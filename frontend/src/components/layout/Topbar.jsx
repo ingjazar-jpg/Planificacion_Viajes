@@ -25,7 +25,7 @@ function Topbar({ onMenuClick }) {
           aria-label="Alertas disponibles al conectar la API"
           title="Las alertas estarán disponibles al conectar la API"
         >
-          <span aria-hidden="true">♧</span>
+          <span aria-hidden="true">🔔</span>
           <span>Alertas</span>
         </button>
         <span className="local-indicator">
