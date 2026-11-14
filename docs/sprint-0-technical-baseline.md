@@ -1,46 +1,66 @@
-# Sprint 0 — Propuesta de línea base técnica
+# Sprint 0 — Línea base técnica aprobada
 
 **Proyecto:** Sistema de Planificación y Control de Vacaciones Decembrinas  
-**Fecha:** 2026-11-14  
-**Estado:** PROPUESTA — PENDIENTE DE APROBACIÓN  
+**Fecha de aprobación:** 2026-11-14  
+**Estado:** APROBADA  
 **Repositorio:** https://github.com/ingjazar-jpg/Planificacion_Viajes
 
 ## 1. Objetivo
 
-Fijar las versiones principales del entorno de desarrollo y sus convenciones de ejecución local para que la configuración sea reproducible entre GitHub y el equipo local.
+Fijar las versiones y convenciones del entorno de desarrollo para que la configuración sea reproducible entre GitHub y el entorno local.
 
-Esta propuesta no modifica el stack obligatorio aprobado en ARCH-001.
+Esta línea base mantiene el stack obligatorio aprobado en ARCH-001.
 
-## 2. Versiones propuestas
+## 2. Versiones fijadas
 
-| Componente | Versión objetivo | Criterio |
-|---|---|---|
-| Python | 3.14.x | Rama de correcciones activas y ecosistema maduro |
-| FastAPI | 0.142.x | Versión estable vigente consultada |
-| Pydantic | 2.14.x | Rama 2.x compatible con Python 3.14 |
-| Uvicorn | 0.54.x | Versión estable vigente consultada |
-| Pytest | 9.2.x | Versión estable vigente consultada |
-| Node.js | 26.x LTS | Rama Active LTS |
-| npm | Incluido con Node.js 26 | Gestor único del frontend |
-| React | 19.3.x | Versión estable vigente |
-| Vite | 8.3.x | Rama vigente con mantenimiento regular |
+Las siguientes versiones exactas se seleccionaron dentro de las familias aprobadas y se verificaron contra las fuentes oficiales consultadas el 2026-11-14.
 
-Las versiones menores y de parche se verificarán nuevamente al generar los manifiestos. Se fijarán versiones exactas en los archivos de dependencias/lock para que las instalaciones posteriores reproduzcan el mismo entorno.
+| Componente | Versión fijada |
+|---|---|
+| Python | 3.14.10 |
+| FastAPI | 0.142.2 |
+| Pydantic | 2.14.3 |
+| Uvicorn | 0.54.0 |
+| Pytest | 9.2.0 |
+| pytest-cov | 7.1.0 |
+| HTTPX (cliente de pruebas API) | 0.28.1 |
+| Node.js | 26.13.1 LTS |
+| npm | Versión incluida con Node.js 26.13.1 |
+| React | 19.3.0 |
+| React DOM | 19.3.0 |
+| Vite | 8.3.8 |
+| @vitejs/plugin-react | 6.3.0 |
+| Vitest | 5.1.0 |
+| jsdom | 31.0.1 |
+| @testing-library/react | 16.3.3 |
+| @testing-library/dom | 10.4.2 |
+| @testing-library/jest-dom | 7.0.1 |
 
-## 3. Referencias oficiales consultadas
+Los archivos de dependencias fijarán estas versiones exactas. Para el frontend se generará y versionará `package-lock.json` mediante npm. Para el backend, los requisitos se fijarán en archivos versionados; la instalación de un entorno virtual no se incluirá en Git.
 
-- Python: https://www.python.org/doc/versions/
-- Estado y ciclo de vida de Python: https://devguide.python.org/versions/
-- Node.js Releases: https://nodejs.org/en/about/previous-releases
-- FastAPI Release Notes: https://fastapi.tiangolo.com/release-notes/
-- Pydantic Changelog: https://pydantic.dev/docs/validation/latest/get-started/changelog/
-- Uvicorn Releases: https://github.com/Kludex/uvicorn/releases
-- Pytest Changelog: https://docs.pytest.org/en/stable/changelog.html
-- React Versions: https://react.dev/versions
-- Vite Releases: https://vite.dev/releases
-- Vite Node.js compatibility: https://vite.dev/guide/
+Python se mantiene en la rama 3.14.x aprobada, aunque exista una rama posterior de Python. FastAPI se mantiene en la serie 0.142.x aprobada. No se realizarán cambios de serie sin revisión y aprobación.
 
-## 4. Puertos y direcciones locales propuestos
+## 3. Fuentes oficiales de versiones
+
+- Python 3.14.10: https://www.python.org/doc/versions/
+- FastAPI 0.142.2: https://fastapi.tiangolo.com/release-notes/
+- Pydantic 2.14.3: https://pypi.org/project/pydantic/2.14.3/
+- Uvicorn 0.54.0: https://uvicorn.dev/release-notes/
+- Pytest 9.2.0: https://docs.pytest.org/en/latest/changelog.html
+- pytest-cov 7.1.0: https://pypi.org/project/pytest-cov/
+- HTTPX 0.28.1: https://pypi.org/project/httpx/
+- Node.js 26.13.1 LTS: https://nodejs.org/en/download/
+- React 19.3.0: https://react.dev/versions
+- Vite 8.3.8: https://github.com/vitejs/vite/releases
+- Requisito Node.js de Vite 8: https://vite.dev/blog/announcing-vite8
+- @vitejs/plugin-react 6.3.0: https://www.npmjs.com/package/@vitejs/plugin-react
+- Vitest 5.1.0: https://vitest.dev/blog/vitest-5-1
+- jsdom 31.0.1: https://www.npmjs.com/package/jsdom
+- React Testing Library 16.3.3: https://www.npmjs.com/package/@testing-library/react
+- DOM Testing Library 10.4.2: https://www.npmjs.com/package/@testing-library/dom
+- jest-dom 7.0.1: https://www.npmjs.com/package/@testing-library/jest-dom
+
+## 4. Puertos y direcciones locales
 
 | Servicio | Host | Puerto | Dirección |
 |---|---|---:|---|
@@ -48,71 +68,72 @@ Las versiones menores y de parche se verificarán nuevamente al generar los mani
 | Backend FastAPI | localhost | 8000 | http://localhost:8000 |
 | API v1 | localhost | 8000 | http://localhost:8000/api/v1 |
 
-Configuración propuesta:
+Configuración obligatoria:
 
-- Vite utilizará host localhost y strictPort true.
-- Uvicorn escuchará exclusivamente en localhost.
-- El frontend consumirá http://localhost:8000/api/v1.
-- FastAPI permitirá CORS únicamente desde http://localhost:5173 durante desarrollo local.
+- Vite utilizará host `localhost` y `strictPort: true`.
+- Uvicorn escuchará exclusivamente en `localhost`.
+- El frontend consumirá `http://localhost:8000/api/v1`.
+- FastAPI permitirá CORS únicamente desde `http://localhost:5173` durante desarrollo local.
 - No se expondrán los servicios a la red local ni a interfaces públicas.
 
-Los puertos son convenciones de desarrollo; no alteran los contratos de recursos de API-001.
+Los puertos son convenciones de desarrollo y no modifican los contratos de recursos de API-001.
 
 ## 5. Convenciones de dependencias
 
 ### Backend
 
-- requirements.txt para dependencias directas de ejecución.
-- requirements-dev.txt para herramientas de desarrollo y pruebas, si se requiere separación.
-- Versiones fijadas o acotadas y reproducibles.
-- Entorno virtual local .venv/, excluido de Git.
+- `backend/requirements.txt`: dependencias de ejecución.
+- `backend/requirements-dev.txt`: dependencias de desarrollo y pruebas, incluyendo las de ejecución.
+- Entorno virtual local: `.venv/`, excluido de Git.
+- La versión de Python quedará registrada en `.python-version`.
 - No versionar secretos, variables locales ni datos reales.
 
 ### Frontend
 
-- package.json para scripts y dependencias.
-- package-lock.json versionado para reproducibilidad con npm.
-- node_modules/ y dist/ excluidos de Git.
+- `frontend/package.json`: scripts y dependencias.
+- `frontend/package-lock.json`: resolución reproducible con npm, versionada.
+- `frontend/node_modules/` y `frontend/dist/`: excluidos de Git.
+- La versión de Node.js quedará registrada en `.nvmrc`.
 
-## 6. Convenciones de pruebas
+## 6. Pruebas
 
-- Backend: Pytest.
-- Frontend: Vitest y React Testing Library, previa verificación de compatibilidad entre versiones.
-- Los tests de servicios y reglas de negocio serán independientes de la API cuando corresponda.
+- Backend: Pytest y pytest-cov.
+- Pruebas de endpoints FastAPI: HTTPX mediante TestClient.
+- Frontend: Vitest, jsdom y React Testing Library.
+- Los tests de reglas de negocio se mantendrán independientes de la API cuando corresponda.
 - Los tests de API verificarán contratos, validaciones y códigos HTTP.
-- El objetivo de cobertura backend será mínimo 80 %, conforme a SPEC-006.
+- Cobertura backend mínima objetivo: 80 %, conforme a SPEC-006.
+- Los flujos principales del frontend tendrán pruebas automatizadas.
 
-## 7. Variables y configuración
+## 7. Configuración de entorno
 
-Se utilizarán archivos de ejemplo sin secretos:
+- El frontend usará `VITE_API_URL`, con valor local `http://localhost:8000/api/v1`.
+- Los archivos de entorno reales se excluirán de Git.
+- Se podrán versionar archivos `.env.example` sin secretos.
+- Ninguna variable permitirá exponer FastAPI fuera de localhost.
 
-- backend/.env.example
-- frontend/.env.example
+## 8. Comandos locales previstos
 
-La URL de API del frontend será configurable mediante variable VITE_API_URL, con valor local propuesto http://localhost:8000/api/v1.
+Los comandos definitivos se documentarán en `docs/local-development.md` cuando se incorporen los manifiestos y la estructura de ejecución.
 
-Los archivos .env reales permanecerán excluidos del control de versiones.
-
-## 8. Comandos locales propuestos
-
-Los comandos definitivos de instalación, ejecución, pruebas y compilación se documentarán después de aprobar esta línea base y crear los manifiestos de dependencias.
-
-La documentación priorizará PowerShell para facilitar el uso en Windows y podrá incluir equivalentes para otros terminales si son necesarios.
+La guía priorizará PowerShell en Windows, con comandos equivalentes cuando sea necesario.
 
 ## 9. Criterios de aceptación de la línea base
 
-1. Versiones principales de Python y Node están decididas.
-2. Versiones compatibles de backend y frontend están identificadas.
-3. Puertos y hosts locales están definidos.
-4. CORS está restringido al origen local del frontend.
-5. Los manifiestos de dependencias son reproducibles.
-6. Los archivos de datos, respaldos, entornos y secretos permanecen excluidos de Git.
+1. Las versiones principales de Python y Node.js están fijadas.
+2. Las versiones de dependencias directas están fijadas.
+3. Los puertos y hosts locales están definidos.
+4. CORS queda limitado al origen local del frontend.
+5. Los archivos de dependencias permiten instalaciones reproducibles.
+6. Los datos, respaldos, entornos y secretos permanecen excluidos de Git.
 7. Los comandos de instalación, ejecución y pruebas quedan documentados.
-8. Se pueden ejecutar las pruebas iniciales en ambos proyectos.
+8. Las pruebas iniciales pueden ejecutarse en ambos proyectos.
 
-## 10. Estado y aprobación
+## 10. Control de cambios
 
-La presente línea base es una propuesta. No se crearán todavía manifiestos de dependencias ni código funcional hasta recibir aprobación.
+| Versión | Fecha | Descripción | Estado |
+|---|---|---|---|
+| 0.1 | 2026-11-14 | Línea base técnica propuesta | Aprobada por la usuaria |
+| 0.2 | 2026-11-14 | Fijación de versiones exactas verificadas | Aprobada como concreción de la línea base |
 
----
-**Fin de la propuesta.**
+**Fin de la línea base técnica aprobada.**
