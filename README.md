@@ -10,7 +10,7 @@ Aplicación web local para planificar períodos de vacaciones decembrinas, admin
 - Contratos REST API-001 v0.1: aprobados.
 - Interfaz UI-001 v0.1: aprobada.
 - Línea base técnica Sprint 0: aprobada el 14-11-2026.
-- Configuración inicial de dependencias y herramientas: incorporada; pendiente de instalación y validación en el entorno fijado.
+- Configuración inicial de dependencias y herramientas: incorporada; script local de generación de lockfiles disponible; pendiente ejecutar y validar en el equipo.
 - Estado de implementación funcional: aún no iniciada.
 
 Los documentos aprobados son la fuente de verdad del proyecto. Los cambios funcionales o técnicos deberán reflejarse primero en las especificaciones correspondientes y aprobarse antes de modificar la implementación.
@@ -73,6 +73,7 @@ Los documentos funcionales, de arquitectura, datos, API e interfaz aprobados se 
 
 - [Línea base técnica aprobada](docs/sprint-0-technical-baseline.md)
 - [Guía de desarrollo local](docs/local-development.md)
+- [Script local de lockfiles](scripts/prepare-local-lockfiles.ps1)
 - [Revisión de preparación para implementación](docs/implementation-readiness-review.md)
 
 ## Desarrollo local
