@@ -1,6 +1,6 @@
 # Desarrollo local
 
-**Estado:** Guía inicial de Sprint 0.  
+**Estado:** Guía de preparación de entorno de Sprint 0.  
 **Fuente de configuración:** `docs/sprint-0-technical-baseline.md`.
 
 ## 1. Requisitos
@@ -8,10 +8,11 @@
 Instalar las versiones aprobadas:
 
 - Python 3.14.10.
-- Node.js 26.13.1 LTS (incluye npm).
+- Node.js 26.13.1 LTS.
+- npm 11.20.0 (incluido con Node.js 26.13.1).
 - Git.
 
-Comprobar desde PowerShell:
+Comprobar desde PowerShell, en la raíz del repositorio:
 
 ```powershell
 python --version
@@ -20,66 +21,83 @@ npm --version
 git --version
 ```
 
-Las versiones de Python y Node deben coincidir con `.python-version` y `.nvmrc`.
+Las versiones de Python, Node.js y npm deben coincidir con `.python-version`, `.nvmrc` y `.npm-version`.
 
-## 2. Backend
+## 2. Generación automatizada de lockfiles y validación
 
-Desde la raíz del repositorio:
+Con el repositorio actualizado desde GitHub, ejecutar desde la raíz:
 
 ```powershell
-py -3.14 -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
-python -m pip install -r backend\requirements-dev.txt
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\scripts\prepare-local-lockfiles.ps1
 ```
 
-Verificar dependencias:
+El script:
+
+1. Comprueba Python, Node.js y npm contra las versiones fijadas.
+2. Crea `.venv/` si no existe.
+3. Actualiza pip a 26.3.
+4. Genera `backend/pylock.toml` desde `backend/requirements-dev.txt`.
+5. Instala el entorno Python desde el lock y comprueba dependencias e imports.
+6. Genera `frontend/package-lock.json` mediante npm.
+7. Instala el frontend mediante `npm ci`.
+8. Comprueba el árbol de dependencias y los imports principales de React, Vite, Vitest, jsdom y Testing Library.
+
+**Nota sobre Python:** el comando `pip lock` de pip 26.3 está documentado como experimental. El lock generado garantiza compatibilidad con la versión de Python y plataforma donde se generó. Para este proyecto se generará en el equipo local previsto (Windows con Python 3.14.10). https://pip.pypa.io/en/stable/cli/pip_lock/
+
+El script no crea ni modifica código funcional y no hace commit ni push.
+
+## 3. Archivos esperados
+
+Al terminar correctamente:
+
+- `backend/pylock.toml`: lockfile Python.
+- `frontend/package-lock.json`: lockfile npm.
+- `.venv/`: entorno virtual local, excluido de Git.
+- `frontend/node_modules/`: dependencias instaladas, excluidas de Git.
+
+Los dos lockfiles sí deben revisarse y versionarse en GitHub. No subir el entorno virtual ni `node_modules/`.
+
+## 4. Validación adicional
+
+Desde la raíz:
 
 ```powershell
-python -m pip show fastapi pydantic uvicorn pytest pytest-cov httpx
+.\.venv\Scripts\python.exe -m pip check
+.\.venv\Scripts\python.exe -m pip list
 ```
 
-La ejecución del servidor se documentará cuando se incorpore la aplicación FastAPI.
-
-## 3. Frontend
-
-Desde la carpeta `frontend`:
+Desde `frontend/`:
 
 ```powershell
-cd frontend
-npm install
-```
-
-La primera instalación generará `package-lock.json`. Ese archivo deberá incorporarse al repositorio para que las instalaciones siguientes utilicen:
-
-```powershell
-npm ci
-```
-
-Comprobar los scripts disponibles:
-
-```powershell
+npm ls --depth=0
 npm run
 ```
 
-El servidor Vite utilizará `http://localhost:5173` y no cambiará de puerto silenciosamente.
+No ejecutar todavía `npm run build` ni `npm test` como criterios de éxito: aún no se han incorporado `index.html`, la entrada de React ni los primeros tests. El script solo valida la instalación, resolución de dependencias e imports.
 
-La compilación y las pruebas se podrán ejecutar cuando se incorporen los archivos de entrada y los primeros tests:
+## 5. Revisión de cambios locales
+
+Al terminar:
 
 ```powershell
-npm run build
-npm test
+git status --short
 ```
 
-## 4. Variables de entorno
+Se esperan los dos lockfiles nuevos. No deben aparecer cambios en `datos_vacaciones.json`, respaldos, `.venv/` ni `node_modules/`.
 
-Copiar `frontend/.env.example` a `frontend/.env.local` cuando se necesite personalizar la URL local de la API.
+Antes de confirmar los archivos, revisar su contenido y comprobar que no contienen datos locales, rutas personales ni secretos.
 
-Los archivos `.env` reales no deben subirse a GitHub. No almacenar secretos en variables `VITE_*`, porque quedan disponibles para el código frontend.
+Cuando el resultado sea correcto, crear un commit con únicamente:
 
-## 5. Sincronización Git
+- `backend/pylock.toml`
+- `frontend/package-lock.json`
 
-Para descargar los cambios de GitHub a una copia local existente:
+Si el script también modificó otro archivo, revisar el diff antes de incluirlo.
+
+## 6. Sincronización Git
+
+Para descargar cambios de GitHub a una copia local existente:
 
 ```powershell
 git pull origin main
@@ -94,8 +112,10 @@ cd Planificacion_Viajes
 
 No ejecutar ambos flujos sobre la misma carpeta. Antes de actualizar una copia local con cambios propios, comprobar `git status` y guardar o confirmar el trabajo local.
 
-## 6. Estado actual
+## 7. Estado actual
 
-Esta guía prepara los entornos, pero no afirma que la aplicación esté ejecutable todavía. Los archivos de entrada de React, la aplicación FastAPI y las pruebas funcionales se incorporarán en tareas posteriores, después de completar las precisiones contractuales y copiar la documentación aprobada.
+La guía y el script están versionados en GitHub. Los lockfiles no se han generado ni validado todavía porque requieren ejecutarse en el equipo local con los runtimes aprobados.
+
+La aplicación funcional, el build y las pruebas funcionales se incorporarán en tareas posteriores.
 
 Los datos locales, respaldos, archivos temporales, entornos virtuales, dependencias instaladas y registros no se versionan.
