@@ -1,8 +1,8 @@
 # SPEC-004 — Presupuestos y gastos
 
 Proyecto: Sistema de Planificación y Control de Vacaciones Decembrinas
-Versión: 0.2 — Borrador consolidado
-Estado: Pendiente de aprobación
+Versión: 0.2
+Estado: Aprobada
 Fecha: 13 de noviembre de 2026
 
 ## 1. Propósito
