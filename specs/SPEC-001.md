@@ -10,7 +10,7 @@
 
 | Versión | 0.1 |
 
-| Estado | Borrador para revisión |
+| Estado | Aprobada |
 
 | Metodología | Spec-Driven Development (SDD) |
 
