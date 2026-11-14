@@ -1,0 +1,72 @@
+# Sistema de Planificación y Control de Vacaciones Decembrinas
+
+Aplicación web local para planificar períodos de vacaciones decembrinas, administrar actividades y calendario, controlar presupuestos y gastos, consultar alertas internas y generar informes.
+
+## Estado del proyecto
+
+- Especificaciones funcionales SPEC-001 a SPEC-006: aprobadas.
+- Arquitectura ARCH-001 v0.1: aprobada.
+- Modelo de datos DATA-001 v0.2: aprobado.
+- Contratos REST API-001 v0.1: aprobados.
+- Interfaz UI-001 v0.1: aprobada.
+- Estado de implementación: aún no iniciada.
+
+Los documentos aprobados son la fuente de verdad del proyecto. Los cambios funcionales o técnicos deberán reflejarse primero en las especificaciones correspondientes y aprobarse antes de modificar la implementación.
+
+## Stack tecnológico obligatorio
+
+### Backend
+- Python.
+- FastAPI.
+- Pydantic.
+- Persistencia JSON local, administrada exclusivamente por el backend.
+
+### Frontend
+- React.
+- Vite.
+- JavaScript/JSX.
+- HTML5 y CSS3.
+
+## Restricciones arquitectónicas
+
+- Archivo principal de datos: `datos_vacaciones.json`.
+- El backend será el único responsable de leer y escribir el archivo JSON.
+- El servidor FastAPI escuchará exclusivamente en `localhost`.
+- No se utilizará una base de datos externa.
+- No se enviarán datos a servicios externos.
+- No se incorporarán integraciones externas de calendario, mapas, mensajería o notificaciones sin autorización expresa.
+- No se utilizarán Bootstrap ni Tailwind.
+- Las reglas de negocio y los cálculos pertenecen al backend.
+- Los importes se manejarán como `Decimal` en backend y cadenas decimales en JSON.
+- Moneda: COP.
+- Zona horaria: `America/Bogota`.
+
+## Organización prevista
+
+```text
+backend/
+frontend/
+data/
+docs/
+specs/
+```
+
+La estructura detallada se materializará durante Sprint 0 conforme a ARCH-001. Los datos locales, respaldos, entornos virtuales, dependencias instaladas y registros no deben versionarse.
+
+## Calidad y criterios de trabajo
+
+- Cobertura de pruebas backend objetivo: mínimo 80 %.
+- Pruebas de flujos principales del frontend.
+- Accesibilidad: WCAG 2.2 AA.
+- Diseño responsive desde 360 px.
+- Compatibilidad con las últimas dos versiones principales de Chrome, Edge, Firefox y Safari.
+- Tareas pequeñas y verificables de máximo 30 minutos.
+- No iniciar trabajo dependiente de una aprobación pendiente.
+
+## Fuente documental
+
+Los documentos funcionales, de arquitectura, datos, API e interfaz aprobados se incorporarán al repositorio en `specs/` y `docs/`. Hasta que se incorporen, este README resume las decisiones principales, pero no sustituye esos documentos.
+
+## Desarrollo local
+
+La configuración e instrucciones de ejecución se documentarán cuando se completen las tareas de preparación técnica de Sprint 0.
