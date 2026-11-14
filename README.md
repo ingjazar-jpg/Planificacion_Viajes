@@ -9,7 +9,9 @@ Aplicación web local para planificar períodos de vacaciones decembrinas, admin
 - Modelo de datos DATA-001 v0.2: aprobado.
 - Contratos REST API-001 v0.1: aprobados.
 - Interfaz UI-001 v0.1: aprobada.
-- Estado de implementación: aún no iniciada.
+- Línea base técnica Sprint 0: aprobada el 14-11-2026.
+- Configuración inicial de dependencias y herramientas: incorporada; pendiente de instalación y validación en el entorno fijado.
+- Estado de implementación funcional: aún no iniciada.
 
 Los documentos aprobados son la fuente de verdad del proyecto. Los cambios funcionales o técnicos deberán reflejarse primero en las especificaciones correspondientes y aprobarse antes de modificar la implementación.
 
@@ -67,6 +69,12 @@ La estructura detallada se materializará durante Sprint 0 conforme a ARCH-001. 
 
 Los documentos funcionales, de arquitectura, datos, API e interfaz aprobados se incorporarán al repositorio en `specs/` y `docs/`. Hasta que se incorporen, este README resume las decisiones principales, pero no sustituye esos documentos.
 
+## Documentación operativa
+
+- [Línea base técnica aprobada](docs/sprint-0-technical-baseline.md)
+- [Guía de desarrollo local](docs/local-development.md)
+- [Revisión de preparación para implementación](docs/implementation-readiness-review.md)
+
 ## Desarrollo local
 
-La configuración e instrucciones de ejecución se documentarán cuando se completen las tareas de preparación técnica de Sprint 0.
+La configuración de dependencias está incorporada. La guía local describe la instalación inicial, incluida la generación y versionado de `frontend/package-lock.json`. La aplicación funcional y sus comandos de ejecución se completarán en las siguientes tareas.
