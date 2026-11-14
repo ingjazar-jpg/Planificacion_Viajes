@@ -124,9 +124,11 @@ El frontend consultará las copias mediante los endpoints de API-001 y recibirá
 
 ### 5.1 Completado en GitHub
 
-- Línea base técnica aprobada el 2026-11-14 y registrada en `docs/sprint-0-technical-baseline.md`.
+- Línea base técnica aprobada y concretada con Python 3.14.10, pip 26.3, Node.js 26.13.1 LTS, npm 11.20.0 y las versiones de dependencias registradas en `docs/sprint-0-technical-baseline.md`.
 - Runtime fijado en `.python-version` y `.nvmrc`.
 - Dependencias directas de backend fijadas en `backend/requirements.txt` y `backend/requirements-dev.txt`.
+- Generador de lock Python definido: `pip lock` 26.3; script local disponible en `scripts/prepare-local-lockfiles.ps1`.
+- Flujo npm definido: generar `frontend/package-lock.json` y validar la instalación mediante `npm ci`.
 - Configuración inicial de Pytest en `backend/pytest.ini`.
 - Manifiesto frontend `frontend/package.json` con versiones exactas y scripts.
 - Configuración de Vite y Vitest.
@@ -161,7 +163,7 @@ Las versiones exactas y sus fuentes oficiales están documentadas en la línea b
 
 **Preparación documental:** aprobaciones confirmadas, pero copia íntegra de documentos aún pendiente en GitHub.  
 **Preparación del repositorio:** estructura inicial y archivos de configuración creados y verificados en GitHub.  
-**Preparación de dependencias:** manifiestos directos creados; falta package-lock y validación de instalación en las versiones fijadas.  
+**Preparación de dependencias:** manifiestos directos y script de generación local creados; falta ejecutar el script, generar ambos lockfiles y validar la instalación en el equipo local.  
 **Preparación contractual:** parcial; quedan precisiones del contrato API y detalles de pruebas/validación de restauración por cerrar. Las decisiones de intervalos multidiarios, estado inicial y catálogo de respaldos ya están aprobadas.  
 **Documentación de especificaciones:** la usuaria informa que los archivos .md aprobados se están preparando en otro chat; no se duplicarán ni reconstruirán aquí.  
 **Inicio de implementación funcional:** NO AUTORIZADO hasta cerrar los elementos bloqueantes y completar la revisión.
@@ -170,7 +172,7 @@ Las versiones exactas y sus fuentes oficiales están documentadas en la línea b
 
 1. Incorporar a `specs/` los archivos Markdown originales cuando estén listos en el otro chat, preservando su contenido y versión.
 2. Completar las precisiones de API-001: derivación de `year`, esquemas detallados request/response y metadatos de backups.
-3. Generar y versionar `frontend/package-lock.json` y validar las instalaciones.
+3. Ejecutar `scripts/prepare-local-lockfiles.ps1`, validar las instalaciones y versionar `backend/pylock.toml` y `frontend/package-lock.json`.
 4. Definir las convenciones de ramas, Pull Requests y revisión.
 5. Ejecutar una revisión final de preparación y autorizar el primer incremento funcional.
 
