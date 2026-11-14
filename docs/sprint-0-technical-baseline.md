@@ -18,6 +18,7 @@ Las siguientes versiones exactas se seleccionaron dentro de las familias aprobad
 | Componente | Versión fijada |
 |---|---|
 | Python | 3.14.10 |
+| pip (generador de lockfile) | 26.3 |
 | FastAPI | 0.142.2 |
 | Pydantic | 2.14.3 |
 | Uvicorn | 0.54.0 |
@@ -25,7 +26,7 @@ Las siguientes versiones exactas se seleccionaron dentro de las familias aprobad
 | pytest-cov | 7.1.0 |
 | HTTPX (cliente de pruebas API) | 0.28.1 |
 | Node.js | 26.13.1 LTS |
-| npm | Versión incluida con Node.js 26.13.1 |
+| npm | 11.20.0 |
 | React | 19.3.0 |
 | React DOM | 19.3.0 |
 | Vite | 8.3.8 |
@@ -36,7 +37,7 @@ Las siguientes versiones exactas se seleccionaron dentro de las familias aprobad
 | @testing-library/dom | 10.4.2 |
 | @testing-library/jest-dom | 7.0.1 |
 
-Los archivos de dependencias fijarán estas versiones exactas. Para el frontend se generará y versionará `package-lock.json` mediante npm. Para el backend, los requisitos se fijarán en archivos versionados; la instalación de un entorno virtual no se incluirá en Git.
+Los archivos de dependencias fijarán estas versiones exactas. Para el frontend se generará y versionará `package-lock.json` mediante npm 11.20.0. Para el backend se utilizará `pylock.toml`, generado con pip 26.3 desde `requirements-dev.txt`. La funcionalidad `pip lock` de pip 26.3 está documentada como experimental y el lock generado solo garantiza validez para la versión de Python y plataforma en que se genera; por ello se generará y validará en el equipo local Windows previsto. La instalación de entornos virtuales y dependencias no se incluirá en Git.
 
 Python se mantiene en la rama 3.14.x aprobada, aunque exista una rama posterior de Python. FastAPI se mantiene en la serie 0.142.x aprobada. No se realizarán cambios de serie sin revisión y aprobación.
 
@@ -86,6 +87,7 @@ Los puertos son convenciones de desarrollo y no modifican los contratos de recur
 - `backend/requirements-dev.txt`: dependencias de desarrollo y pruebas, incluyendo las de ejecución.
 - Entorno virtual local: `.venv/`, excluido de Git.
 - La versión de Python quedará registrada en `.python-version`.
+- pip 26.3 se utilizará para generar e instalar `backend/pylock.toml`.
 - No versionar secretos, variables locales ni datos reales.
 
 ### Frontend
@@ -94,6 +96,7 @@ Los puertos son convenciones de desarrollo y no modifican los contratos de recur
 - `frontend/package-lock.json`: resolución reproducible con npm, versionada.
 - `frontend/node_modules/` y `frontend/dist/`: excluidos de Git.
 - La versión de Node.js quedará registrada en `.nvmrc`.
+- La versión de npm quedará registrada en `.npm-version` y se validará mediante `.npmrc`.
 
 ## 6. Pruebas
 
@@ -135,5 +138,6 @@ La guía priorizará PowerShell en Windows, con comandos equivalentes cuando sea
 |---|---|---|---|
 | 0.1 | 2026-11-14 | Línea base técnica propuesta | Aprobada por la usuaria |
 | 0.2 | 2026-11-14 | Fijación de versiones exactas verificadas | Aprobada como concreción de la línea base |
+| 0.3 | 2026-11-14 | Fijación de npm 11.20.0 y pip 26.3; definición de pylock.toml y package-lock.json | Aprobada como procedimiento de generación local |
 
 **Fin de la línea base técnica aprobada.**
