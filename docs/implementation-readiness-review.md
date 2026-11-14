@@ -120,19 +120,29 @@ La retención de 15 copias semanales se aplicará exclusivamente a la serie sema
 
 El frontend consultará las copias mediante los endpoints de API-001 y recibirá únicamente identificadores y metadatos seguros. Nunca recibirá rutas físicas.
 
-## 5. Preparación técnica pendiente
+## 5. Preparación técnica
 
-Antes de declarar cerrado Sprint 0 se deberán definir y verificar:
+### 5.1 Completado en GitHub
 
-- Versiones compatibles de Python, Node.js, FastAPI, Pydantic, React y Vite.
-- Dependencias y archivos de bloqueo correspondientes.
-- Orígenes CORS permitidos para el frontend local y la API local.
-- Comandos reproducibles de instalación, ejecución y pruebas.
-- Configuración de pruebas backend y frontend.
-- Flujo de ramas y revisión mediante Pull Request.
-- Incorporación íntegra de la documentación aprobada.
+- Línea base técnica aprobada el 2026-11-14 y registrada en `docs/sprint-0-technical-baseline.md`.
+- Runtime fijado en `.python-version` y `.nvmrc`.
+- Dependencias directas de backend fijadas en `backend/requirements.txt` y `backend/requirements-dev.txt`.
+- Configuración inicial de Pytest en `backend/pytest.ini`.
+- Manifiesto frontend `frontend/package.json` con versiones exactas y scripts.
+- Configuración de Vite y Vitest.
+- Variable de entorno de ejemplo `frontend/.env.example`.
+- Guía inicial de instalación y sincronización en `docs/local-development.md`.
 
-Las versiones y dependencias se elegirán con verificación de compatibilidad vigente al momento de configurarlas.
+### 5.2 Pendiente de ejecución/verificación
+
+- Generar `frontend/package-lock.json` usando npm 11 en Node.js 26.13.1 y subirlo al repositorio. No se generó en esta etapa porque el entorno de trabajo remoto no dispone de Node.js 26/npm 11.
+- Instalar dependencias en un entorno Python 3.14.10 y Node.js 26.13.1.
+- Verificar resolución completa de dependencias y ejecución de scripts.
+- Incorporar la aplicación FastAPI y los archivos de entrada React antes de ejecutar build, servidor o pruebas funcionales.
+- Implementar y probar CORS limitado a `http://localhost:5173`.
+- Definir el flujo de ramas y revisión mediante Pull Request.
+
+Las versiones exactas y sus fuentes oficiales están documentadas en la línea base aprobada. La existencia de manifiestos no equivale a una instalación ni a pruebas ejecutadas.
 
 ## 6. Restricciones que se mantienen
 
@@ -150,16 +160,17 @@ Las versiones y dependencias se elegirán con verificación de compatibilidad vi
 ## 7. Dictamen
 
 **Preparación documental:** aprobaciones confirmadas, pero copia íntegra de documentos aún pendiente en GitHub.  
-**Preparación del repositorio:** estructura inicial creada y verificada.  
-**Preparación de dependencias y ejecución:** pendiente.  
-**Preparación contractual:** parcial; quedan precisiones del contrato API y de la administración interna de backups por documentar en una revisión controlada. Las decisiones de intervalos multidiarios, estado inicial y catálogo de respaldos ya están aprobadas.  
+**Preparación del repositorio:** estructura inicial y archivos de configuración creados y verificados en GitHub.  
+**Preparación de dependencias:** manifiestos directos creados; falta package-lock y validación de instalación en las versiones fijadas.  
+**Preparación contractual:** parcial; quedan precisiones del contrato API y detalles de pruebas/validación de restauración por cerrar. Las decisiones de intervalos multidiarios, estado inicial y catálogo de respaldos ya están aprobadas.  
+**Documentación de especificaciones:** la usuaria informa que los archivos .md aprobados se están preparando en otro chat; no se duplicarán ni reconstruirán aquí.  
 **Inicio de implementación funcional:** NO AUTORIZADO hasta cerrar los elementos bloqueantes y completar la revisión.
 
 ## 8. Próximas tareas
 
-1. Incorporar los documentos aprobados completos a `specs/`, sin reconstruirlos como transcripciones originales.
-2. Completar las precisiones restantes de API-001: derivación de `year`, contratos detallados request/response y metadatos del catálogo de backups.
-3. Aprobar la línea base de versiones y configuración reproducible.
+1. Incorporar a `specs/` los archivos Markdown originales cuando estén listos en el otro chat, preservando su contenido y versión.
+2. Completar las precisiones de API-001: derivación de `year`, esquemas detallados request/response y metadatos de backups.
+3. Generar y versionar `frontend/package-lock.json` y validar las instalaciones.
 4. Definir las convenciones de ramas, Pull Requests y revisión.
 5. Ejecutar una revisión final de preparación y autorizar el primer incremento funcional.
 
