@@ -10,7 +10,7 @@ SPEC-002 — Gestión de períodos vacacionales y actividades
 
 | Versión | 0.1 |
 
-| Estado | Borrador para revisión |
+| Estado | Aprobada |
 
 | Documento relacionado | SPEC-001 v0.1 |
 
