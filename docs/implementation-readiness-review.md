@@ -88,6 +88,16 @@ El estado podrá modificarse posteriormente mediante las operaciones de actualiz
 
 Esta aclaración se incorporará en la siguiente revisión controlada del contrato API-001 y en los esquemas Pydantic de creación. El documento API-001 v0.1 aprobado no se sobrescribe silenciosamente.
 
+### 4.7 Identificador y metadatos de copias de seguridad — ACLARADO Y APROBADO
+
+La usuaria aprobó el 2026-11-14 que cada copia de seguridad tenga un UUID independiente, generado por el backend y asociado al archivo de respaldo correspondiente.
+
+El identificador y los metadatos administrativos de las copias pertenecerán al subsistema de backups y se conservarán fuera de las entidades y del documento principal `datos_vacaciones.json`.
+
+El frontend utilizará el UUID como `backup_id`, sin conocer ni recibir rutas físicas del sistema de archivos.
+
+La implementación deberá definir y documentar el formato del archivo, la ubicación local protegida, el mecanismo de catálogo/descubrimiento de copias y la validación de integridad, respetando la retención aprobada. Esta decisión no agrega una entidad Backup al esquema JSON principal de DATA-001.
+
 ## 5. Preparación técnica pendiente
 
 Antes de declarar cerrado Sprint 0 se deberán definir y verificar:
