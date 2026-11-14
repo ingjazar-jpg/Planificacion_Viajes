@@ -76,9 +76,7 @@ Se deberá completar el detalle por endpoint sin cambiar las decisiones aprobada
 
 ### 4.5 Estado inicial de actividades
 
-SPEC-002 define los estados y las transiciones, pero deberá quedar expresamente documentado si al crear una actividad el estado se asigna automáticamente a `Pendiente` o se exige en el request.
-
-Este punto debe resolverse en el contrato de creación y en los modelos Pydantic.
+**RESUELTO.** La decisión aprobada se registra en la sección 4.6: el backend asigna automáticamente `Pendiente` y el frontend no envía `status` al crear una actividad.
 
 ### 4.6 Estado inicial de actividades — ACLARADO Y APROBADO
 
@@ -154,15 +152,15 @@ Las versiones y dependencias se elegirán con verificación de compatibilidad vi
 **Preparación documental:** aprobaciones confirmadas, pero copia íntegra de documentos aún pendiente en GitHub.  
 **Preparación del repositorio:** estructura inicial creada y verificada.  
 **Preparación de dependencias y ejecución:** pendiente.  
-**Preparación contractual:** requiere cerrar los hallazgos de la sección 4.  
+**Preparación contractual:** parcial; quedan precisiones del contrato API y de la administración interna de backups por documentar en una revisión controlada. Las decisiones de intervalos multidiarios, estado inicial y catálogo de respaldos ya están aprobadas.  
 **Inicio de implementación funcional:** NO AUTORIZADO hasta cerrar los elementos bloqueantes y completar la revisión.
 
 ## 8. Próximas tareas
 
-1. Incorporar los documentos aprobados completos a `specs/`.
-2. Resolver la semántica de intervalos multidiarios y el estado inicial de actividades.
-3. Completar las precisiones de API-001 indicadas en esta revisión.
-4. Definir versiones y configuración reproducible.
+1. Incorporar los documentos aprobados completos a `specs/`, sin reconstruirlos como transcripciones originales.
+2. Completar las precisiones restantes de API-001: derivación de `year`, contratos detallados request/response y metadatos del catálogo de backups.
+3. Aprobar la línea base de versiones y configuración reproducible.
+4. Definir las convenciones de ramas, Pull Requests y revisión.
 5. Ejecutar una revisión final de preparación y autorizar el primer incremento funcional.
 
 ---
