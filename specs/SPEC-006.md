@@ -2,7 +2,7 @@
 
 Proyecto: Sistema de Planificación y Control de Vacaciones Decembrinas
 Versión: 0.2
-Estado: Borrador actualizado — pendiente de aprobación
+Estado: Aprobada
 Fecha: 13 de noviembre de 2026
 
 ## 1. Objetivo
