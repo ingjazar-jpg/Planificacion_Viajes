@@ -10,7 +10,7 @@
 
 | Versión | 0.2 |
 
-| Estado | Borrador actualizado para revisión |
+| Estado | Aprobada |
 
 | Documentos relacionados | SPEC-001 v0.1 y SPEC-002 v0.2 |
 
