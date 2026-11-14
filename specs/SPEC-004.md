@@ -241,7 +241,7 @@ Los gastos y presupuestos de un período no modificarán los datos de otros per�
 
 ## 5. Indicadores presupuestarios
 
-El módulo deverá mostrar:
+El módulo deberá mostrar:
 
 - Presupuesto general.
 
