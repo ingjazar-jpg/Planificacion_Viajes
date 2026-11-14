@@ -1,0 +1,30 @@
+{
+  "name": "planificacion-vacaciones-frontend",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "engines": {
+    "node": ">=26.13.1 <27",
+    "npm": ">=11"
+  },
+  "scripts": {
+    "dev": "vite --host localhost --strictPort",
+    "build": "vite build",
+    "preview": "vite preview --host localhost --strictPort",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "@testing-library/dom": "10.4.2",
+    "@testing-library/jest-dom": "7.0.1",
+    "@testing-library/react": "16.3.3",
+    "@vitejs/plugin-react": "6.3.0",
+    "jsdom": "31.0.1",
+    "vite": "8.3.8",
+    "vitest": "5.1.0"
+  }
+}
