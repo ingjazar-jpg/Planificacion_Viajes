@@ -1,0 +1,21 @@
+:root {
+  color-scheme: light;
+
+  --color-primary: #172a46;
+  --color-secondary: #2e6b5b;
+  --color-accent: #d9c28f;
+  --color-background: #f3f6fa;
+  --color-surface: #ffffff;
+  --color-border: #e5eaf0;
+  --color-text: #172a46;
+  --color-text-secondary: #435168;
+  --color-success: #25835e;
+  --color-warning: #9b701e;
+  --color-danger: #bb5145;
+  --color-chart-muted: #7d9bb0;
+
+  --font-family-base: Inter, "Segoe UI", Arial, sans-serif;
+  --radius-card: 14px;
+  --radius-control: 8px;
+  --shadow-card: 0 12px 32px rgb(23 42 70 / 8%);
+}
