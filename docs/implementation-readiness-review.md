@@ -98,6 +98,30 @@ El frontend utilizará el UUID como `backup_id`, sin conocer ni recibir rutas f�
 
 La implementación deberá definir y documentar el formato del archivo, la ubicación local protegida, el mecanismo de catálogo/descubrimiento de copias y la validación de integridad, respetando la retención aprobada. Esta decisión no agrega una entidad Backup al esquema JSON principal de DATA-001.
 
+### 4.8 Catálogo local de copias de seguridad — APROBADO
+
+La usuaria aprobó el 2026-11-14 utilizar un catálogo independiente en:
+
+`data/backups/manifest.json`
+
+El catálogo será metadato operativo local del subsistema de respaldos y no formará parte de `datos_vacaciones.json`. Tanto el catálogo como los archivos de respaldo permanecerán excluidos del control de versiones.
+
+Cada entrada del catálogo contendrá, como mínimo:
+
+- `backup_id`: UUID generado por el backend.
+- `created_at`: timestamp ISO 8601 con zona horaria.
+- `type`: tipo de respaldo (`weekly` o `pre_write`).
+- `validation_status`: resultado de la última validación.
+- `file_reference`: referencia relativa interna al archivo, nunca expuesta al frontend.
+
+Los archivos de respaldo deberán usar un nombre inequívoco que permita identificar su UUID, tipo y momento de creación. Esa información, junto con la estructura y metadatos validados dentro de cada copia, permitirá reconstruir el manifiesto si se daña o falta.
+
+La reconstrucción deberá examinar únicamente el directorio local de respaldos, validar cada archivo y regenerar el catálogo sin modificar el JSON principal. Los archivos inválidos se conservarán y se reportarán; no se considerarán restaurables.
+
+La retención de 15 copias semanales se aplicará exclusivamente a la serie semanal. Los respaldos previos a escritura se gestionarán por separado como protección transaccional, de acuerdo con SPEC-006 y ARCH-001; no se mezclarán ambas políticas de retención.
+
+El frontend consultará las copias mediante los endpoints de API-001 y recibirá únicamente identificadores y metadatos seguros. Nunca recibirá rutas físicas.
+
 ## 5. Preparación técnica pendiente
 
 Antes de declarar cerrado Sprint 0 se deberán definir y verificar:
