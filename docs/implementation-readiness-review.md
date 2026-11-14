@@ -74,18 +74,12 @@ Según las decisiones confirmadas en los chats del proyecto:
 
 ARCH-001, DATA-001, API-001 y UI-001 están publicados con sus estados de aprobación en los archivos de `docs/`.
 
-### 3.1 Discrepancia en las copias versionadas de SPEC
+### 3.1 Estado de aprobación reflejado en las copias versionadas
 
-Los archivos que actualmente aparecen en `specs/` no reflejan de manera consistente la aprobación comunicada en los chats:
+Los encabezados de SPEC-001 a SPEC-006 se actualizaron para reflejar su estado real: **Aprobada**. La aprobación ya había sido confirmada en las decisiones del proyecto; este cambio corrige únicamente los metadatos documentales para evitar interpretaciones equivocadas.
 
-- SPEC-001 y SPEC-002 conservan encabezados de borrador v0.1.
-- SPEC-003 conserva el estado de borrador actualizado para revisión.
-- SPEC-004 y SPEC-005 conservan estados de pendiente de aprobación.
-- SPEC-006 conserva el estado de borrador pendiente de aprobación.
+La actualización no modifica el contenido funcional, las reglas de negocio, las decisiones, ni las versiones de las especificaciones. No implica una nueva aprobación ni altera el historial de decisiones.
 
-Por tanto, existe una discrepancia entre el registro de aprobación del proyecto y las copias actualmente versionadas. No se debe interpretar el índice `specs/README.md` como sustituto de los documentos aprobados ni modificar esos encabezados manualmente para aparentar una aprobación.
-
-**Acción requerida:** incorporar las versiones originales aprobadas de SPEC-001 a SPEC-006, preservando su contenido, versión, decisiones y estado. No reconstruirlas a partir de resúmenes ni alterar su contenido normativo durante esta revisión.
 
 ## 4. Decisiones y precisiones contractuales registradas
 
