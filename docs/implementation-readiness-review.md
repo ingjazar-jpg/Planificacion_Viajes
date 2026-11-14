@@ -44,29 +44,35 @@ La carpeta `specs/` contiene por ahora un índice, no las transcripciones comple
 
 ## 4. Hallazgos contractuales
 
-### 4.1 Creación de períodos
+### 4.1 Interpretación temporal de actividades multidiarias — ACLARADA Y APROBADA
+
+La usuaria confirmó el 2026-11-14 que una actividad multidiaria ocupa un intervalo continuo desde la combinación de `start_date + start_time` hasta `end_date + end_time`.
+
+La regla de solapamiento utilizará intervalos semiabiertos `[inicio, finalización)`:
+- El instante de inicio está incluido.
+- El instante de finalización está excluido.
+- Una segunda actividad puede comenzar exactamente cuando termina la primera.
+- Cualquier actividad cuyo intervalo interseque el intervalo ocupado se considera solapada, aunque corresponda a otro día del calendario.
+
+Esta interpretación concreta la regla de intervalos ya aprobada en SPEC-002 y no cambia el modelo DATA-001.
+
+### 4.2 Creación de períodos
 
 DATA-001 establece que `year` corresponde al año de `start_date`. El ejemplo de creación de período en API-001 incluye `year` como campo de entrada.
 
 **Ajuste técnico propuesto:** retirar `year` del request de creación y derivarlo en el backend. La respuesta sí devolverá `year`. No cambia la regla aprobada de DATA-001.
 
-### 4.2 Identificador de copias de seguridad
+### 4.3 Identificador de copias de seguridad
 
 API-001 utiliza `backup_id` para seleccionar una copia, pero DATA-001 no define una entidad Backup dentro de `datos_vacaciones.json`.
 
 **Ajuste técnico propuesto:** tratar el identificador como metadato del subsistema de backups, fuera de las entidades persistidas en el JSON principal. El contrato deberá definir formato, unicidad y relación con el archivo de respaldo.
 
-### 4.3 Esquemas de respuesta API
+### 4.4 Esquemas de respuesta API
 
 API-001 define convenciones y ejemplos, pero varias operaciones todavía requieren esquemas request/response completos antes de implementar sus controladores y modelos Pydantic.
 
 Se deberá completar el detalle por endpoint sin cambiar las decisiones aprobadas de estructura `data`, errores, filtros, paginación y códigos HTTP.
-
-### 4.4 Intervalos de actividades de varios días
-
-DATA-001 contiene `start_date`, `end_date`, `start_time` y `end_time`. SPEC-002 define intervalos `[inicio, finalización)` y prohíbe solapamientos, pero debe quedar explícita la interpretación temporal de una actividad que abarca varios días para que las validaciones sean inequívocas.
-
-Este punto requiere confirmación funcional antes de implementar el validador de solapamientos.
 
 ### 4.5 Estado inicial de actividades
 
