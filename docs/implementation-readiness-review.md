@@ -80,6 +80,14 @@ SPEC-002 define los estados y las transiciones, pero deberá quedar expresamente
 
 Este punto debe resolverse en el contrato de creación y en los modelos Pydantic.
 
+### 4.6 Estado inicial de actividades — ACLARADO Y APROBADO
+
+La usuaria confirmó el 2026-11-14 que al crear una actividad el backend asignará automáticamente el estado `Pendiente`. El frontend no enviará el campo `status` en la solicitud de creación.
+
+El estado podrá modificarse posteriormente mediante las operaciones de actualización, siempre respetando las transiciones aprobadas en SPEC-002.
+
+Esta aclaración se incorporará en la siguiente revisión controlada del contrato API-001 y en los esquemas Pydantic de creación. El documento API-001 v0.1 aprobado no se sobrescribe silenciosamente.
+
 ## 5. Preparación técnica pendiente
 
 Antes de declarar cerrado Sprint 0 se deberán definir y verificar:
