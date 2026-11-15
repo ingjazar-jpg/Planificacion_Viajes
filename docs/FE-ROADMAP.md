@@ -153,13 +153,13 @@ Cada bloque FE se cerrará cuando:
 | Bloque | Estado |
 |---|---|
 | FE-001 | Validado y cerrado — 15-11-2026 |
-| FE-002 | Implementación en curso; pendiente de validación local |
+| FE-002 | Validado y cerrado — 15-11-2026 |
 | FE-003 | Pendiente de refinement |
 | FE-004 | Pendiente de refinement |
 | FE-005 | Pendiente de refinement |
 | FE-006 | Pendiente de refinement |
 
-La base frontend existente incluye shell, navegación inicial y placeholders de módulos. Su validación inicial registrada (3 pruebas y build correcto) no equivale a validar la integración funcional con backend.
+FE-001 y FE-002 están validados y cerrados. FE-002 fue validado localmente con 37 pruebas frontend aprobadas, build de producción exitoso e integración manual con BE-006 y BE-009. FE-003 a FE-006 permanecen pendientes de refinement. La base frontend restante conserva placeholders hasta la implementación de sus respectivos bloques.
 
 ## 9. Documentos relacionados
 
