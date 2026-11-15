@@ -1,7 +1,7 @@
-import { apiRequest } from "./httpClient.js";
+import { request } from "./httpClient.js";
 
 export async function evaluateAlerts(periodId) {
-  return apiRequest("/alerts/evaluate", {
+  return request("/alerts/evaluate", {
     method: "POST",
     body: { period_id: periodId },
   });
@@ -13,12 +13,12 @@ export async function getPendingActiveAlerts(periodId) {
     status: "Pendiente",
     condition_active: "true",
   });
-  const response = await apiRequest(`/alerts?${query.toString()}`);
+  const response = await request(`/alerts?${query.toString()}`);
   return response.data;
 }
 
 export async function reviewAlert(alertId) {
-  const response = await apiRequest(
+  const response = await request(
     `/alerts/${encodeURIComponent(alertId)}/review`,
     { method: "PATCH" },
   );
