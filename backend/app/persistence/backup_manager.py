@@ -218,6 +218,49 @@ class BackupManager:
                 return updated
             raise BackupNotFoundError("No existe una copia con el backup_id indicado.")
 
+    def read_weekly_backup(self, backup_id: UUID | str) -> tuple[BackupRecord, bytes]:
+        """Return validated bytes for a registered weekly backup only."""
+        identifier = UUID(str(backup_id))
+        with self._lock:
+            catalog = self.load_catalog()
+            for index, record in enumerate(catalog.backups):
+                if record.backup_id != identifier:
+                    continue
+                if record.type != "weekly":
+                    raise BackupNotFoundError(
+                        "La copia indicada no pertenece al catálogo de copias semanales."
+                    )
+                path = self._path_for_record(record)
+                try:
+                    payload = path.read_bytes()
+                    self._validate_document_bytes(payload)
+                except (OSError, ValueError, UnicodeDecodeError, json.JSONDecodeError, ValidationError) as exc:
+                    records = list(catalog.backups)
+                    records[index] = record.model_copy(update={"validation_status": "invalid"})
+                    self._write_catalog(BackupCatalog(backups=records))
+                    raise BackupNotRestorableError(
+                        "La copia existe, pero no es válida o no puede leerse."
+                    ) from exc
+
+                validated = record.model_copy(update={"validation_status": "valid"})
+                if record.validation_status != "valid":
+                    records = list(catalog.backups)
+                    records[index] = validated
+                    self._write_catalog(BackupCatalog(backups=records))
+                return validated, payload
+            raise BackupNotFoundError("No existe una copia semanal con el backup_id indicado.")
+
+    def preserve_corrupt_data(self, payload: bytes, *, now: datetime | None = None) -> Path:
+        """Preserve the exact bytes of a damaged main document outside the catalog."""
+        created_at = now or datetime.now(BUSINESS_TIMEZONE)
+        if created_at.tzinfo is None or created_at.utcoffset() is None:
+            raise ValueError("now debe incluir zona horaria.")
+        stamp = created_at.strftime("%Y%m%dT%H%M%S%z")
+        target = self.backup_dir / f"corrupt__{stamp}__{uuid4()}.json"
+        with self._lock:
+            self._atomic_write(target, payload)
+        return target
+
     def list_weekly(self) -> list[BackupRecord]:
         """Return weekly metadata only, newest first, capped at the API limit."""
         catalog = self.load_catalog()
