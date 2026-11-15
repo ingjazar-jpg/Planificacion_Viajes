@@ -31,7 +31,7 @@ function ContextProbe() {
       <span data-testid="selected">{selectedPeriod?.id || "none"}</span>
       <span data-testid="count">{periods.length}</span>
       <button type="button" onClick={() => selectPeriod(secondPeriod.id)}>Select second</button>
-      <button type="button" onClick={refreshPeriods}>Refresh</button>
+      <button type="button" onClick={() => refreshPeriods()}>Refresh</button>
       <button type="button" onClick={() => refreshPeriods(newlyCreatedPeriod.id)}>Refresh and select created</button>
     </div>
   );
