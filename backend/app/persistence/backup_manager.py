@@ -171,6 +171,10 @@ class BackupManager:
             if created_at.tzinfo is None or created_at.utcoffset() is None:
                 raise ValueError("now debe incluir zona horaria.")
 
+            # Load or rebuild the existing catalog before creating the new file.
+            # Otherwise a first-run rebuild would discover the just-created file
+            # and the subsequent append would duplicate its backup_id.
+            catalog = self.load_catalog()
             backup_id = uuid4()
             stamp = created_at.strftime("%Y%m%dT%H%M%S%z")
             filename = f"{backup_type}__{stamp}__{backup_id}.json"
@@ -189,7 +193,6 @@ class BackupManager:
                 validation_status="valid",
                 file_reference=filename,
             )
-            catalog = self.load_catalog()
             catalog.backups.append(record)
             if backup_type == "weekly":
                 catalog = self._apply_weekly_retention(catalog)
