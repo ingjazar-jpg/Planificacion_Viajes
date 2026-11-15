@@ -1,7 +1,7 @@
 """API and lifecycle tests for internal alerts."""
 
 from datetime import datetime
-from uuid import uuid4
+from uuid import UUID, uuid4
 from zoneinfo import ZoneInfo
 
 from fastapi.testclient import TestClient
