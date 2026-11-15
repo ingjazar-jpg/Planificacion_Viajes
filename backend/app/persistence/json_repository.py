@@ -68,6 +68,15 @@ class JsonRepository:
         """Create a validated pre-write backup through the configured manager."""
         self.backup_manager.create_backup(source, backup_type="pre_write")
 
+    def create_weekly_backup_if_due(self, *, now: datetime | None = None):
+        """Create the scheduled weekly backup when the application starts.
+
+        The application lifecycle should call this once during startup. If the
+        weekly interval elapsed while the application was closed, one backup is
+        created; missed weeks are not backfilled.
+        """
+        return self.backup_manager.create_weekly_if_due(now=now)
+
     def load(self) -> DataDocument:
         """Load and validate the document, or return an empty document if absent."""
         with self._lock:
