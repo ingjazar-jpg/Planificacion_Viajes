@@ -13,7 +13,7 @@ function compareStart(a, b) {
 }
 
 export function AlertsDrawer({
-  open, onClose, alerts, isLoading, error, notice, isReviewing,
+  open, onClose, alerts, isLoading, error, notice, noticeIsError = false, isReviewing,
   onRetry, onReview, onNavigate,
 }) {
   const panelRef = useRef(null);
@@ -57,7 +57,7 @@ export function AlertsDrawer({
           <div><p className="eyebrow">CENTRO DE NOTIFICACIONES</p><h2 id="alerts-title">Alertas pendientes</h2></div>
           <button ref={closeRef} className="icon-button" type="button" onClick={onClose} aria-label="Cerrar alertas">✕</button>
         </header>
-        {notice && <p className="alert-notice" role="status">{notice}</p>}
+        {notice && <p className={noticeIsError ? "alert-notice alert-notice-error" : "alert-notice"} role={noticeIsError ? "alert" : "status"}>{notice}</p>}
         {isLoading ? <p role="status" className="drawer-state">Actualizando alertas…</p> : null}
         {error ? <div className="drawer-error" role="alert">
           <p>{error.message || "No fue posible actualizar las alertas."}</p>
