@@ -1,7 +1,7 @@
 """Pydantic schemas for expense and expense-history endpoints."""
 
 import re
-from datetime import date, datetime
+from datetime import date as Date, datetime
 from decimal import Decimal, InvalidOperation
 from typing import Any
 from uuid import UUID
@@ -42,7 +42,7 @@ class ExpenseCreate(BaseModel):
     concept: str = Field(min_length=1)
     description: str | None = None
     amount: Decimal
-    date: date
+    date: Date
     category: ActivityCategory
     activity_id: UUID | None = None
     observations: str | None = None
@@ -74,7 +74,7 @@ class ExpensePut(BaseModel):
     concept: str = Field(min_length=1)
     description: str | None
     amount: Decimal
-    date: date
+    date: Date
     category: ActivityCategory
     activity_id: UUID | None
     observations: str | None
@@ -106,7 +106,7 @@ class ExpensePatch(BaseModel):
     concept: str | None = None
     description: str | None = None
     amount: Decimal | None = None
-    date: date | None = None
+    date: Date | None = None
     category: ActivityCategory | None = None
     activity_id: UUID | None = None
     observations: str | None = None
@@ -154,7 +154,7 @@ class ExpenseResponse(BaseModel):
     concept: str
     description: str | None
     amount: Decimal
-    date: date
+    date: Date
     category: ActivityCategory
     activity_id: UUID | None
     observations: str | None
