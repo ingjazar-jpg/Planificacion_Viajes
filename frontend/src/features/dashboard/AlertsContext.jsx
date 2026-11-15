@@ -16,6 +16,7 @@ export function AlertsProvider({ children }) {
   const [error, setError] = useState(null);
   const [isReviewing, setIsReviewing] = useState([]);
   const [notice, setNotice] = useState("");
+  const [noticeIsError, setNoticeIsError] = useState(false);
   const requestSequence = useRef(0);
 
   const refreshAlerts = useCallback(async () => {
@@ -30,6 +31,7 @@ export function AlertsProvider({ children }) {
     setError(null);
     setAlerts([]);
     setNotice("");
+    setNoticeIsError(false);
     try {
       await ensurePeriodEvaluated(selectedPeriodId, evaluateAlerts);
       const nextAlerts = await getPendingActiveAlerts(selectedPeriodId);
@@ -55,9 +57,11 @@ export function AlertsProvider({ children }) {
       await reviewAlert(alertId);
       setAlerts((current) => current.filter((alert) => alert.id !== alertId));
       setNotice("Alerta marcada como revisada.");
+      setNoticeIsError(false);
       return true;
     } catch (requestError) {
       setNotice(requestError.message || "No fue posible marcar la alerta como revisada.");
+      setNoticeIsError(true);
       return false;
     } finally {
       setIsReviewing((current) => current.filter((id) => id !== alertId));
@@ -65,9 +69,9 @@ export function AlertsProvider({ children }) {
   }, []);
 
   const value = useMemo(() => ({
-    alerts, count: alerts.length, isLoading, error, notice, isReviewing,
+    alerts, count: alerts.length, isLoading, error, notice, noticeIsError, isReviewing,
     refreshAlerts, markReviewed,
-  }), [alerts, isLoading, error, notice, isReviewing, refreshAlerts, markReviewed]);
+  }), [alerts, isLoading, error, notice, noticeIsError, isReviewing, refreshAlerts, markReviewed]);
 
   return <AlertsContext.Provider value={value}>{children}</AlertsContext.Provider>;
 }
