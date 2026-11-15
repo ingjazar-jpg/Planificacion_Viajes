@@ -7,12 +7,13 @@ Aplicación web local para planificar períodos de vacaciones decembrinas, admin
 - Especificaciones funcionales SPEC-001 a SPEC-006: aprobadas.
 - Arquitectura ARCH-001 v0.1: aprobada.
 - Modelo de datos DATA-001 v0.2: aprobado.
-- Contratos REST API-001 v0.7: aprobados.
+- Contratos REST API-001 v0.8: aprobados.
 - Interfaz UI-001 v0.1: aprobada.
 - Línea base técnica Sprint 0: aprobada el 14-11-2026.
-- Backend: BE-001 a BE-008 validados; BE-009 (API de Dashboard) implementado y publicado en GitHub, pendiente de validación local. Última suite completa validada antes de BE-009: **178 passed, 0 failed**.
+- Backend: BE-001 a BE-009 validados; BE-009 cerró con **185 passed, 0 failed**. BE-010 (API de informes, comparación histórica y exportaciones PDF/XLSX) está implementado en GitHub y pendiente de validación local.
 - BE-007 — API de presupuestos y gastos: implementada y validada; las 16 pruebas nuevas del bloque pasan dentro de la suite completa.
-- BE-009 — API de Dashboard: endpoint, cálculos y 8 pruebas nuevas publicados; incluye respuesta con importes cero cuando no existe presupuesto.
+- BE-009 — API de Dashboard: validada localmente; incluye respuesta con importes cero cuando no existe presupuesto.
+- BE-010 — API de informes: tres informes, comparación histórica, filtros, agrupaciones y exportaciones PDF/XLSX implementados; 10 pruebas nuevas pendientes de validación local.
 - Frontend: shell y navegación inicial validados; módulos funcionales e integración con backend pendientes.
 - Validación reproducible del backend con Python 3.14.10 y revisión/incorporación de lockfiles: pendientes.
 
