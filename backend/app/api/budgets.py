@@ -6,7 +6,7 @@ from fastapi import APIRouter, Request
 from fastapi.exceptions import RequestValidationError
 
 from app.schemas.budgets import BudgetCreateResponse, BudgetResponse
-from app.schemas.budgets import BudgetUpsert
+from app.schemas.budgets import BudgetInput
 from app.services.budget_expense_service import BudgetExpenseService
 
 
@@ -18,7 +18,7 @@ def _service(request: Request) -> BudgetExpenseService:
 
 
 @router.post("/{period_id}/budget", status_code=201)
-def create_budget(period_id: UUID, payload: BudgetUpsert, request: Request):
+def create_budget(period_id: UUID, payload: BudgetInput, request: Request):
     budget = _service(request).create_budget(
         period_id,
         total_budget=payload.total_budget,
@@ -39,14 +39,14 @@ def create_budget(period_id: UUID, payload: BudgetUpsert, request: Request):
 
 @router.get("/{period_id}/budget")
 def get_budget(period_id: UUID, request: Request):
-    result = _service(request).get_budget(UUID(period_id))
+    result = _service(request).get_budget(period_id)
     return {"data": BudgetResponse.model_validate(result)}
 
 
 @router.put("/{period_id}/budget")
 def update_budget(period_id: UUID, payload: BudgetUpsert, request: Request):
     result = _service(request).update_budget(
-        UUID(period_id),
+        period_id,
         total_budget=payload.total_budget,
         category_budgets=[item.model_dump() for item in payload.category_budgets],
     )
