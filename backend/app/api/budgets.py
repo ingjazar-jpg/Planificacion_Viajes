@@ -1,9 +1,10 @@
 """REST endpoints for period budgets and calculated indicators."""
 
+from uuid import UUID
+
 from fastapi import APIRouter, Request
 from fastapi.exceptions import RequestValidationError
 
-from app.domain.enums import ActivityCategory
 from app.schemas.budgets import BudgetCreateResponse, BudgetResponse
 from app.schemas.budgets import BudgetUpsert
 from app.services.budget_expense_service import BudgetExpenseService
@@ -17,10 +18,9 @@ def _service(request: Request) -> BudgetExpenseService:
 
 
 @router.post("/{period_id}/budget", status_code=201)
-def create_budget(period_id: str, payload: BudgetUpsert, request: Request):
-    from uuid import UUID
+def create_budget(period_id: UUID, payload: BudgetUpsert, request: Request):
     budget = _service(request).create_budget(
-        UUID(period_id),
+        period_id,
         total_budget=payload.total_budget,
         category_budgets=[item.model_dump() for item in payload.category_budgets],
     )
@@ -38,15 +38,13 @@ def create_budget(period_id: str, payload: BudgetUpsert, request: Request):
 
 
 @router.get("/{period_id}/budget")
-def get_budget(period_id: str, request: Request):
-    from uuid import UUID
+def get_budget(period_id: UUID, request: Request):
     result = _service(request).get_budget(UUID(period_id))
     return {"data": BudgetResponse.model_validate(result)}
 
 
 @router.put("/{period_id}/budget")
-def update_budget(period_id: str, payload: BudgetUpsert, request: Request):
-    from uuid import UUID
+def update_budget(period_id: UUID, payload: BudgetUpsert, request: Request):
     result = _service(request).update_budget(
         UUID(period_id),
         total_budget=payload.total_budget,
