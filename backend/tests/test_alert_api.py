@@ -85,9 +85,9 @@ def test_evaluation_creates_upcoming_overdue_and_high_priority_alerts(tmp_path):
     assert counts["active_count"] == 3
     document = repository.load()
     assert {(a.activity_id, a.type) for a in document.alerts} == {
-        (upcoming["id"], AlertType.UPCOMING),
-        (overdue_high["id"], AlertType.OVERDUE),
-        (overdue_high["id"], AlertType.HIGH_PRIORITY),
+        (UUID(upcoming["id"]), AlertType.UPCOMING),
+        (UUID(overdue_high["id"]), AlertType.OVERDUE),
+        (UUID(overdue_high["id"]), AlertType.HIGH_PRIORITY),
     }
     assert all(a.status == AlertStatus.PENDING for a in document.alerts)
     assert all(a.history[0].event_type == AlertEventType.CREATED for a in document.alerts)
