@@ -11,6 +11,8 @@ function PeriodManagementDialog({ open, onClose }) {
   const [form, setForm] = useState(EMPTY_FORM);
   const [error, setError] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [refreshPending, setRefreshPending] = useState(false);
+  const [preferredRefreshId, setPreferredRefreshId] = useState(null);
   const closeButtonRef = useRef(null);
   const previousFocusRef = useRef(null);
   const isSavingRef = useRef(false);
@@ -51,6 +53,8 @@ function PeriodManagementDialog({ open, onClose }) {
       setForm(EMPTY_FORM);
       setError("");
       setIsSaving(false);
+      setRefreshPending(false);
+      setPreferredRefreshId(null);
     }
   }, [open]);
 
@@ -128,14 +132,34 @@ function PeriodManagementDialog({ open, onClose }) {
         ? await updatePeriod(editingPeriod.id, payload)
         : await createPeriod(payload);
 
-      const refreshedPeriods = await refreshPeriods(editingPeriod ? null : savedPeriod?.id);
+      const preferredId = editingPeriod ? null : savedPeriod?.id ?? null;
+      setPreferredRefreshId(preferredId);
+      const refreshedPeriods = await refreshPeriods(preferredId);
       if (!refreshedPeriods) {
+        setRefreshPending(true);
         setError("El período se guardó, pero no fue posible actualizar el listado. Reintenta la consulta.");
         return;
       }
+      setRefreshPending(false);
       onClose();
     } catch (requestError) {
       setError(requestError.message || "No fue posible guardar el período.");
+    } finally {
+      setIsSaving(false);
+    }
+  }
+
+  async function retryPeriodRefresh() {
+    setIsSaving(true);
+    setError("");
+    try {
+      const refreshedPeriods = await refreshPeriods(preferredRefreshId);
+      if (refreshedPeriods) {
+        setRefreshPending(false);
+        onClose();
+      } else {
+        setError("Todavía no fue posible actualizar el listado. Inténtalo nuevamente.");
+      }
     } finally {
       setIsSaving(false);
     }
@@ -202,7 +226,13 @@ function PeriodManagementDialog({ open, onClose }) {
                   onChange={updateField} min={form.start_date || undefined} required />
               </div>
             </div>
-            {error && <p className="period-form-error" role="alert">{error}</p>}
+            {error && (
+              <div className="period-form-error" role="alert">
+                <p>{error}</p>
+                {refreshPending && <button className="text-action" type="button"
+                  onClick={retryPeriodRefresh} disabled={isSaving}>Reintentar actualización</button>}
+              </div>
+            )}
             <footer className="period-dialog-footer">
               <button className="secondary-action" type="button" onClick={requestBackToList} disabled={isSaving}>Volver</button>
               <button className="state-action" type="submit" disabled={isSaving}>
