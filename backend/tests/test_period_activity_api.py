@@ -1,11 +1,16 @@
 """Contract and business-rule tests for period and activity endpoints."""
 
-from datetime import datetime
+from datetime import date, datetime
+from decimal import Decimal
+from uuid import uuid4
 from zoneinfo import ZoneInfo
 
 from fastapi.testclient import TestClient
 
 from app.main import create_app
+from app.domain.entities import Alert, AlertHistoryEvent, Expense, ExpenseHistory
+from app.domain.enums import AlertEventType, AlertStatus, AlertType, ExpenseModificationType, ActivityCategory
+from app.persistence.document import DataDocument
 from app.persistence.json_repository import JsonRepository
 
 
@@ -152,6 +157,8 @@ def test_activity_patch_and_status_transition_rules(tmp_path):
     assert progress.status_code == 200
     completed = client.patch(f"/api/v1/activities/{activity['id']}", json={"status": "Completada"})
     assert completed.status_code == 200
+    cancelled = client.patch(f"/api/v1/activities/{activity['id']}", json={"status": "Cancelada"})
+    assert cancelled.status_code == 200
     backwards = client.patch(f"/api/v1/activities/{activity['id']}", json={"status": "En progreso"})
     assert backwards.status_code == 409
     assert backwards.json()["error"]["code"] == "INVALID_ACTIVITY_STATUS_TRANSITION"
@@ -190,3 +197,45 @@ def test_activity_patch_rejects_immutable_period_and_null_required_field(tmp_pat
     activity = client.post("/api/v1/activities", json=_activity_payload(period["id"])).json()["data"]
     assert client.patch(f"/api/v1/activities/{activity['id']}", json={"period_id": period["id"]}).status_code == 422
     assert client.patch(f"/api/v1/activities/{activity['id']}", json={"category": None}).status_code == 422
+
+
+
+def test_activity_delete_removes_expenses_histories_alerts_and_alert_history(tmp_path):
+    repository = JsonRepository(tmp_path / "data.json")
+    client = TestClient(create_app(repository=repository))
+    period = _create_period(client)
+    activity = client.post("/api/v1/activities", json=_activity_payload(period["id"])).json()["data"]
+    activity_id = activity["id"]
+    expense_id = uuid4()
+    now = NOW
+    document = repository.load()
+    expense = Expense(
+        id=expense_id, period_id=period["id"], concept="Reserva",
+        amount=Decimal("100.00"), date=date(2026, 12, 10),
+        category=ActivityCategory.TRAVEL, activity_id=activity_id,
+        created_at=now, updated_at=now,
+    )
+    history = ExpenseHistory(
+        id=uuid4(), expense_id=expense_id,
+        modification_type=ExpenseModificationType.CREATION,
+        previous_values=None, new_values={"concept":"Reserva"}, modified_at=now,
+    )
+    alert = Alert(
+        id=uuid4(), activity_id=activity_id, type=AlertType.UPCOMING,
+        status=AlertStatus.PENDING, condition_active=True,
+        created_at=now, updated_at=now,
+        history=[AlertHistoryEvent(event_type=AlertEventType.CREATED, occurred_at=now)],
+    )
+    repository.save(DataDocument.model_validate({
+        **document.model_dump(mode="python"),
+        "expenses":[expense], "expense_history":[history], "alerts":[alert],
+    }))
+
+    response = client.delete(f"/api/v1/activities/{activity_id}")
+
+    assert response.status_code == 204
+    final_document = repository.load()
+    assert all(str(item.id) != activity_id for item in final_document.activities)
+    assert final_document.expenses == []
+    assert final_document.expense_history == []
+    assert final_document.alerts == []
