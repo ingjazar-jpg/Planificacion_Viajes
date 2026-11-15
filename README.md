@@ -14,7 +14,7 @@ Aplicación web local para planificar períodos de vacaciones decembrinas, admin
 - BE-007 — API de presupuestos y gastos: implementada y validada; las 16 pruebas nuevas del bloque pasan dentro de la suite completa.
 - BE-009 — API de Dashboard: validada localmente; incluye respuesta con importes cero cuando no existe presupuesto.
 - BE-010 — API de informes: validada localmente; tres informes, comparación histórica, filtros, agrupaciones y exportaciones PDF/XLSX; 10 pruebas nuevas incluidas en las 195 aprobadas.
-- Frontend: **FE-001 y FE-002 validados y cerrados**. FE-001: 12 pruebas aprobadas. FE-002: 37 pruebas aprobadas, build exitoso, integración real con backend, responsive y accesibilidad manual comprobados. FE-003: refinement D1–D27 aprobado y especificación v0.1 lista para implementación; aún no implementada ni validada.
+- Frontend: **FE-001 y FE-002 validados y cerrados**. FE-001: 12 pruebas aprobadas. FE-002: 37 pruebas aprobadas y build exitoso. FE-003: administración de períodos y primera entrega del calendario mensual validadas; calendario con 59 pruebas aprobadas (12 archivos), build Vite exitoso y pruebas visuales/funcionales confirmadas. El listado y CRUD de actividades y demás flujos de FE-003 continúan pendientes.
 - Validación reproducible del backend con Python 3.14.10 y revisión/incorporación de lockfiles: pendientes.
 
 Consulta el [estado detallado del proyecto](docs/project-status.md) para ver capacidades completadas, trabajo pendiente, criterios de cierre y flujo de validación.
@@ -89,7 +89,7 @@ Los documentos funcionales, de arquitectura, datos, API e interfaz aprobados se 
 - [FE-002 — Dashboard y alertas](docs/FE-002.md)
 - [FE-003 — Calendario y actividades](docs/FE-003.md)
 
-FE-001 y FE-002 están validados y cerrados. FE-001 incorpora el cliente HTTP centralizado, contexto global del período, selector conectado a la API y estados comunes. FE-002 incorpora Dashboard, gráficos y panel de alertas integrados con BE-006 y BE-009; su validación local reportó 37 pruebas aprobadas, build de producción exitoso y comprobaciones manuales de integración, responsive y teclado. FE-003 cuenta con especificación aprobada para implementación; FE-004 a FE-006 permanecen pendientes de refinement. La validación reproducible del backend con Python 3.14.10 continúa pendiente.
+FE-001 y FE-002 están validados y cerrados. FE-001 incorpora el cliente HTTP centralizado, contexto global del período, selector conectado a la API y estados comunes. FE-002 incorpora Dashboard, gráficos y panel de alertas integrados con BE-006 y BE-009; su validación local reportó 37 pruebas aprobadas, build de producción exitoso y comprobaciones manuales de integración, responsive y teclado. FE-003 tiene dos primeras entregas validadas (administración de períodos y calendario mensual); el resto de actividades sigue en implementación. FE-004 a FE-006 permanecen pendientes de refinement. La validación reproducible del backend con Python 3.14.10 continúa pendiente.
 
 ## Desarrollo local
 
