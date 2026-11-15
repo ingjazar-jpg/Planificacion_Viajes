@@ -1,5 +1,7 @@
 """Contract, aggregation, filtering, comparison, and export tests for reports."""
-from uuid import uuid4
+from io import BytesIO
+
+from openpyxl import load_workbook
 
 from fastapi.testclient import TestClient
 
@@ -237,6 +239,10 @@ def test_pdf_and_xlsx_exports_return_binary_downloads_and_period_scope_ignores_f
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
     assert xlsx.content.startswith(b"PK")
+    workbook = load_workbook(BytesIO(xlsx.content))
+    activity_sheet = workbook["Actividades"]
+    # The second activity is cancelled and receives the dedicated visual fill.
+    assert activity_sheet["A3"].fill.fgColor.rgb.endswith("FCE4D6")
 
 
 def test_export_requires_format_and_scope_and_rejects_invalid_values(tmp_path):
