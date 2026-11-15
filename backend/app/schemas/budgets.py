@@ -112,5 +112,5 @@ class BudgetExecutionResponse(BaseModel):
     general_balance: Decimal
     execution_percentage: Decimal
     category_budgets: list[CategoryBudgetExecutionResponse]
-    created_at: object
-    updated_at: object
+    created_at: datetime
+    updated_at: datetime
