@@ -163,7 +163,7 @@ describe("FE-002: panel de alertas", () => {
     expect(names).toEqual(["Vencida temprano", "Vencida tarde"]);
   });
 
-  it("cierra con Escape y devuelve el foco al control que abrió el panel", () => {
+  it("solicita el cierre del panel al pulsar Escape", () => {
     const onClose = vi.fn();
     render(
       <>
