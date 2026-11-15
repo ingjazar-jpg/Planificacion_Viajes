@@ -115,7 +115,7 @@ describe("CalendarPage", () => {
     getCalendar.mockResolvedValue(denseActivities);
     render(<CalendarPage />);
 
-    const moreButton = await screen.findByRole("button", { name: /Ver 1 actividades más/ });
+    const moreButton = await screen.findByRole("button", { name: /Ver más actividades/ });
     fireEvent.click(moreButton);
     const agenda = screen.getByRole("region", { name: /Actividades del lunes, 16 de noviembre/ });
     expect(within(agenda).getAllByRole("button", { name: /Actividad [1-4]/ })).toHaveLength(4);
