@@ -2,13 +2,27 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import App from "../src/App.jsx";
 import { getPeriods } from "../src/services/api/periodsService.js";
+import { getDashboard } from "../src/services/api/dashboardService.js";
+import { evaluateAlerts, getPendingActiveAlerts } from "../src/services/api/alertsService.js";
 
-vi.mock("../src/services/api/periodsService.js", () => ({
-  getPeriods: vi.fn(),
+vi.mock("../src/services/api/periodsService.js", () => ({ getPeriods: vi.fn() }));
+vi.mock("../src/services/api/dashboardService.js", () => ({ getDashboard: vi.fn() }));
+vi.mock("../src/services/api/alertsService.js", () => ({
+  evaluateAlerts: vi.fn(), getPendingActiveAlerts: vi.fn(), reviewAlert: vi.fn(),
 }));
 
 describe("App FE-001 foundation", () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+    getDashboard.mockResolvedValue({
+      period: { name: "Vacaciones", year: 2026 },
+      financial: { total_budget: "0.00", total_expenses: "0.00", balance: "0.00", execution_percentage: "0.00" },
+      activities: { total: 0, by_status: [], completion_percentage: "0.00", overdue_count: 0 },
+      charts: { activities_by_status: [], budget_vs_expenses_by_category: [], expenses_by_category: [], completion_percentage: "0.00" },
+    });
+    evaluateAlerts.mockResolvedValue({ data: {} });
+    getPendingActiveAlerts.mockResolvedValue([]);
+  });
 
   it("renders the shell, six navigation sections and active period", async () => {
     getPeriods.mockResolvedValue([
