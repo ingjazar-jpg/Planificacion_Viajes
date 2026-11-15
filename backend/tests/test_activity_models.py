@@ -8,6 +8,7 @@ from pydantic import ValidationError
 
 from app.domain.entities import Activity
 from app.domain.enums import ActivityCategory, ActivityStatus, Priority
+from app.schemas.activities import ActivityCreate
 
 
 @pytest.fixture
@@ -39,12 +40,28 @@ def test_activity_defaults_to_pending(valid_activity_data):
     assert activity.destination == "Santa Marta"
 
 
-def test_activity_rejects_client_managed_status(valid_activity_data):
-    valid_activity_data["status"] = ActivityStatus.COMPLETED
+def test_activity_create_rejects_client_managed_status(valid_activity_data):
+    request_data = {
+        key: value
+        for key, value in valid_activity_data.items()
+        if key not in {"id", "created_at", "updated_at", "status"}
+    }
+    request_data["status"] = ActivityStatus.COMPLETED
 
-    # Domain entities accept persisted status; the API create schema must reject it.
-    activity = Activity.model_validate(valid_activity_data)
-    assert activity.status is ActivityStatus.COMPLETED
+    with pytest.raises(ValidationError):
+        ActivityCreate.model_validate(request_data)
+
+
+def test_activity_create_accepts_contract_fields(valid_activity_data):
+    request_data = {
+        key: value
+        for key, value in valid_activity_data.items()
+        if key not in {"id", "created_at", "updated_at", "status"}
+    }
+
+    request = ActivityCreate.model_validate(request_data)
+    assert request.period_id == valid_activity_data["period_id"]
+    assert request.category is ActivityCategory.TRAVEL
 
 
 def test_activity_rejects_reversed_dates(valid_activity_data):
