@@ -747,3 +747,48 @@ select:disabled {
   .calendar-event-name { font-size: .5rem; }
   .calendar-month-navigation .secondary-action { min-width: 34px; padding: .4rem .55rem; }
 }
+
+
+/* FE-003 — listado de actividades */
+.activities-page { display: grid; gap: 1.25rem; max-width: 1500px; margin: 0 auto; }
+.activities-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+.activities-view-switch { display: flex; flex-wrap: wrap; gap: .5rem; }
+.activities-view-switch button[aria-pressed="true"] { border-color: var(--color-secondary); color: var(--color-secondary); background: #eaf2ed; }
+.activities-panel { min-width: 0; padding: clamp(.85rem, 2vw, 1.35rem); border: 1px solid var(--color-border); border-radius: var(--radius-card); background: var(--color-surface); box-shadow: var(--shadow-card); }
+.activities-list-heading { display: flex; align-items: center; justify-content: space-between; gap: .8rem; margin-bottom: 1rem; }
+.activities-list-heading h2 { margin: 0; color: var(--color-primary); font-size: 1.05rem; }
+.activities-list-heading span { color: var(--color-text-secondary); font-size: .8rem; }
+.activity-filters { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .8rem; align-items: end; margin-bottom: 1rem; }
+.activity-filters label { display: grid; min-width: 0; gap: .3rem; color: var(--color-text-secondary); font-size: .78rem; font-weight: 650; }
+.activity-filters input, .activity-filters select { width: 100%; min-width: 0; min-height: 40px; padding: .45rem .6rem; border: 1px solid var(--color-border); border-radius: var(--radius-control); color: var(--color-text); background: var(--color-surface); }
+.activity-clear-filters { justify-self: start; min-height: 38px; }
+.activity-filter-error { margin: 0 0 .8rem; color: var(--color-danger); font-size: .82rem; }
+.activities-table-wrap { width: 100%; overflow-x: auto; }
+.activities-table { width: 100%; border-collapse: collapse; text-align: left; }
+.activities-table th, .activities-table td { padding: .8rem .65rem; border-bottom: 1px solid var(--color-border); vertical-align: middle; font-size: .82rem; }
+.activities-table th { color: var(--color-text-secondary); background: var(--color-background); font-size: .72rem; white-space: nowrap; }
+.activity-name { color: var(--color-primary); font-weight: 700; }
+.activity-status { display: inline-flex; width: fit-content; padding: .25rem .5rem; border-radius: 999px; font-size: .72rem; font-weight: 700; white-space: nowrap; }
+.activity-status-pendiente { color: #765515; background: #fbf1d9; }
+.activity-status-en-progreso { color: #285d83; background: #e7f1f8; }
+.activity-status-completada { color: #236b4c; background: #e6f2eb; }
+.activity-status-cancelada { color: #5e646d; background: #eceef0; }
+.activities-cards { display: none; margin: 0; padding: 0; list-style: none; }
+.activity-card { display: grid; gap: .8rem; padding: 1rem; border: 1px solid var(--color-border); border-radius: 10px; background: var(--color-surface); }
+.activity-card > strong { color: var(--color-primary); }
+.activity-card dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .7rem; margin: 0; }
+.activity-card dl div { min-width: 0; }
+.activity-card dt { color: var(--color-text-secondary); font-size: .7rem; font-weight: 700; }
+.activity-card dd { margin: .15rem 0 0; overflow-wrap: anywhere; font-size: .8rem; }
+.activity-navigation-note { padding: .8rem; border: 1px dashed var(--color-border); border-radius: 8px; color: var(--color-text-secondary); font-size: .82rem; }
+@media (max-width: 760px) {
+  .activities-heading { flex-direction: column; }
+  .activity-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .activities-table-wrap { display: none; }
+  .activities-cards { display: grid; gap: .7rem; }
+}
+@media (max-width: 380px) {
+  .activities-panel { padding: .65rem; }
+  .activity-filters { grid-template-columns: minmax(0, 1fr); }
+  .activities-list-heading { align-items: flex-start; flex-direction: column; }
+}
