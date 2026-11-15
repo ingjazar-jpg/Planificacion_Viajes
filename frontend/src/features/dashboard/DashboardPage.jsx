@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from "react";
 import { usePeriod } from "../../context/PeriodContext.jsx";
 import { getDashboard } from "../../services/api/dashboardService.js";
 import { ErrorState, LoadingState } from "../../components/common/AsyncState.jsx";
-import { useAlerts } from "./AlertsContext.jsx";
 import {
   ActivityStatusChart, BudgetComparisonChart, ComplianceIndicator, ExpenseCategoryChart,
 } from "./DashboardCharts.jsx";
@@ -17,7 +16,6 @@ function Metric({ label, value }) {
 
 function DashboardPage() {
   const { selectedPeriodId, selectedPeriod } = usePeriod();
-  useAlerts();
   const [dashboard, setDashboard] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
