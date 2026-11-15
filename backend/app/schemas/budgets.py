@@ -1,6 +1,7 @@
 """Pydantic schemas for budget endpoints."""
 
 import re
+from datetime import datetime
 from decimal import Decimal, InvalidOperation
 from uuid import UUID
 
@@ -95,8 +96,8 @@ class BudgetResponse(BaseModel):
     period_id: UUID
     total_budget: Decimal
     category_budgets: list[CategoryBudgetResponse]
-    created_at: object
-    updated_at: object
+    created_at: datetime
+    updated_at: datetime
 
 
 class BudgetExecutionResponse(BaseModel):
