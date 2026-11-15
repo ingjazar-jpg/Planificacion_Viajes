@@ -170,7 +170,7 @@ def test_budget_put_replaces_distribution_without_touching_expenses_or_history(t
     assert categories["Viajes"]["allocated_amount"] == "0.00"
     after = repository.load()
     assert len(after.expenses) == 1
-    assert after.expenses[0].id == expense["id"]
+    assert str(after.expenses[0].id) == expense["id"]
     assert len(after.expense_history) == len(before.expense_history)
 
 
