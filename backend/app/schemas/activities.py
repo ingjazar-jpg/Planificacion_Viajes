@@ -8,12 +8,11 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 from app.domain.enums import ActivityCategory, ActivityStatus, Priority
 
 
-class ActivityCreate(BaseModel):
-    """Request body for POST /activities; status and IDs are server-managed."""
+class ActivityFields(BaseModel):
+    """Shared editable activity fields."""
 
     model_config = ConfigDict(extra="forbid")
 
-    period_id: UUID
     name: str = Field(min_length=1)
     description: str | None = None
     category: ActivityCategory
@@ -41,13 +40,64 @@ class ActivityCreate(BaseModel):
         return normalized or None
 
     @model_validator(mode="after")
-    def validate_schedule(self) -> "ActivityCreate":
+    def validate_schedule(self):
         if self.start_date > self.end_date:
             raise ValueError("start_date debe ser anterior o igual a end_date.")
         if self.start_date == self.end_date and self.end_time <= self.start_time:
-            raise ValueError(
-                "Para actividades de un día, end_time debe ser posterior a start_time."
-            )
+            raise ValueError("end_time debe ser posterior a start_time para actividades de un día.")
+        return self
+
+
+class ActivityCreate(ActivityFields):
+    """Request body for POST /activities; status and IDs are server-managed."""
+
+    period_id: UUID
+
+
+class ActivityPut(ActivityFields):
+    """Complete editable payload for PUT /activities/{activity_id}."""
+
+    status: ActivityStatus
+
+
+class ActivityPatch(BaseModel):
+    """Partial editable payload for PATCH /activities/{activity_id}."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    name: str | None = Field(default=None, min_length=1)
+    description: str | None = None
+    category: ActivityCategory | None = None
+    destination: str | None = None
+    start_date: date | None = None
+    end_date: date | None = None
+    start_time: time | None = None
+    end_time: time | None = None
+    priority: Priority | None = None
+    status: ActivityStatus | None = None
+
+    @field_validator("name")
+    @classmethod
+    def normalize_name(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        normalized = value.strip()
+        if not normalized:
+            raise ValueError("El nombre de la actividad no puede estar vacío.")
+        return normalized
+
+    @field_validator("description", "destination")
+    @classmethod
+    def normalize_optional_text(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        normalized = value.strip()
+        return normalized or None
+
+    @model_validator(mode="after")
+    def require_fields(self):
+        if not self.model_fields_set:
+            raise ValueError("PATCH debe incluir al menos un campo editable.")
         return self
 
 
