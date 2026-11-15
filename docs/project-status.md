@@ -8,9 +8,9 @@
 
 ## 1. Resumen ejecutivo
 
-La implementación del backend está en curso. BE-001 a BE-009 están validados. La usuaria confirmó para BE-009 la suite completa con **185 passed, 0 failed**. BE-010 (API de informes) está implementado y publicado en GitHub; su validación local está pendiente.
+La implementación del backend continúa. BE-001 a BE-010 están validados. La usuaria confirmó para BE-010 la suite completa con **195 passed, 0 failed**.
 
-El resultado de 185 pruebas corresponde a la ejecución completa validada antes de BE-010. Los resultados históricos por bloque son hitos acumulativos, no cantidades que deban sumarse.
+El resultado de 195 pruebas corresponde a la ejecución completa validada después de BE-010. Los resultados históricos por bloque son hitos acumulativos, no cantidades que deban sumarse.
 
 ## 2. Estado por bloque de implementación
 
@@ -25,9 +25,9 @@ El resultado de 185 pruebas corresponde a la ejecución completa validada antes 
 | BE-007 | API de presupuestos y gastos | Validado | 169 passed (suite completa) |
 | BE-008 | API de calendario | Validado | 178 passed (suite completa; 9 pruebas nuevas) |
 | BE-009 | API de Dashboard | Validado | 185 passed (suite completa) |
-| BE-010 | API de informes, comparación y exportaciones | Implementado en GitHub; validación local pendiente | 10 pruebas nuevas añadidas |
+| BE-010 | API de informes, comparación y exportaciones | Validado | 195 passed (suite completa; 10 pruebas nuevas) |
 
-**Nota:** las cifras de cada fila son resultados acumulativos reportados después de cada bloque. El último resultado local confirmado es 185 pruebas aprobadas, 0 fallidas; BE-010 aún no está incluida en esa validación.
+**Nota:** las cifras de cada fila son resultados acumulativos reportados después de cada bloque. El último resultado local confirmado es 195 pruebas aprobadas, 0 fallidas, incluyendo BE-010.
 
 ## 3. Capacidades backend ya implementadas
 
@@ -72,7 +72,7 @@ El resultado de 185 pruebas corresponde a la ejecución completa validada antes 
 - Indicador is_overdue calculado por backend en America/Bogota, sin persistirlo.
 - Sin paginación, conforme a API-001.
 
-**Validación:** la usuaria confirmó la ejecución local de `python -m pytest -v` con **185 passed, 0 failed**, incluyendo BE-009.
+**Validación:** la usuaria confirmó la ejecución local de `python -m pytest -v` con **195 passed, 0 failed**, incluyendo BE-010.
 
 ## 4. BE-007 — API de presupuestos y gastos
 
@@ -115,7 +115,7 @@ La usuaria sincronizó los cambios desde GitHub y reportó la ejecución complet
 
 ### BE-010 — API de informes
 
-**Estado:** implementación publicada en GitHub; validación local pendiente.
+**Estado:** implementación publicada en GitHub y validada localmente: **195 passed, 0 failed**.
 
 Alcance implementado:
 - Informe general, informe de actividades e informe presupuestario y de gastos.
@@ -135,7 +135,7 @@ Archivos principales:
 
 Dependencias de exportación añadidas a `backend/requirements.txt`: ReportLab y openpyxl.
 
-Se añadieron 10 pruebas de BE-010. Su resultado local debe confirmarse después de sincronizar GitHub e instalar las dependencias actualizadas. No declarar BE-010 validado hasta recibir la ejecución local completa.
+Se añadieron 10 pruebas de BE-010. La usuaria sincronizó los cambios, instaló las dependencias actualizadas y confirmó la suite completa con **195 passed, 0 failed**. Durante la validación se corrigió el helper de presupuesto de la prueba de comparación histórica: ahora calcula una asignación válida respecto del total y comprueba que la API responda HTTP 201. No fue necesario modificar la lógica de producción.
 
 Cualquier endpoint transversal adicional que la revisión identifique como faltante se evaluará sin alterar contratos aprobados.
 
@@ -153,8 +153,7 @@ El shell y la navegación inicial del frontend ya habían sido validados localme
 
 ## 7. Calidad y validación
 
-- Última suite backend completa confirmada por la usuaria antes de BE-010: **185 passed, 0 failed**.
-- BE-010 incorpora 10 pruebas nuevas; su suite completa está pendiente de ejecución local.
+- Última suite backend completa confirmada por la usuaria: **195 passed, 0 failed**, incluyendo las 10 pruebas nuevas de BE-010.
 - Los resultados anteriores por bloque son históricos y acumulativos.
 - No se declara cobertura mínima del 80 % hasta disponer de un informe de cobertura verificable.
 - La advertencia de Starlette relacionada con `httpx` observada en la última ejecución no produjo fallos en las pruebas; no se modifica la dependencia sin necesidad y revisión.
@@ -162,7 +161,7 @@ El shell y la navegación inicial del frontend ya habían sido validados localme
 ## 8. Entorno y tareas técnicas pendientes
 
 - La línea base Sprint 0 aprobada fija Python 3.14.10. La usuaria reportó un entorno local con Python 3.15.2; la validación reproducible en Python 3.14.10 sigue pendiente.
-- La validación de 185 pruebas incluye BE-009, pero es anterior a BE-010 y no acredita el bloque de informes. Tampoco reemplaza la comprobación reproducible en la versión Python fijada.
+- La validación de 195 pruebas incluye BE-010 y se ejecutó localmente con Python 3.15.2. No reemplaza la comprobación reproducible en la versión Python fijada (3.14.10), que sigue pendiente.
 - `backend/pylock.toml` y `frontend/package-lock.json` se identificaron como archivos locales no versionados en el último estado conocido. Deben preservarse y revisarse antes de decidir su incorporación.
 - No eliminar, sobrescribir ni limpiar archivos locales no rastreados durante sincronizaciones.
 
@@ -182,9 +181,8 @@ Las especificaciones aprobadas siguen siendo la fuente de verdad funcional y té
 
 1. Revisar `git status --short` y proteger los archivos locales no rastreados antes de sincronizar.
 2. Sincronizar `feat/backend-domain-foundation` mediante `git pull --ff-only`.
-3. Instalar las dependencias actualizadas del backend y ejecutar `python -m pytest -v`.
-4. Si aparecen fallos, corregir primero en GitHub, volver a sincronizar y repetir la suite completa.
-5. Cerrar BE-010 únicamente cuando la usuaria confirme el resultado local satisfactorio.
+3. BE-010 queda cerrada con 195 pruebas aprobadas y cero fallos.
+4. Continuar con el refinement y la implementación del siguiente bloque del backend/frontend según las especificaciones aprobadas.
 
 ---
 
