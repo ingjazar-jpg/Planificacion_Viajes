@@ -5,7 +5,7 @@ from datetime import datetime
 from decimal import Decimal, InvalidOperation
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from app.domain.enums import ActivityCategory
 
@@ -54,6 +54,20 @@ class BudgetInput(BaseModel):
     @classmethod
     def validate_total_budget(cls, value: object) -> Decimal:
         return _parse_money_string(value, allow_zero=True)
+
+    @model_validator(mode="after")
+    def validate_category_distribution(self) -> "BudgetInput":
+        categories = [item.category for item in self.category_budgets]
+        if len(categories) != len(set(categories)):
+            raise ValueError("No se permiten categorías repetidas.")
+        allocated = sum(
+            (item.amount for item in self.category_budgets), Decimal("0")
+        )
+        if allocated > self.total_budget:
+            raise ValueError(
+                "La suma de asignaciones no puede superar el presupuesto general."
+            )
+        return self
 
 
 class CategoryBudgetAmount(BaseModel):
