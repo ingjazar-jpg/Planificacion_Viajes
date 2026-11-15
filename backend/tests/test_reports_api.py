@@ -75,6 +75,7 @@ def test_general_report_applies_activity_and_expense_filters_independently_witho
     )
 
     assert response.status_code == 200, response.text
+    assert "meta" not in response.json()
     data = response.json()["data"]
     assert data["budget"] == {
         "total_budget": "0.00", "total_expenses": "65.00",
