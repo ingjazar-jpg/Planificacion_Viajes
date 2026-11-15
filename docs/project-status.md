@@ -202,9 +202,8 @@ Las especificaciones aprobadas siguen siendo la fuente de verdad funcional y té
 
 ## 10. Próximos pasos inmediatos
 
-1. Completar la revisión de criterios de aceptación FE-001 que requieren comprobación manual o integración real contra el backend en ejecución.
-2. Si esos criterios se satisfacen, cerrar FE-001 y preparar el refinement de FE-002.
-3. Mantener pendiente la validación reproducible con Python 3.14.10, según la línea base técnica aprobada.
+1. Iniciar el refinement de FE-002 — Dashboard y alertas — conforme a `docs/FE-ROADMAP.md` y los contratos aprobados.
+2. Mantener pendiente la validación reproducible con Python 3.14.10, según la línea base técnica aprobada.
 
 ---
 
