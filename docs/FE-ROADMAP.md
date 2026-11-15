@@ -153,7 +153,7 @@ Cada bloque FE se cerrará cuando:
 | Bloque | Estado |
 |---|---|
 | FE-001 | Validado y cerrado — 15-11-2026 |
-| FE-002 | Especificación aprobada; siguiente bloque de implementación |
+| FE-002 | Implementación en curso; pendiente de validación local |
 | FE-003 | Pendiente de refinement |
 | FE-004 | Pendiente de refinement |
 | FE-005 | Pendiente de refinement |
