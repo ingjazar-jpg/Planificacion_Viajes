@@ -156,4 +156,7 @@ class JsonRepository:
             return
         finally:
             if descriptor is not None:
-                os.close(descriptor)
+                try:
+                    os.close(descriptor)
+                except OSError:
+                    pass
