@@ -44,7 +44,7 @@ def get_budget(period_id: UUID, request: Request):
 
 
 @router.put("/{period_id}/budget")
-def update_budget(period_id: UUID, payload: BudgetUpsert, request: Request):
+def update_budget(period_id: UUID, payload: BudgetInput, request: Request):
     result = _service(request).update_budget(
         period_id,
         total_budget=payload.total_budget,
