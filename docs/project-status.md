@@ -153,10 +153,11 @@ El shell y la navegación inicial del frontend ya habían sido validados localme
 
 ### 6.1 Plan de implementación frontend
 
-Se consolidó el mapa de implementación en seis bloques FE y se aprobó para implementación el refinement de FE-001:
+Se consolidó el mapa de implementación en seis bloques FE. FE-001 y FE-002 cuentan con especificaciones aprobadas para implementación:
 
 - `docs/FE-ROADMAP.md`: mapa de trazabilidad de seis bloques FE con pantallas, componentes, endpoints y dependencias.
 - `docs/FE-001.md`: especificación aprobada para la fundación frontend.
+- `docs/FE-002.md`: especificación aprobada para Dashboard y alertas (15 decisiones, 31 requisitos funcionales y 27 criterios de aceptación).
 
 Decisiones aprobadas para FE-001:
 - Cliente HTTP: `fetch` nativo centralizado.
@@ -169,7 +170,7 @@ La implementación de FE-001 está publicada en `feat/backend-domain-foundation`
 
 La advertencia deprecatoria de Starlette relacionada con `httpx` no produjo fallos y queda registrada como observación técnica no bloqueante. La validación reproducible con Python 3.14.10 permanece pendiente como tarea transversal de Sprint 0; no bloquea el cierre funcional de FE-001.
 
-Los bloques FE-002 a FE-006 permanecen pendientes de refinement. El mapa no modifica ni reabre los contratos aprobados de UI-001, API-001 ni las SPEC.
+FE-002 — Dashboard y alertas — cuenta con especificación aprobada para implementación en `docs/FE-002.md`. La aprobación cubre 15 decisiones de refinement, 31 requisitos funcionales y 27 criterios de aceptación. La implementación aún no ha comenzado ni se declara validada. FE-003 a FE-006 permanecen pendientes de refinement. La aprobación de FE-002 no modifica ni reabre los contratos de UI-001, API-001 ni las SPEC.
 
 ## 7. Calidad y validación
 
@@ -202,7 +203,7 @@ Las especificaciones aprobadas siguen siendo la fuente de verdad funcional y té
 
 ## 10. Próximos pasos inmediatos
 
-1. Iniciar el refinement de FE-002 — Dashboard y alertas — conforme a `docs/FE-ROADMAP.md` y los contratos aprobados.
+1. Iniciar la implementación de FE-002 — Dashboard y alertas — conforme a `docs/FE-002.md`, reutilizando la base FE-001 y los contratos BE-006/BE-009.
 2. Mantener pendiente la validación reproducible con Python 3.14.10, según la línea base técnica aprobada.
 
 ---
