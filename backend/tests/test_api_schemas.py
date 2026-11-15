@@ -126,7 +126,7 @@ def test_expense_create_normalizes_optional_text():
         description="  ",
         amount="100.00",
         date=date(2026, 12, 20),
-        category=ActivityCategory.ALOJAMIENTO,
+        category=ActivityCategory.LODGING,
         observations="  nota  ",
     )
     assert expense.description is None
