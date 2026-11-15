@@ -8,9 +8,9 @@
 
 ## 1. Resumen ejecutivo
 
-La implementación del backend está en curso. BE-001 a BE-008 están validados. BE-009 (API de Dashboard) está implementado y publicado en GitHub; su validación local está pendiente. La última suite completa validada por la usuaria antes de BE-009 fue **178 passed, 0 failed**.
+La implementación del backend está en curso. BE-001 a BE-009 están validados. La usuaria confirmó para BE-009 la suite completa con **185 passed, 0 failed**. BE-010 (API de informes) está implementado y publicado en GitHub; su validación local está pendiente.
 
-El resultado de 178 pruebas corresponde a la ejecución completa más reciente; los resultados históricos por bloque que se muestran abajo son hitos acumulativos, no cantidades que deban sumarse.
+El resultado de 185 pruebas corresponde a la ejecución completa validada antes de BE-010. Los resultados históricos por bloque son hitos acumulativos, no cantidades que deban sumarse.
 
 ## 2. Estado por bloque de implementación
 
@@ -25,8 +25,9 @@ El resultado de 178 pruebas corresponde a la ejecución completa más reciente; 
 | BE-007 | API de presupuestos y gastos | Validado | 169 passed (suite completa) |
 | BE-008 | API de calendario | Validado | 178 passed (suite completa; 9 pruebas nuevas) |
 | BE-009 | API de Dashboard | Implementado en GitHub; validación local pendiente | 7 pruebas nuevas añadidas |
+| BE-010 | API de informes, comparación y exportaciones | Implementado en GitHub; validación local pendiente | 10 pruebas nuevas añadidas |
 
-**Nota:** las cifras de cada fila son resultados acumulativos reportados después de cada bloque. El último resultado vigente es 178 pruebas aprobadas, 0 fallidas.
+**Nota:** las cifras de cada fila son resultados acumulativos reportados después de cada bloque. El último resultado local confirmado es 185 pruebas aprobadas, 0 fallidas; BE-010 aún no está incluida en esa validación.
 
 ## 3. Capacidades backend ya implementadas
 
@@ -71,7 +72,7 @@ El resultado de 178 pruebas corresponde a la ejecución completa más reciente; 
 - Indicador is_overdue calculado por backend en America/Bogota, sin persistirlo.
 - Sin paginación, conforme a API-001.
 
-**Validación:** la usuaria confirmó la ejecución local de `python -m pytest -v` con **178 passed, 0 failed**, incluyendo las 9 pruebas nuevas de `backend/tests/test_calendar_api.py`.
+**Validación:** la usuaria confirmó la ejecución local de `python -m pytest -v` con **185 passed, 0 failed**, incluyendo BE-009.
 
 ## 4. BE-007 — API de presupuestos y gastos
 
@@ -106,14 +107,37 @@ El resultado de 178 pruebas corresponde a la ejecución completa más reciente; 
 
 La usuaria sincronizó los cambios desde GitHub y reportó la ejecución completa de `python -m pytest -v` con **169 passed, 0 failed**. Las 16 pruebas nuevas de `backend/tests/test_budget_expense_api.py` forman parte de la suite aprobada. También quedaron verificadas las regresiones de schemas y la correspondencia de errores HTTP con API-001.
 
-## 5. Trabajo pendiente del backend
+## 5. BE-009 y BE-010 — Dashboard e informes
 
-Después de BE-009, y conforme a los contratos existentes, queda por implementar y validar:
+### BE-009 — API de Dashboard
 
-- API de informes, filtros, agrupaciones, comparación histórica y exportaciones PDF/XLSX.
-- Cualquier endpoint transversal que la revisión de implementación identifique como faltante, sin alterar contratos aprobados.
+**Estado:** validado localmente. La usuaria confirmó **185 passed, 0 failed** en la suite completa.
 
-Estos componentes no deben considerarse implementados por el hecho de que existan entidades, páginas frontend o contratos documentados.
+### BE-010 — API de informes
+
+**Estado:** implementación publicada en GitHub; validación local pendiente.
+
+Alcance implementado:
+- Informe general, informe de actividades e informe presupuestario y de gastos.
+- Filtros combinables, rangos inclusivos y filtros independientes por sección del informe general.
+- Paginación posterior a los filtros y totales calculados sobre el conjunto completo filtrado.
+- Agrupaciones de gastos por categoría y actividad, incluido «Sin actividad asociada».
+- Comparación histórica de dos períodos con los cuatro indicadores financieros aprobados.
+- Exportaciones PDF y XLSX con alcance `filtered` o `period`, sin paginación.
+- Resaltado visual de actividades canceladas en exportaciones.
+- Períodos sin presupuesto admitidos en informes general y presupuestario, conforme a API-DEC-047; la consulta individual del presupuesto conserva `BUDGET_NOT_FOUND`.
+
+Archivos principales:
+- `backend/app/schemas/reports.py`
+- `backend/app/services/report_service.py`
+- `backend/app/api/reports.py`
+- `backend/tests/test_reports_api.py`
+
+Dependencias de exportación añadidas a `backend/requirements.txt`: ReportLab y openpyxl.
+
+Se añadieron 10 pruebas de BE-010. Su resultado local debe confirmarse después de sincronizar GitHub e instalar las dependencias actualizadas. No declarar BE-010 validado hasta recibir la ejecución local completa.
+
+Cualquier endpoint transversal adicional que la revisión identifique como faltante se evaluará sin alterar contratos aprobados.
 
 ## 6. Trabajo pendiente del frontend e integración
 
@@ -129,7 +153,8 @@ El shell y la navegación inicial del frontend ya habían sido validados localme
 
 ## 7. Calidad y validación
 
-- Última suite backend completa reportada: **178 passed, 0 failed**.
+- Última suite backend completa confirmada por la usuaria antes de BE-010: **185 passed, 0 failed**.
+- BE-010 incorpora 10 pruebas nuevas; su suite completa está pendiente de ejecución local.
 - Los resultados anteriores por bloque son históricos y acumulativos.
 - No se declara cobertura mínima del 80 % hasta disponer de un informe de cobertura verificable.
 - La advertencia de Starlette relacionada con `httpx` observada en la última ejecución no produjo fallos en las pruebas; no se modifica la dependencia sin necesidad y revisión.
@@ -137,7 +162,7 @@ El shell y la navegación inicial del frontend ya habían sido validados localme
 ## 8. Entorno y tareas técnicas pendientes
 
 - La línea base Sprint 0 aprobada fija Python 3.14.10. La usuaria reportó un entorno local con Python 3.15.2; la validación reproducible en Python 3.14.10 sigue pendiente.
-- La última validación de 178 pruebas corresponde al estado anterior a BE-009 y no acredita todavía la nueva implementación. Tampoco reemplaza la comprobación en la versión fijada.
+- La validación de 185 pruebas incluye BE-009, pero es anterior a BE-010 y no acredita el bloque de informes. Tampoco reemplaza la comprobación reproducible en la versión Python fijada.
 - `backend/pylock.toml` y `frontend/package-lock.json` se identificaron como archivos locales no versionados en el último estado conocido. Deben preservarse y revisarse antes de decidir su incorporación.
 - No eliminar, sobrescribir ni limpiar archivos locales no rastreados durante sincronizaciones.
 
@@ -155,9 +180,11 @@ Las especificaciones aprobadas siguen siendo la fuente de verdad funcional y té
 
 ## 10. Próximos pasos inmediatos
 
-1. Sincronizar BE-009 desde GitHub y ejecutar la suite completa localmente, protegiendo los archivos no rastreados.
-2. Si la suite pasa, cerrar BE-009 como validado.
-3. Iniciar Refinement de BE-010 para informes, filtros, agrupaciones, comparación histórica y exportaciones PDF/XLSX.
+1. Revisar `git status --short` y proteger los archivos locales no rastreados antes de sincronizar.
+2. Sincronizar `feat/backend-domain-foundation` mediante `git pull --ff-only`.
+3. Instalar las dependencias actualizadas del backend y ejecutar `python -m pytest -v`.
+4. Si aparecen fallos, corregir primero en GitHub, volver a sincronizar y repetir la suite completa.
+5. Cerrar BE-010 únicamente cuando la usuaria confirme el resultado local satisfactorio.
 
 ---
 
