@@ -39,7 +39,14 @@ class PeriodActivityService:
 
     def _save(self, document: DataDocument) -> None:
         document.metadata.updated_at = self._now()
-        self.repository.save(document)
+        try:
+            self.repository.save(document)
+        except Exception as exc:
+            raise PeriodActivityServiceError(
+                500,
+                "PERSISTENCE_WRITE_FAILED",
+                "No fue posible guardar los cambios. Los datos anteriores se conservaron.",
+            ) from exc
 
     @staticmethod
     def _period_or_404(document: DataDocument, period_id: UUID) -> Period:
@@ -146,7 +153,7 @@ class PeriodActivityService:
         allowed = {
             ActivityStatus.PENDING: {ActivityStatus.PENDING, ActivityStatus.IN_PROGRESS, ActivityStatus.CANCELLED},
             ActivityStatus.IN_PROGRESS: {ActivityStatus.IN_PROGRESS, ActivityStatus.COMPLETED, ActivityStatus.CANCELLED},
-            ActivityStatus.COMPLETED: {ActivityStatus.COMPLETED},
+            ActivityStatus.COMPLETED: {ActivityStatus.COMPLETED, ActivityStatus.CANCELLED},
             ActivityStatus.CANCELLED: {ActivityStatus.CANCELLED},
         }
         if candidate_fields["status"] not in allowed[current.status]:
