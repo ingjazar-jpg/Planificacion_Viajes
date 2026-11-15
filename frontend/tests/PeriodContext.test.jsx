@@ -17,6 +17,11 @@ const secondPeriod = {
   name: "Vacaciones 2026",
   year: 2026,
 };
+const newlyCreatedPeriod = {
+  id: "period-2028",
+  name: "Vacaciones 2028",
+  year: 2028,
+};
 
 function ContextProbe() {
   const { periods, selectedPeriod, selectPeriod, refreshPeriods, isLoading } = usePeriod();
@@ -27,6 +32,7 @@ function ContextProbe() {
       <span data-testid="count">{periods.length}</span>
       <button type="button" onClick={() => selectPeriod(secondPeriod.id)}>Select second</button>
       <button type="button" onClick={refreshPeriods}>Refresh</button>
+      <button type="button" onClick={() => refreshPeriods(newlyCreatedPeriod.id)}>Refresh and select created</button>
     </div>
   );
 }
@@ -64,4 +70,14 @@ describe("PeriodProvider", () => {
     await act(async () => screen.getByRole("button", { name: "Refresh" }).click());
     await waitFor(() => expect(screen.getByTestId("selected")).toHaveTextContent("none"));
   });
+  it("selects a newly created period when refresh receives its preferred id", async () => {
+    getPeriods.mockResolvedValueOnce([firstPeriod, secondPeriod])
+      .mockResolvedValueOnce([newlyCreatedPeriod, firstPeriod, secondPeriod]);
+    render(<PeriodProvider><ContextProbe /></PeriodProvider>);
+
+    await waitFor(() => expect(screen.getByTestId("selected")).toHaveTextContent("period-2027"));
+    await act(async () => screen.getByRole("button", { name: "Refresh and select created" }).click());
+    await waitFor(() => expect(screen.getByTestId("selected")).toHaveTextContent("period-2028"));
+  });
+
 });
