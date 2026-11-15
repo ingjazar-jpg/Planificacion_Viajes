@@ -25,14 +25,10 @@ export function AlertsProvider({ children }) {
     }
     setIsLoading(true);
     setError(null);
+    setAlerts([]);
     setNotice("");
     try {
-      if (retryEvaluation) {
-        // Un reintento explícito de evaluación solo ocurre si el primer intento falló.
-        await ensurePeriodEvaluated(selectedPeriodId, evaluateAlerts);
-      } else {
-        await ensurePeriodEvaluated(selectedPeriodId, evaluateAlerts);
-      }
+      await ensurePeriodEvaluated(selectedPeriodId, evaluateAlerts);
       const nextAlerts = await getPendingActiveAlerts(selectedPeriodId);
       setAlerts(nextAlerts);
     } catch (requestError) {
@@ -56,7 +52,7 @@ export function AlertsProvider({ children }) {
       setNotice("Alerta marcada como revisada.");
       return true;
     } catch (requestError) {
-      setError(requestError);
+      setNotice(requestError.message || "No fue posible marcar la alerta como revisada.");
       return false;
     } finally {
       setIsReviewing((current) => current.filter((id) => id !== alertId));
