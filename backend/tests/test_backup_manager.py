@@ -8,6 +8,7 @@ from uuid import UUID
 import pytest
 
 from app.persistence.backup_manager import (
+    BackupError,
     BackupManager,
     BackupNotFoundError,
     BackupNotRestorableError,
@@ -38,6 +39,7 @@ def test_create_backup_writes_uuid_metadata_outside_main_document(tmp_path):
     assert record.validation_status == "valid"
     assert record.file_reference.endswith(f"{record.backup_id}.json")
     assert manager.manifest_path.is_file()
+    assert len(manager.load_catalog().backups) == 1
     assert data_file.read_text(encoding="utf-8").find(str(record.backup_id)) == -1
 
 
@@ -176,7 +178,7 @@ def test_create_backup_rejects_source_outside_configured_data_file(tmp_path):
     write_main_file(other_file)
     manager = BackupManager(data_file)
 
-    with pytest.raises(Exception, match="archivo principal configurado"):
+    with pytest.raises(BackupError, match="archivo principal configurado"):
         manager.create_backup(other_file, backup_type="pre_write", now=NOW)
 
 
