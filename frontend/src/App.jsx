@@ -1,10 +1,13 @@
 import AppLayout from "./layouts/AppLayout.jsx";
 import { PeriodProvider } from "./context/PeriodContext.jsx";
+import { AlertsProvider } from "./features/dashboard/AlertsContext.jsx";
 
 function App() {
   return (
     <PeriodProvider>
-      <AppLayout />
+      <AlertsProvider>
+        <AppLayout />
+      </AlertsProvider>
     </PeriodProvider>
   );
 }
