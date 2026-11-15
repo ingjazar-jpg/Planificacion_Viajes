@@ -77,6 +77,7 @@ describe("App FE-001 foundation", () => {
     fireEvent.click(screen.getByRole("button", { name: "Calendario" }));
     expect(screen.getByRole("heading", { name: "Calendario" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Calendario" })).toHaveAttribute("aria-current", "page");
+    await screen.findByText("No hay actividades para este mes");
   });
 
   it("opens and closes the mobile navigation", async () => {
