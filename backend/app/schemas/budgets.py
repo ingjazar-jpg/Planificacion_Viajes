@@ -114,3 +114,17 @@ class BudgetExecutionResponse(BaseModel):
     category_budgets: list[CategoryBudgetExecutionResponse]
     created_at: datetime
     updated_at: datetime
+
+ 
+class CategoryBudgetAmount(BaseModel):
+    category: ActivityCategory
+    amount: str
+
+
+class BudgetCreateResponse(BaseModel):
+    id: UUID
+    period_id: UUID
+    total_budget: str
+    category_budgets: list[CategoryBudgetAmount]
+    created_at: datetime
+    updated_at: datetime
