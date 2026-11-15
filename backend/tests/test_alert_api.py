@@ -249,7 +249,10 @@ def test_get_alerts_returns_active_and_inactive_by_default_and_rejects_partial_p
 def test_evaluate_endpoint_requires_existing_period_and_returns_contract(tmp_path):
     client, repository = _client(tmp_path)
     period = _period(client)
-    _activity(client, period["id"], priority="Alta")
+    _activity(
+        client, period["id"], priority="Alta",
+        start_date="2026-11-17", end_date="2026-11-17",
+    )
     _clear_alerts(repository)
 
     response = client.post("/api/v1/alerts/evaluate", json={"period_id": period["id"]})
