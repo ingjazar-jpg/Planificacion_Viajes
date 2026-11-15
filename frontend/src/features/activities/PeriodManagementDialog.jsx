@@ -5,7 +5,7 @@ import { createPeriod, updatePeriod } from "../../services/api/periodsService.js
 const EMPTY_FORM = { name: "", start_date: "", end_date: "" };
 
 function PeriodManagementDialog({ open, onClose }) {
-  const { periods, selectedPeriodId, refreshPeriods, selectPeriod } = usePeriod();
+  const { periods, selectedPeriodId, refreshPeriods } = usePeriod();
   const [mode, setMode] = useState("list");
   const [editingPeriod, setEditingPeriod] = useState(null);
   const [form, setForm] = useState(EMPTY_FORM);
@@ -99,12 +99,11 @@ function PeriodManagementDialog({ open, onClose }) {
         ? await updatePeriod(editingPeriod.id, payload)
         : await createPeriod(payload);
 
-      const refreshedPeriods = await refreshPeriods();
+      const refreshedPeriods = await refreshPeriods(editingPeriod ? null : savedPeriod?.id);
       if (!refreshedPeriods) {
         setError("El período se guardó, pero no fue posible actualizar el listado. Reintenta la consulta.");
         return;
       }
-      if (!editingPeriod && savedPeriod?.id) selectPeriod(savedPeriod.id);
       onClose();
     } catch (requestError) {
       setError(requestError.message || "No fue posible guardar el período.");
