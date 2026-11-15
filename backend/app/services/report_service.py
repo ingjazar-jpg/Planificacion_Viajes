@@ -405,12 +405,15 @@ class ReportService:
             sheet = workbook.create_sheet(title=title[:31])
             for row in rows:
                 sheet.append(row)
-            sheet.freeze_panes = "A2"
-            sheet.auto_filter.ref = sheet.dimensions
             header_row = (
                 5 if sheet.title == "Gastos por categoría"
-                else 2 if sheet.title == "Presupuesto" and sheet.max_row > 1
+                else 2 if sheet.title == "Presupuesto" and len(rows) > 1
+                and rows[1] and rows[1][0] == "Categoría"
                 else 1
+            )
+            sheet.freeze_panes = f"A{header_row + 1}"
+            sheet.auto_filter.ref = (
+                f"A{header_row}:{sheet.cell(row=sheet.max_row, column=sheet.max_column).coordinate}"
             )
             for cell in sheet[header_row]:
                 cell.font = Font(bold=True, color="FFFFFF")
@@ -458,6 +461,7 @@ class ReportService:
                 header_row = (
                     4 if sheet_title == "Gastos por categoría"
                     else 1 if sheet_title == "Presupuesto" and len(rows) > 1
+                    and rows[1] and rows[1][0] == "Categoría"
                     else 0
                 )
                 table = Table(table_data, repeatRows=header_row + 1, hAlign="LEFT")
