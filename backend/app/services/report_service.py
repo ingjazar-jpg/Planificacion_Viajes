@@ -376,6 +376,10 @@ class ReportService:
                 ]))
             if "by_category" in expenses:
                 sheets.append(("Gastos por categoría", [
+                    ["Total de gastos", expenses["total"]],
+                    ["Cantidad de gastos", str(expenses["count"])],
+                    ["Saldo general", expenses["balance"]],
+                    ["Ejecución (%)", expenses["execution_percentage"]],
                     ["Categoría", "Total", "Cantidad"],
                     *[[str(x["category"].value), x["total"], str(x["count"])]
                       for x in expenses["by_category"]],
@@ -400,6 +404,14 @@ class ReportService:
             for cell in sheet[1]:
                 cell.font = Font(bold=True, color="FFFFFF")
                 cell.fill = PatternFill("solid", fgColor="315B68")
+            if sheet.title == "Actividades":
+                header = [cell.value for cell in sheet[1]]
+                if "Estado" in header:
+                    status_column = header.index("Estado") + 1
+                    for row_index in range(2, sheet.max_row + 1):
+                        if sheet.cell(row=row_index, column=status_column).value == "Cancelada":
+                            for cell in sheet[row_index]:
+                                cell.fill = PatternFill("solid", fgColor="FCE4D6")
             for column in sheet.columns:
                 letter = column[0].column_letter
                 width = min(max(max(len(str(cell.value or "")) for cell in column) + 2, 12), 42)
@@ -433,14 +445,25 @@ class ReportService:
                           for row in rows]
             if table_data:
                 table = Table(table_data, repeatRows=1, hAlign="LEFT")
-                table.setStyle(TableStyle([
+                table_commands = [
                     ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#315B68")),
                     ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
                     ("GRID", (0, 0), (-1, -1), 0.35, colors.HexColor("#B7C5C9")),
                     ("VALIGN", (0, 0), (-1, -1), "TOP"),
                     ("LEFTPADDING", (0, 0), (-1, -1), 5),
                     ("RIGHTPADDING", (0, 0), (-1, -1), 5),
-                ]))
+                ]
+                if sheet_title == "Actividades" and rows:
+                    header = [str(value) for value in rows[0]]
+                    if "Estado" in header:
+                        status_column = header.index("Estado")
+                        for row_index, row in enumerate(rows[1:], start=1):
+                            if len(row) > status_column and str(row[status_column]) == "Cancelada":
+                                table_commands.append((
+                                    "BACKGROUND", (0, row_index), (-1, row_index),
+                                    colors.HexColor("#FCE4D6"),
+                                ))
+                table.setStyle(TableStyle(table_commands))
                 story.extend([table, Spacer(1, 4 * mm)])
         pdf.build(story)
         return output.getvalue()
