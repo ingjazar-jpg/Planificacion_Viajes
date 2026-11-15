@@ -160,7 +160,7 @@ function PeriodManagementDialog({ open, onClose }) {
             <h3>{editingPeriod ? "Editar período" : "Crear período"}</h3>
             <label htmlFor="period-name">Nombre <span aria-hidden="true">*</span></label>
             <input id="period-name" name="name" value={form.name} onChange={updateField}
-              maxLength={120} required autoComplete="off" />
+              required autoComplete="off" />
             <div className="period-date-grid">
               <div>
                 <label htmlFor="period-start-date">Fecha inicial <span aria-hidden="true">*</span></label>
