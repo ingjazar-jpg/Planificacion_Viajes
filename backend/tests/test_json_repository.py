@@ -9,11 +9,18 @@ from uuid import uuid4
 import pytest
 
 from app.domain.entities import Budget, Period
+from app.persistence.backup_manager import (
+    BackupManager,
+    BackupNotFoundError,
+    BackupNotRestorableError,
+)
 from app.persistence.document import DataDocument
 from app.persistence.json_repository import (
     DataCorruptionError,
     JsonRepository,
+    RepositoryRestoreError,
     RepositoryWriteError,
+    RestoreConfirmationRequiredError,
 )
 
 
@@ -200,3 +207,160 @@ def test_weekly_backup_check_delegates_to_backup_manager(tmp_path):
 
     assert first is not None
     assert second is None
+
+
+def test_restore_backup_requires_explicit_confirmation(tmp_path):
+    file_path = tmp_path / "datos_vacaciones.json"
+    original = DataDocument.empty(now=NOW)
+    file_path.write_text(
+        json.dumps(original.model_dump(mode="json")),
+        encoding="utf-8",
+    )
+    manager = BackupManager(file_path)
+    record = manager.create_backup(backup_type="weekly", now=NOW)
+    repository = JsonRepository(file_path, backup_manager=manager)
+    original_text = file_path.read_text(encoding="utf-8")
+
+    with pytest.raises(RestoreConfirmationRequiredError):
+        repository.restore_backup(str(record.backup_id), confirmed=False)
+
+    assert file_path.read_text(encoding="utf-8") == original_text
+    assert len(manager.load_catalog().backups) == 1
+
+
+def test_restore_weekly_backup_creates_pre_write_and_replaces_document(tmp_path):
+    file_path = tmp_path / "datos_vacaciones.json"
+    file_path.write_text(
+        json.dumps(DataDocument.empty(now=NOW).model_dump(mode="json")),
+        encoding="utf-8",
+    )
+    manager = BackupManager(file_path)
+    weekly = manager.create_backup(backup_type="weekly", now=NOW)
+    repository = JsonRepository(file_path, backup_manager=manager)
+    repository.save(make_document())
+    current_text = file_path.read_text(encoding="utf-8")
+
+    restored = repository.restore_backup(str(weekly.backup_id), confirmed=True)
+
+    assert restored.backup_id == weekly.backup_id
+    assert repository.load().periods == []
+    catalog = manager.load_catalog()
+    pre_write = [item for item in catalog.backups if item.type == "pre_write"]
+    assert len(pre_write) == 2
+    latest_pre_write = max(pre_write, key=lambda item: item.created_at)
+    saved_current = manager.backup_dir / latest_pre_write.file_reference
+    assert json.loads(saved_current.read_text(encoding="utf-8")) == json.loads(current_text)
+
+
+def test_restore_rejects_unknown_or_pre_write_backup(tmp_path):
+    file_path = tmp_path / "datos_vacaciones.json"
+    file_path.write_text(
+        json.dumps(DataDocument.empty(now=NOW).model_dump(mode="json")),
+        encoding="utf-8",
+    )
+    manager = BackupManager(file_path)
+    pre_write = manager.create_backup(backup_type="pre_write", now=NOW)
+    repository = JsonRepository(file_path, backup_manager=manager)
+    original_text = file_path.read_text(encoding="utf-8")
+
+    with pytest.raises(BackupNotFoundError):
+        repository.restore_backup(str(uuid4()), confirmed=True)
+    with pytest.raises(BackupNotFoundError):
+        repository.restore_backup(str(pre_write.backup_id), confirmed=True)
+
+    assert file_path.read_text(encoding="utf-8") == original_text
+
+
+def test_restore_rejects_invalid_backup_without_changing_current_data(tmp_path):
+    file_path = tmp_path / "datos_vacaciones.json"
+    file_path.write_text(
+        json.dumps(DataDocument.empty(now=NOW).model_dump(mode="json")),
+        encoding="utf-8",
+    )
+    manager = BackupManager(file_path)
+    weekly = manager.create_backup(backup_type="weekly", now=NOW)
+    backup_path = manager.backup_dir / weekly.file_reference
+    backup_path.write_text("{invalid", encoding="utf-8")
+    repository = JsonRepository(file_path, backup_manager=manager)
+    original_text = file_path.read_text(encoding="utf-8")
+
+    with pytest.raises(BackupNotRestorableError):
+        repository.restore_backup(str(weekly.backup_id), confirmed=True)
+
+    assert file_path.read_text(encoding="utf-8") == original_text
+    catalog_record = manager.load_catalog().backups[0]
+    assert catalog_record.validation_status == "invalid"
+
+
+def test_restore_failure_preserves_current_file_and_pre_write_backup(tmp_path, monkeypatch):
+    file_path = tmp_path / "datos_vacaciones.json"
+    file_path.write_text(
+        json.dumps(DataDocument.empty(now=NOW).model_dump(mode="json")),
+        encoding="utf-8",
+    )
+    manager = BackupManager(file_path)
+    weekly = manager.create_backup(backup_type="weekly", now=NOW)
+    repository = JsonRepository(file_path, backup_manager=manager)
+    repository.save(make_document())
+    original_text = file_path.read_text(encoding="utf-8")
+
+    def fail_replace(_: Path, __: Path) -> None:
+        raise OSError("replace failed")
+
+    monkeypatch.setattr("app.persistence.json_repository._atomic_replace", fail_replace)
+
+    with pytest.raises(RepositoryRestoreError):
+        repository.restore_backup(str(weekly.backup_id), confirmed=True)
+
+    assert file_path.read_text(encoding="utf-8") == original_text
+    catalog = manager.load_catalog()
+    pre_write = [item for item in catalog.backups if item.type == "pre_write"]
+    assert len(pre_write) == 2
+    assert any(
+        json.loads((manager.backup_dir / item.file_reference).read_text(encoding="utf-8"))["periods"]
+        for item in pre_write
+    )
+
+
+def test_restore_preserves_corrupt_main_file_before_replacement(tmp_path):
+    file_path = tmp_path / "datos_vacaciones.json"
+    valid = DataDocument.empty(now=NOW)
+    file_path.write_text(
+        json.dumps(valid.model_dump(mode="json")),
+        encoding="utf-8",
+    )
+    manager = BackupManager(file_path)
+    weekly = manager.create_backup(backup_type="weekly", now=NOW)
+    corrupted = b'{"schema_version":'
+    file_path.write_bytes(corrupted)
+    repository = JsonRepository(file_path, backup_manager=manager)
+
+    repository.restore_backup(str(weekly.backup_id), confirmed=True)
+
+    preserved = list(manager.backup_dir.glob("corrupt__*.json"))
+    assert len(preserved) == 1
+    assert preserved[0].read_bytes() == corrupted
+    assert repository.load().schema_version == "1.0"
+    assert len(manager.load_catalog().backups) == 1
+
+
+def test_restore_can_recover_when_main_file_is_missing(tmp_path):
+    file_path = tmp_path / "datos_vacaciones.json"
+    manager = BackupManager(file_path)
+    file_path.parent.mkdir(parents=True, exist_ok=True)
+    source = file_path.with_name("source.json")
+    source.write_text(
+        json.dumps(DataDocument.empty(now=NOW).model_dump(mode="json")),
+        encoding="utf-8",
+    )
+    # Create the weekly snapshot from the configured source path, then remove it.
+    file_path.write_text(source.read_text(encoding="utf-8"), encoding="utf-8")
+    weekly = manager.create_backup(backup_type="weekly", now=NOW)
+    file_path.unlink()
+    repository = JsonRepository(file_path, backup_manager=manager)
+
+    repository.restore_backup(str(weekly.backup_id), confirmed=True)
+
+    assert repository.load().schema_version == "1.0"
+    assert not [item for item in manager.load_catalog().backups if item.type == "pre_write"]
+
