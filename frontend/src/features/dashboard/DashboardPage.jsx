@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { usePeriod } from "../../context/PeriodContext.jsx";
 import { getDashboard } from "../../services/api/dashboardService.js";
 import { ErrorState, LoadingState } from "../../components/common/AsyncState.jsx";
@@ -17,11 +17,10 @@ function Metric({ label, value }) {
 
 function DashboardPage() {
   const { selectedPeriodId, selectedPeriod } = usePeriod();
-  const { refreshAlerts } = useAlerts();
+  useAlerts();
   const [dashboard, setDashboard] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const mountedOnce = useRef(false);
 
   const loadDashboard = useCallback(async () => {
     if (!selectedPeriodId) { setDashboard(null); return; }
@@ -38,12 +37,6 @@ function DashboardPage() {
   }, [selectedPeriodId]);
 
   useEffect(() => { loadDashboard(); }, [loadDashboard]);
-  useEffect(() => {
-    if (mountedOnce.current) refreshAlerts();
-    mountedOnce.current = true;
-    // Solo al montar la página (regreso desde otra sección), no por cada cambio de período.
-    // El proveedor global ya gestiona los cambios de período.
-  }, []);
 
   if (isLoading) return <LoadingState message="Cargando el resumen del período…" />;
   if (error) return <ErrorState message={error.message} onRetry={loadDashboard} />;
