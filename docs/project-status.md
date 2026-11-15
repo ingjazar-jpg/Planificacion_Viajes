@@ -1,14 +1,14 @@
 # Estado del proyecto
 
 **Proyecto:** Sistema de Planificación y Control de Vacaciones Decembrinas  
-**Fecha de actualización:** 2026-11-15  
+**Fecha de actualización:** 2026-11-16  
 **Repositorio:** https://github.com/ingjazar-jpg/Planificacion_Viajes  
 **Rama de trabajo:** `feat/backend-domain-foundation`  
 **Fuente de verdad:** especificaciones aprobadas en `specs/` y `docs/`; código versionado en GitHub.
 
 ## 1. Resumen ejecutivo
 
-La implementación del backend BE-001 a BE-010 está validada. Tras incorporar CORS y sus dos pruebas de regresión, la usuaria confirmó la suite backend completa con **197 passed, 0 failed**. FE-001 y FE-002 están validados y cerrados. FE-001 cuenta con **12 pruebas frontend aprobadas**; FE-002, con **37 pruebas frontend aprobadas** y build de producción exitoso. FE-003 tiene refinement aprobado (D1–D27) y especificación v0.1 lista para implementación; todavía no se ha implementado ni validado.
+La implementación del backend BE-001 a BE-010 está validada. Tras incorporar CORS y sus dos pruebas de regresión, la usuaria confirmó la suite backend completa con **197 passed, 0 failed**. FE-001 y FE-002 están validados y cerrados. FE-001 cuenta con **12 pruebas frontend aprobadas**; FE-002, con **37 pruebas frontend aprobadas** y build de producción exitoso. FE-003 tiene refinement aprobado (D1–D27). La administración de períodos y la primera entrega del calendario mensual están validadas; el resto de la gestión de actividades continúa pendiente.
 
 El resultado de 195 pruebas corresponde a la ejecución completa validada después de BE-010. Los resultados históricos por bloque son hitos acumulativos, no cantidades que deban sumarse.
 
@@ -173,13 +173,20 @@ La advertencia deprecatoria de Starlette relacionada con `httpx` no produjo fall
 
 **FE-002 — Dashboard y alertas: VALIDADO Y CERRADO el 15-11-2026.** La usuaria confirmó localmente la suite frontend completa con **37 passed, 0 failed** en 8 archivos y `npm run build` exitoso con Vite 8.3.8. La validación integrada manual confirmó Dashboard conectado a FastAPI, indicadores y cuatro gráficos, estados vacíos, alertas y contador, revisión y actualización sin recarga, navegación a Actividades, actualización al regresar al Dashboard, responsive a 360 × 800 px y operación básica por teclado (Escape y gestión de foco). No hubo warnings React `act(...)` en la última ejecución; Vitest mostró solo una advertencia informativa sobre creación de entornos jsdom. El detalle funcional de actividad se mantiene dentro del alcance FE-003. El cierre no modifica ni reabre UI-001, API-001 ni las SPEC.
 
-FE-003: refinement aprobado el 15-11-2026; especificación `docs/FE-003.md` v0.1 aprobada para implementación. FE-004 a FE-006 permanecen pendientes de refinement.
+**FE-003 — Calendario y actividades:** refinement aprobado el 15-11-2026; especificación `docs/FE-003.md` v0.1 aprobada para implementación.
+
+- **Administración de períodos: validada y cerrada.** La usuaria confirmó 48 pruebas aprobadas, build exitoso e integración manual de creación/edición y manejo de conflictos.
+- **Calendario mensual: primera entrega validada y cerrada el 16-11-2026.** La usuaria confirmó localmente 12 archivos de pruebas, **59 passed, 0 failed**, y build Vite 8.3.8 exitoso con 41 módulos transformados. La prueba de integración App ya no presenta advertencias React `act(...)`; queda el aviso informativo de jsdom. La usuaria confirmó satisfactorias todas las pruebas visuales y funcionales: mes inicial, navegación, filtros combinados, agenda diaria, detalle, desbordamiento de actividades y vista móvil de 360 px.
+- **FE-003 no está cerrado en su totalidad.** Permanecen pendientes listado y CRUD de actividades, transiciones de estado, cancelación/eliminación e integración completa de navegación desde alertas.
+- FE-004 a FE-006 permanecen pendientes de refinement.
 
 ## 7. Calidad y validación
 
 - Última suite backend completa confirmada por la usuaria, posterior al ajuste CORS: **197 passed, 0 failed**.
 - Suite frontend FE-001: **12 passed, 0 failed**.
 - Suite frontend FE-002: **37 passed, 0 failed** en 8 archivos; build de producción exitoso.
+- FE-003 administración de períodos: **48 passed, 0 failed** en 10 archivos; build exitoso.
+- FE-003 calendario mensual primera entrega: **59 passed, 0 failed** en 12 archivos; build Vite 8.3.8 exitoso; validación visual/funcional confirmada por la usuaria.
 - Validación manual integrada FE-002: Dashboard, alertas, revisión, navegación, responsive y teclado confirmados por la usuaria.
 - Build frontend de producción: exitoso.
 - La ejecución backend mostró una advertencia deprecatoria de Starlette por el uso de `httpx` con `starlette.testclient`; no afectó el resultado. La actualización de dependencias queda fuera del alcance de FE-001 y requiere revisión independiente.
@@ -208,7 +215,7 @@ Las especificaciones aprobadas siguen siendo la fuente de verdad funcional y té
 
 ## 10. Próximos pasos inmediatos
 
-1. Iniciar refinement de FE-003 — Calendario y actividades — conforme al roadmap y contratos aprobados.
+1. Continuar FE-003 con el listado y mantenimiento CRUD de actividades, conforme a la especificación aprobada y sin reabrir decisiones cerradas.
 2. Mantener pendiente la validación reproducible con Python 3.14.10, según la línea base técnica aprobada.
 
 ---
