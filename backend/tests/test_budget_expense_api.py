@@ -43,10 +43,10 @@ def _activity(client, period_id, **overrides):
 def _budget_payload(total="1000.00", categories=None):
     return {
         "total_budget": total,
-        "category_budgets": categories or [
+        "category_budgets": (categories if categories is not None else [
             {"category": "Viajes", "amount": "600.00"},
             {"category": "Alojamiento", "amount": "200.00"},
-        ],
+        ]),
     }
 
 
