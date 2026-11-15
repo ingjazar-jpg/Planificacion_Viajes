@@ -24,7 +24,7 @@ El resultado de 178 pruebas corresponde a la ejecución completa más reciente; 
 | BE-006 | API y ciclo de vida de alertas | Validado | 153 passed |
 | BE-007 | API de presupuestos y gastos | Validado | 169 passed (suite completa) |
 | BE-008 | API de calendario | Validado | 178 passed (suite completa; 9 pruebas nuevas) |
-| BE-009 | API de Dashboard | Implementado en GitHub; validación local pendiente | 8 pruebas nuevas añadidas |
+| BE-009 | API de Dashboard | Implementado en GitHub; validación local pendiente | 7 pruebas nuevas añadidas |
 
 **Nota:** las cifras de cada fila son resultados acumulativos reportados después de cada bloque. El último resultado vigente es 178 pruebas aprobadas, 0 fallidas.
 
