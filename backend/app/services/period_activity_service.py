@@ -8,6 +8,7 @@ from app.domain.entities import Activity, Period
 from app.domain.enums import ActivityStatus
 from app.persistence.document import DataDocument
 from app.persistence.json_repository import JsonRepository
+from app.services.alert_service import AlertService
 
 
 BUSINESS_TIMEZONE = ZoneInfo("America/Bogota")
@@ -139,6 +140,7 @@ class PeriodActivityService:
         now = self._now()
         activity = Activity(id=uuid4(), **fields, status=ActivityStatus.PENDING, created_at=now, updated_at=now)
         updated = DataDocument.model_validate({**document.model_dump(mode="python"), "activities": [*document.activities, activity]})
+        updated, _ = AlertService.evaluate_document(updated, period_id, now=now, activity_ids={activity.id})
         self._save(updated)
         return activity
 
@@ -162,6 +164,9 @@ class PeriodActivityService:
         self._validate_schedule(period=period, activity_id=activity_id, period_activities=[x for x in document.activities if x.period_id == current.period_id], **{key: candidate_fields[key] for key in ("start_date","end_date","start_time","end_time")})
         updated_activity = current.model_copy(update={**candidate_fields, "updated_at": self._now()})
         updated = DataDocument.model_validate({**document.model_dump(mode="python"), "activities": [updated_activity if item.id == activity_id else item for item in document.activities]})
+        updated, _ = AlertService.evaluate_document(
+            updated, current.period_id, now=self._now(), activity_ids={activity_id}
+        )
         self._save(updated)
         return updated_activity
 
