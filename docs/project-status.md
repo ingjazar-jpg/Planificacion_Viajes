@@ -8,7 +8,7 @@
 
 ## 1. Resumen ejecutivo
 
-La implementación del backend BE-001 a BE-010 está validada. Tras incorporar CORS y sus dos pruebas de regresión, la usuaria confirmó la suite backend completa con **197 passed, 0 failed**. FE-001 y FE-002 están validados y cerrados. FE-001 cuenta con **12 pruebas frontend aprobadas**; FE-002, con **37 pruebas frontend aprobadas** y build de producción exitoso.
+La implementación del backend BE-001 a BE-010 está validada. Tras incorporar CORS y sus dos pruebas de regresión, la usuaria confirmó la suite backend completa con **197 passed, 0 failed**. FE-001 y FE-002 están validados y cerrados. FE-001 cuenta con **12 pruebas frontend aprobadas**; FE-002, con **37 pruebas frontend aprobadas** y build de producción exitoso. FE-003 tiene refinement aprobado (D1–D27) y especificación v0.1 lista para implementación; todavía no se ha implementado ni validado.
 
 El resultado de 195 pruebas corresponde a la ejecución completa validada después de BE-010. Los resultados históricos por bloque son hitos acumulativos, no cantidades que deban sumarse.
 
@@ -158,6 +158,7 @@ Se consolidó el mapa de implementación en seis bloques FE. FE-001 y FE-002 cue
 - `docs/FE-ROADMAP.md`: mapa de trazabilidad de seis bloques FE con pantallas, componentes, endpoints y dependencias.
 - `docs/FE-001.md`: especificación aprobada para la fundación frontend.
 - `docs/FE-002.md`: especificación aprobada para Dashboard y alertas (15 decisiones, 31 requisitos funcionales y 27 criterios de aceptación).
+- `docs/FE-003.md`: especificación aprobada para calendario y actividades (27 decisiones, 46 requisitos funcionales y 32 criterios de aceptación).
 
 Decisiones aprobadas para FE-001:
 - Cliente HTTP: `fetch` nativo centralizado.
@@ -172,7 +173,7 @@ La advertencia deprecatoria de Starlette relacionada con `httpx` no produjo fall
 
 **FE-002 — Dashboard y alertas: VALIDADO Y CERRADO el 15-11-2026.** La usuaria confirmó localmente la suite frontend completa con **37 passed, 0 failed** en 8 archivos y `npm run build` exitoso con Vite 8.3.8. La validación integrada manual confirmó Dashboard conectado a FastAPI, indicadores y cuatro gráficos, estados vacíos, alertas y contador, revisión y actualización sin recarga, navegación a Actividades, actualización al regresar al Dashboard, responsive a 360 × 800 px y operación básica por teclado (Escape y gestión de foco). No hubo warnings React `act(...)` en la última ejecución; Vitest mostró solo una advertencia informativa sobre creación de entornos jsdom. El detalle funcional de actividad se mantiene dentro del alcance FE-003. El cierre no modifica ni reabre UI-001, API-001 ni las SPEC.
 
-FE-003 a FE-006 permanecen pendientes de refinement.
+FE-003: refinement aprobado el 15-11-2026; especificación `docs/FE-003.md` v0.1 aprobada para implementación. FE-004 a FE-006 permanecen pendientes de refinement.
 
 ## 7. Calidad y validación
 
