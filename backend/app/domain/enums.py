@@ -24,3 +24,27 @@ class ActivityStatus(StrEnum):
     IN_PROGRESS = "En progreso"
     COMPLETED = "Completada"
     CANCELLED = "Cancelada"
+
+
+class AlertType(StrEnum):
+    UPCOMING = "Próxima"
+    OVERDUE = "Vencida"
+    HIGH_PRIORITY = "Prioridad alta"
+
+
+class AlertStatus(StrEnum):
+    PENDING = "Pendiente"
+    REVIEWED = "Revisada"
+
+
+class AlertEventType(StrEnum):
+    CREATED = "created"
+    ACTIVATED = "activated"
+    REVIEWED = "reviewed"
+    DEACTIVATED = "deactivated"
+    REACTIVATED = "reactivated"
+
+
+class ExpenseModificationType(StrEnum):
+    CREATION = "Creación"
+    EDITION = "Edición"
