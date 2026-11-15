@@ -50,6 +50,16 @@ describe("ActivitiesPage list", () => {
     })));
   });
 
+  it("does not query an invalid date range", async () => {
+    render(<ActivitiesPage />);
+    await screen.findByText("Viaje familiar");
+    const callsBefore = getActivities.mock.calls.length;
+    fireEvent.change(screen.getByLabelText("Desde"), { target: { value: "2026-12-30" } });
+    fireEvent.change(screen.getByLabelText("Hasta"), { target: { value: "2026-12-10" } });
+    expect(await screen.findByRole("alert")).toHaveTextContent("no puede ser posterior");
+    await waitFor(() => expect(getActivities).toHaveBeenCalledTimes(callsBefore + 1));
+  });
+
   it("shows a contextual empty state and clears filters from it", async () => {
     getActivities.mockResolvedValue([]);
     render(<ActivitiesPage />);
