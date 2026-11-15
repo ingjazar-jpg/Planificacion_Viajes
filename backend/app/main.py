@@ -12,7 +12,7 @@ from fastapi.responses import JSONResponse
 
 from app.api.backups import router as backups_router
 from app.persistence.json_repository import JsonRepository
-from app.services.backup_service import BackupService
+from app.services.backup_service import BackupService, BackupServiceError
 
 
 DEFAULT_DATA_FILE = (
@@ -65,6 +65,22 @@ def create_app(*, repository: JsonRepository | None = None) -> FastAPI:
                     "code": "VALIDATION_ERROR",
                     "message": "La solicitud contiene datos inválidos.",
                     "details": details,
+                }
+            },
+        )
+
+    @application.exception_handler(BackupServiceError)
+    async def backup_service_exception_handler(
+        request: Request, exc: BackupServiceError
+    ) -> JSONResponse:
+        """Return safe, contract-specific backup errors."""
+        return JSONResponse(
+            status_code=exc.status_code,
+            content={
+                "error": {
+                    "code": exc.code,
+                    "message": exc.message,
+                    "details": [],
                 }
             },
         )
