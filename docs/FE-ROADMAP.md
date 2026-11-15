@@ -153,7 +153,7 @@ Cada bloque FE se cerrará cuando:
 | Bloque | Estado |
 |---|---|
 | FE-001 | Validado y cerrado — 15-11-2026 |
-| FE-002 | Siguiente bloque: pendiente de refinement |
+| FE-002 | Especificación aprobada; siguiente bloque de implementación |
 | FE-003 | Pendiente de refinement |
 | FE-004 | Pendiente de refinement |
 | FE-005 | Pendiente de refinement |
@@ -165,6 +165,7 @@ La base frontend existente incluye shell, navegación inicial y placeholders de 
 
 - [UI-001 — Identidad visual e inventario de componentes](UI-001.md)
 - [FE-001 — Especificación de fundación frontend](FE-001.md)
+- [FE-002 — Especificación de Dashboard y alertas](FE-002.md)
 - [API-001 — Contratos de endpoints REST](API-001.md)
 - [ARCH-001 — Arquitectura técnica](ARCH.md)
 - [Estado del proyecto](project-status.md)
