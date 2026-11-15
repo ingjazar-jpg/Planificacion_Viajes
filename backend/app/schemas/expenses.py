@@ -134,9 +134,13 @@ class ExpensePatch(BaseModel):
         return _parse_expense_amount(value)
 
     @model_validator(mode="after")
-    def require_at_least_one_field(self) -> "ExpensePatch":
+    def validate_patch_fields(self) -> "ExpensePatch":
         if not self.model_fields_set:
             raise ValueError("Debe enviarse al menos un campo editable.")
+        non_nullable = {"concept", "amount", "date", "category"}
+        for field_name in non_nullable & self.model_fields_set:
+            if getattr(self, field_name) is None:
+                raise ValueError(f"{field_name} no admite null.")
         return self
 
 
@@ -166,6 +170,6 @@ class ExpenseHistoryResponse(BaseModel):
     id: UUID
     expense_id: UUID
     modification_type: ExpenseModificationType
-    previous_values: dict[str, Any]
-    new_values: dict[str, Any]
+    previous_values: dict[str, Any] | None
+    new_values: dict[str, Any] | None
     modified_at: datetime
