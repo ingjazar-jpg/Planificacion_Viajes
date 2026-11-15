@@ -6,6 +6,7 @@ from decimal import Decimal, InvalidOperation
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic_core import PydanticCustomError
 
 from app.domain.enums import ActivityCategory
 
@@ -64,8 +65,9 @@ class BudgetInput(BaseModel):
             (item.amount for item in self.category_budgets), Decimal("0")
         )
         if allocated > self.total_budget:
-            raise ValueError(
-                "La suma de asignaciones no puede superar el presupuesto general."
+            raise PydanticCustomError(
+                "category_budget_exceeds_total",
+                "La suma de asignaciones no puede superar el presupuesto general.",
             )
         return self
 
