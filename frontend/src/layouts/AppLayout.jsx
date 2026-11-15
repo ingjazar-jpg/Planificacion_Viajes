@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useAlerts } from "../features/dashboard/AlertsContext.jsx";
 import { AlertsDrawer } from "../features/dashboard/AlertsDrawer.jsx";
 import ActivitiesPage from "../features/activities/ActivitiesPage.jsx";
@@ -30,8 +30,10 @@ function AppLayout() {
   const { alerts, count, isLoading: alertsLoading, error: alertsError, notice, isReviewing, refreshAlerts, markReviewed } = useAlerts();
   const { periods, isLoading, error, refreshPeriods } = usePeriod();
   const CurrentPage = pageComponents[activeSection] ?? DashboardPage;
+  const closeAlerts = useCallback(() => setIsAlertsOpen(false), []);
 
   function handleNavigate(sectionId, activityId = null) {
+    if (sectionId === "dashboard" && activeSection !== "dashboard") refreshAlerts();
     setActiveSection(sectionId);
     if (sectionId === "activities" && activityId) setActivityDestinationId(activityId);
     setIsMobileNavigationOpen(false);
@@ -66,7 +68,7 @@ function AppLayout() {
         </main>
       </div>
 
-      <AlertsDrawer open={isAlertsOpen} onClose={() => setIsAlertsOpen(false)} alerts={alerts}
+      <AlertsDrawer open={isAlertsOpen} onClose={closeAlerts} alerts={alerts}
         isLoading={alertsLoading} error={alertsError} notice={notice} isReviewing={isReviewing}
         onRetry={refreshAlerts} onReview={markReviewed}
         onNavigate={(activityId) => { setIsAlertsOpen(false); handleNavigate("activities", activityId); }} />
