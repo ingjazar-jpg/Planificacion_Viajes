@@ -14,7 +14,7 @@ Aplicación web local para planificar períodos de vacaciones decembrinas, admin
 - BE-007 — API de presupuestos y gastos: implementada y validada; las 16 pruebas nuevas del bloque pasan dentro de la suite completa.
 - BE-009 — API de Dashboard: validada localmente; incluye respuesta con importes cero cuando no existe presupuesto.
 - BE-010 — API de informes: validada localmente; tres informes, comparación histórica, filtros, agrupaciones y exportaciones PDF/XLSX; 10 pruebas nuevas incluidas en las 195 aprobadas.
-- Frontend: FE-001 con pruebas automatizadas locales aprobadas (**12 passed, 0 failed**) y build de producción exitoso.
+- Frontend: **FE-001 validado y cerrado**; 12 pruebas frontend aprobadas, build exitoso, integración real, responsive y accesibilidad manual comprobados.
 - Validación reproducible del backend con Python 3.14.10 y revisión/incorporación de lockfiles: pendientes.
 
 Consulta el [estado detallado del proyecto](docs/project-status.md) para ver capacidades completadas, trabajo pendiente, criterios de cierre y flujo de validación.
