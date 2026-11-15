@@ -14,21 +14,6 @@ const EMPTY_FILTERS = {
   category: "", priority: "", status: "", destination: "", start_date: "", end_date: "",
 };
 
-function ActivityFields({ activity }) {
-  return (
-    <>
-      <span className="activity-name">{activity.name}</span>
-      <span>{activity.start_date} – {activity.end_date}</span>
-      <span>{activity.start_time}–{activity.end_time}</span>
-      <span>{activity.category}</span>
-      <span>{activity.priority}</span>
-      <span className={`activity-status activity-status-${String(activity.status).toLowerCase().replaceAll(" ", "-")}`}>
-        {activity.status}
-      </span>
-    </>
-  );
-}
-
 function ActivitiesPage({ activityId = null }) {
   const { selectedPeriodId, selectedPeriod } = usePeriod();
   const [view, setView] = useState("list");
