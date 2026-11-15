@@ -18,7 +18,7 @@ from reportlab.platypus import (
     Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle,
 )
 
-from app.domain.enums import ActivityCategory, ActivityStatus
+from app.domain.enums import ActivityCategory, ActivityStatus, Priority
 from app.persistence.json_repository import JsonRepository
 
 
@@ -41,7 +41,7 @@ class ReportFilters:
     category: ActivityCategory | None = None
     status: ActivityStatus | None = None
     activity_id: UUID | None = None
-    priority: str | None = None
+    priority: Priority | None = None
     min_amount: Decimal | None = None
     max_amount: Decimal | None = None
 
@@ -91,7 +91,7 @@ class ReportService:
             return False
         if filters.activity_id is not None and item.id != filters.activity_id:
             return False
-        if filters.priority is not None and item.priority.value != filters.priority:
+        if filters.priority is not None and item.priority != filters.priority:
             return False
         return True
 
