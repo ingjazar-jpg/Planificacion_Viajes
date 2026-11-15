@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { usePeriod } from "../../context/PeriodContext.jsx";
 import PeriodManagementDialog from "../../features/activities/PeriodManagementDialog.jsx";
 
 function Topbar({ onMenuClick, onAlertsClick, alertCount = 0 }) {
   const { periods, selectedPeriodId, isLoading, error, selectPeriod } = usePeriod();
   const [isPeriodDialogOpen, setIsPeriodDialogOpen] = useState(false);
+  const closePeriodDialog = useCallback(() => setIsPeriodDialogOpen(false), []);
   let placeholder = "Selecciona un período";
   if (isLoading) placeholder = "Cargando períodos…";
   else if (error) placeholder = "No disponible";
@@ -38,7 +39,7 @@ function Topbar({ onMenuClick, onAlertsClick, alertCount = 0 }) {
           <span className="local-indicator"><span className="local-indicator-dot" aria-hidden="true" />Local</span>
         </div>
       </header>
-      <PeriodManagementDialog open={isPeriodDialogOpen} onClose={() => setIsPeriodDialogOpen(false)} />
+      <PeriodManagementDialog open={isPeriodDialogOpen} onClose={closePeriodDialog} />
     </>
   );
 }
