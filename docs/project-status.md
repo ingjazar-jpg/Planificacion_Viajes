@@ -8,7 +8,7 @@
 
 ## 1. Resumen ejecutivo
 
-La implementación del backend BE-001 a BE-010 está validada. Tras incorporar CORS y sus dos pruebas de regresión, la usuaria confirmó la suite backend completa con **197 passed, 0 failed**. FE-001 cuenta con **12 pruebas frontend aprobadas** y build de producción exitoso.
+La implementación del backend BE-001 a BE-010 está validada. Tras incorporar CORS y sus dos pruebas de regresión, la usuaria confirmó la suite backend completa con **197 passed, 0 failed**. FE-001 y FE-002 están validados y cerrados. FE-001 cuenta con **12 pruebas frontend aprobadas**; FE-002, con **37 pruebas frontend aprobadas** y build de producción exitoso.
 
 El resultado de 195 pruebas corresponde a la ejecución completa validada después de BE-010. Los resultados históricos por bloque son hitos acumulativos, no cantidades que deban sumarse.
 
@@ -170,12 +170,16 @@ La implementación de FE-001 está publicada en `feat/backend-domain-foundation`
 
 La advertencia deprecatoria de Starlette relacionada con `httpx` no produjo fallos y queda registrada como observación técnica no bloqueante. La validación reproducible con Python 3.14.10 permanece pendiente como tarea transversal de Sprint 0; no bloquea el cierre funcional de FE-001.
 
-FE-002 — Dashboard y alertas — tiene especificación aprobada en `docs/FE-002.md` y su implementación está en curso. La aprobación cubre 15 decisiones de refinement, 31 requisitos funcionales y 27 criterios de aceptación. La primera entrega de código está publicada en la rama de trabajo; permanece pendiente la sincronización y validación local de la usuaria. FE-003 a FE-006 permanecen pendientes de refinement. La aprobación de FE-002 no modifica ni reabre los contratos de UI-001, API-001 ni las SPEC.
+**FE-002 — Dashboard y alertas: VALIDADO Y CERRADO el 15-11-2026.** La usuaria confirmó localmente la suite frontend completa con **37 passed, 0 failed** en 8 archivos y `npm run build` exitoso con Vite 8.3.8. La validación integrada manual confirmó Dashboard conectado a FastAPI, indicadores y cuatro gráficos, estados vacíos, alertas y contador, revisión y actualización sin recarga, navegación a Actividades, actualización al regresar al Dashboard, responsive a 360 × 800 px y operación básica por teclado (Escape y gestión de foco). No hubo warnings React `act(...)` en la última ejecución; Vitest mostró solo una advertencia informativa sobre creación de entornos jsdom. El detalle funcional de actividad se mantiene dentro del alcance FE-003. El cierre no modifica ni reabre UI-001, API-001 ni las SPEC.
+
+FE-003 a FE-006 permanecen pendientes de refinement.
 
 ## 7. Calidad y validación
 
 - Última suite backend completa confirmada por la usuaria, posterior al ajuste CORS: **197 passed, 0 failed**.
-- Suite frontend FE-001 confirmada localmente: **12 passed, 0 failed**.
+- Suite frontend FE-001: **12 passed, 0 failed**.
+- Suite frontend FE-002: **37 passed, 0 failed** en 8 archivos; build de producción exitoso.
+- Validación manual integrada FE-002: Dashboard, alertas, revisión, navegación, responsive y teclado confirmados por la usuaria.
 - Build frontend de producción: exitoso.
 - La ejecución backend mostró una advertencia deprecatoria de Starlette por el uso de `httpx` con `starlette.testclient`; no afectó el resultado. La actualización de dependencias queda fuera del alcance de FE-001 y requiere revisión independiente.
 - Los resultados anteriores por bloque son históricos y acumulativos.
@@ -203,7 +207,7 @@ Las especificaciones aprobadas siguen siendo la fuente de verdad funcional y té
 
 ## 10. Próximos pasos inmediatos
 
-1. Sincronizar y validar localmente la primera entrega de FE-002 — Dashboard y alertas — conforme a `docs/FE-002.md`; corregir cualquier fallo antes de ampliar el bloque.
+1. Iniciar refinement de FE-003 — Calendario y actividades — conforme al roadmap y contratos aprobados.
 2. Mantener pendiente la validación reproducible con Python 3.14.10, según la línea base técnica aprobada.
 
 ---
