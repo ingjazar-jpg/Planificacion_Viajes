@@ -33,7 +33,7 @@ Los seis bloques FE son unidades de planificación e implementación; no implica
 |---|---|---|---|
 | FE-001 | Fundación frontend | Layout, navegación, cliente HTTP, contexto global de período, estados comunes | Shell compartido |
 | FE-002 | Dashboard y alertas | Indicadores, gráficos, alertas pendientes, panel y revisión | Dashboard y panel de alertas |
-| FE-003 | Calendario y actividades | Vistas de calendario, filtros, consulta y mantenimiento de actividades y períodos | Calendario y Actividades |
+| FE-003 | Calendario y actividades | Administración de períodos, calendario mensual, filtros, consulta y mantenimiento de actividades | Calendario y Actividades |
 | FE-004 | Presupuesto y gastos | Presupuesto por categoría, gastos, filtros, edición e historial | Presupuesto y gastos |
 | FE-005 | Informes | Informes, filtros, comparación histórica y exportaciones | Informes |
 | FE-006 | Gestión de datos e integración | Catálogo de respaldos, restauración y regresión integral | Gestión de datos y cierre de integración |
@@ -60,12 +60,13 @@ Los seis bloques FE son unidades de planificación e implementación; no implica
 
 ### FE-003 — Calendario y actividades
 
-- Calendario diario, semanal y mensual, con vista inicial mensual.
-- Navegación de fechas y filtros contractuales.
-- Actividades multidiarias y canceladas según UI-001.
-- Listado, creación, detalle, edición, transiciones de estado y eliminación.
-- Gestión de períodos necesaria para crear y administrar el primer período.
-- Confirmaciones para acciones destructivas y comunicación de eliminación en cascada.
+- Administración de períodos desde el selector global de Topbar, con listado, creación y edición; no se permite eliminar períodos.
+- Calendario mensual con navegación anterior/siguiente/Hoy, filtros combinables y actividades multidiarias.
+- Vista de calendario y listado conmutables; tabla en escritorio y tarjetas en móvil.
+- Creación, detalle, edición, transiciones de estado, cancelación y eliminación de actividades.
+- Integración desde alertas al detalle de la actividad correspondiente.
+- Confirmaciones para cancelar/eliminar y comunicación explícita de eliminación en cascada.
+- Decisiones FE003-DEC-001 a FE003-DEC-027 aprobadas; especificación formal en docs/FE-003.md.
 
 ### FE-004 — Presupuesto y gastos
 
@@ -154,18 +155,19 @@ Cada bloque FE se cerrará cuando:
 |---|---|
 | FE-001 | Validado y cerrado — 15-11-2026 |
 | FE-002 | Validado y cerrado — 15-11-2026 |
-| FE-003 | Pendiente de refinement |
+| FE-003 | Especificación aprobada para implementación — 15-11-2026 |
 | FE-004 | Pendiente de refinement |
 | FE-005 | Pendiente de refinement |
 | FE-006 | Pendiente de refinement |
 
-FE-001 y FE-002 están validados y cerrados. FE-002 fue validado localmente con 37 pruebas frontend aprobadas, build de producción exitoso e integración manual con BE-006 y BE-009. FE-003 a FE-006 permanecen pendientes de refinement. La base frontend restante conserva placeholders hasta la implementación de sus respectivos bloques.
+FE-001 y FE-002 están validados y cerrados. FE-002 fue validado localmente con 37 pruebas frontend aprobadas, build de producción exitoso e integración manual con BE-006 y BE-009. FE-003 cuenta con refinement aprobado y especificación formal lista para implementación; FE-004 a FE-006 permanecen pendientes de refinement. La base frontend restante conserva placeholders hasta la implementación de sus respectivos bloques.
 
 ## 9. Documentos relacionados
 
 - [UI-001 — Identidad visual e inventario de componentes](UI-001.md)
 - [FE-001 — Especificación de fundación frontend](FE-001.md)
 - [FE-002 — Especificación de Dashboard y alertas](FE-002.md)
+- [FE-003 — Especificación de calendario y actividades](FE-003.md)
 - [API-001 — Contratos de endpoints REST](API-001.md)
 - [ARCH-001 — Arquitectura técnica](ARCH.md)
 - [Estado del proyecto](project-status.md)
