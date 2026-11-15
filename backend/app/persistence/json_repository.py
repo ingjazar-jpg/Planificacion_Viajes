@@ -13,6 +13,7 @@ from zoneinfo import ZoneInfo
 
 from pydantic import ValidationError
 
+from app.persistence.backup_manager import BackupManager
 from app.persistence.document import DataDocument
 
 
@@ -47,8 +48,8 @@ def _lock_for(path: Path) -> RLock:
 class JsonRepository:
     """Read and atomically replace one DATA-001 JSON document.
 
-    A backup callback is mandatory when replacing an existing file. The callback
-    is responsible for creating and cataloguing the approved pre-write backup.
+    Replacing an existing file automatically creates and catalogues a validated
+    pre-write backup. A callback can be injected for controlled integrations/tests.
     """
 
     def __init__(
@@ -56,10 +57,16 @@ class JsonRepository:
         file_path: str | Path,
         *,
         backup_before_write: BackupCallback | None = None,
+        backup_manager: BackupManager | None = None,
     ) -> None:
         self.file_path = Path(file_path)
-        self.backup_before_write = backup_before_write
+        self.backup_manager = backup_manager or BackupManager(self.file_path)
+        self.backup_before_write = backup_before_write or self._create_pre_write_backup
         self._lock = _lock_for(self.file_path)
+
+    def _create_pre_write_backup(self, source: Path) -> None:
+        """Create a validated pre-write backup through the configured manager."""
+        self.backup_manager.create_backup(source, backup_type="pre_write")
 
     def load(self) -> DataDocument:
         """Load and validate the document, or return an empty document if absent."""
@@ -88,10 +95,6 @@ class JsonRepository:
             if self.file_path.exists():
                 # Never overwrite a damaged or incompatible file.
                 self.load()
-                if self.backup_before_write is None:
-                    raise RepositoryConfigurationError(
-                        "Se requiere backup_before_write para reemplazar datos existentes."
-                    )
                 try:
                     self.backup_before_write(self.file_path)
                 except Exception as exc:
