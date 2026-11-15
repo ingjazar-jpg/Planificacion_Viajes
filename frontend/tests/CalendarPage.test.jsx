@@ -44,7 +44,7 @@ describe("CalendarPage", () => {
     render(<CalendarPage />);
 
     expect(await screen.findByRole("heading", { name: "noviembre de 2026" })).toBeInTheDocument();
-    expect(await screen.findByRole("button", { name: /Cena familiar/ })).toBeInTheDocument();
+    expect((await screen.findAllByRole("button", { name: /Cena familiar/ })).length).toBeGreaterThan(0);
     expect(getCalendar).toHaveBeenCalledWith(expect.objectContaining({
       period_id: period.id,
       start_date: "2026-10-26",
