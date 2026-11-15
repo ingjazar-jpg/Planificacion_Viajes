@@ -92,14 +92,18 @@ def test_document_rejects_duplicate_period_year(period):
 
 
 def test_document_rejects_activity_outside_period(period, activity):
-    activity.start_date = date(2027, 1, 11)
-    activity.end_date = date(2027, 1, 12)
+    outside_activity = activity.model_copy(
+        update={
+            "start_date": date(2027, 1, 11),
+            "end_date": date(2027, 1, 12),
+        }
+    )
 
     with pytest.raises(ValidationError, match="dentro de su período"):
         DataDocument(
             metadata={"created_at": NOW, "updated_at": NOW},
             periods=[period],
-            activities=[activity],
+            activities=[outside_activity],
         )
 
 
