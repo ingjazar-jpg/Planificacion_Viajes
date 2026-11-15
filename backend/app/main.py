@@ -17,6 +17,7 @@ from app.api.alerts import router as alerts_router
 from app.api.budgets import router as budgets_router
 from app.api.expenses import router as expenses_router
 from app.api.calendar import router as calendar_router
+from app.api.dashboard import router as dashboard_router
 from app.persistence.json_repository import JsonRepository
 from app.services.backup_service import BackupService, BackupServiceError
 from app.services.period_activity_service import PeriodActivityService, PeriodActivityServiceError
@@ -25,6 +26,7 @@ from app.services.budget_expense_service import (
     BudgetExpenseService, BudgetExpenseServiceError,
 )
 from app.services.calendar_service import CalendarService, CalendarServiceError
+from app.services.dashboard_service import DashboardService, DashboardServiceError
 
 
 DEFAULT_DATA_FILE = (
@@ -59,6 +61,7 @@ def create_app(*, repository: JsonRepository | None = None) -> FastAPI:
     application.state.alert_service = AlertService(data_repository)
     application.state.budget_expense_service = BudgetExpenseService(data_repository)
     application.state.calendar_service = CalendarService(data_repository)
+    application.state.dashboard_service = DashboardService(data_repository)
 
     @application.exception_handler(RequestValidationError)
     async def validation_exception_handler(
@@ -194,6 +197,20 @@ def create_app(*, repository: JsonRepository | None = None) -> FastAPI:
             },
         )
 
+    @application.exception_handler(DashboardServiceError)
+    async def dashboard_service_exception_handler(
+        request: Request, exc: DashboardServiceError
+    ) -> JSONResponse:
+        detail = {"code": exc.code, "message": exc.message}
+        if exc.field:
+            detail["field"] = exc.field
+        return JSONResponse(
+            status_code=exc.status_code,
+            content={"error": {
+                "code": exc.code, "message": exc.message, "details": [detail],
+            }},
+        )
+
     application.include_router(backups_router)
     application.include_router(periods_router)
     application.include_router(activities_router)
@@ -201,6 +218,7 @@ def create_app(*, repository: JsonRepository | None = None) -> FastAPI:
     application.include_router(budgets_router)
     application.include_router(expenses_router)
     application.include_router(calendar_router)
+    application.include_router(dashboard_router)
     return application
 
 
