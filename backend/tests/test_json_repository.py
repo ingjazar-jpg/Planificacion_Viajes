@@ -10,10 +10,10 @@ import pytest
 
 from app.domain.entities import Budget, Period
 from app.persistence.document import DataDocument
+from app.persistence.backup_manager import BackupManager
 from app.persistence.json_repository import (
     DataCorruptionError,
     JsonRepository,
-    RepositoryConfigurationError,
     RepositoryWriteError,
 )
 
@@ -67,19 +67,22 @@ def test_save_and_load_round_trip_preserves_decimal_as_json_string(tmp_path):
     assert payload["periods"][0]["id"] == str(loaded.periods[0].id)
 
 
-def test_replacing_existing_file_requires_backup_callback(tmp_path):
+def test_replacing_existing_file_creates_automatic_pre_write_backup(tmp_path):
     file_path = tmp_path / "datos_vacaciones.json"
+    original_document = DataDocument.empty(now=NOW)
     file_path.write_text(
-        json.dumps(DataDocument.empty(now=NOW).model_dump(mode="json")),
+        json.dumps(original_document.model_dump(mode="json")),
         encoding="utf-8",
     )
-    original = file_path.read_text(encoding="utf-8")
     repository = JsonRepository(file_path)
 
-    with pytest.raises(RepositoryConfigurationError):
-        repository.save(make_document())
+    repository.save(make_document())
 
-    assert file_path.read_text(encoding="utf-8") == original
+    catalog = repository.backup_manager.load_catalog()
+    assert len(catalog.backups) == 1
+    assert catalog.backups[0].type == "pre_write"
+    backup_path = repository.backup_manager.backup_dir / catalog.backups[0].file_reference
+    assert DataDocument.model_validate_json(backup_path.read_text(encoding="utf-8")).periods == []
 
 
 def test_backup_callback_runs_before_existing_file_is_replaced(tmp_path):
@@ -125,7 +128,7 @@ def test_load_rejects_invalid_json_and_save_does_not_overwrite_it(tmp_path):
     file_path = tmp_path / "datos_vacaciones.json"
     corrupted = '{"schema_version":'
     file_path.write_text(corrupted, encoding="utf-8")
-    repository = JsonRepository(file_path, backup_before_write=lambda _: None)
+    repository = JsonRepository(file_path)
 
     with pytest.raises(DataCorruptionError):
         repository.load()
