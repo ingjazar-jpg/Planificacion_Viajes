@@ -10,7 +10,6 @@ import pytest
 
 from app.domain.entities import Budget, Period
 from app.persistence.document import DataDocument
-from app.persistence.backup_manager import BackupManager
 from app.persistence.json_repository import (
     DataCorruptionError,
     JsonRepository,
