@@ -14,7 +14,7 @@ Aplicación web local para planificar períodos de vacaciones decembrinas, admin
 - BE-007 — API de presupuestos y gastos: implementada y validada; las 16 pruebas nuevas del bloque pasan dentro de la suite completa.
 - BE-009 — API de Dashboard: validada localmente; incluye respuesta con importes cero cuando no existe presupuesto.
 - BE-010 — API de informes: validada localmente; tres informes, comparación histórica, filtros, agrupaciones y exportaciones PDF/XLSX; 10 pruebas nuevas incluidas en las 195 aprobadas.
-- Frontend: shell y navegación inicial validados; módulos funcionales e integración con backend pendientes.
+- Frontend: implementación de FE-001 publicada en curso; cliente HTTP, contexto global de período y selector conectados en código. Pruebas locales y build pendientes.
 - Validación reproducible del backend con Python 3.14.10 y revisión/incorporación de lockfiles: pendientes.
 
 Consulta el [estado detallado del proyecto](docs/project-status.md) para ver capacidades completadas, trabajo pendiente, criterios de cierre y flujo de validación.
@@ -87,7 +87,7 @@ Los documentos funcionales, de arquitectura, datos, API e interfaz aprobados se 
 - [Mapa de implementación frontend — seis bloques FE](docs/FE-ROADMAP.md)
 - [FE-001 — Especificación de fundación frontend](docs/FE-001.md)
 
-FE-001 está refinado y aprobado para implementación. La base de navegación existente se conservará y ampliará con el cliente HTTP centralizado, el contexto global del período y el selector conectado a la API. La implementación y validación local de FE-001 están pendientes.
+FE-001 está refinado y aprobado. Su implementación inicial ya está publicada en la rama de trabajo: cliente HTTP centralizado, contexto global del período, selector conectado a la API y estados comunes. Se añadió la política CORS limitada al origen local del frontend. La ejecución local de pruebas frontend/backend y el build siguen pendientes; FE-001 no se considera validado.
 
 ## Desarrollo local
 
