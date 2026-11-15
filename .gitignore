@@ -12,6 +12,9 @@ env/
 .coverage.*
 htmlcov/
 
+# Python dependency lock generated locally (experimental pip lock)
+backend/pylock.toml
+
 # Environment and secrets
 .env
 .env.*
