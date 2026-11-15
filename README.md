@@ -88,7 +88,7 @@ Los documentos funcionales, de arquitectura, datos, API e interfaz aprobados se 
 - [FE-001 — Especificación de fundación frontend](docs/FE-001.md)
 - [FE-002 — Dashboard y alertas](docs/FE-002.md)
 
-FE-001 está validado y cerrado. FE-002 — Dashboard y alertas — cuenta con especificación aprobada para implementación; su desarrollo está pendiente. La implementación FE-001 está publicada en la rama de trabajo: cliente HTTP centralizado, contexto global del período, selector conectado a la API y estados comunes. La validación local reportada incluye 12 pruebas frontend aprobadas, build de producción exitoso y 197 pruebas backend aprobadas, incluida la política CORS limitada al origen local del frontend. La validación funcional integrada de los módulos posteriores permanece pendiente.
+FE-001 está validado y cerrado. FE-002 — Dashboard y alertas — cuenta con especificación aprobada y su implementación está en curso; la primera entrega de código está publicada y pendiente de validación local. La implementación FE-001 está publicada en la rama de trabajo: cliente HTTP centralizado, contexto global del período, selector conectado a la API y estados comunes. La validación local reportada incluye 12 pruebas frontend aprobadas, build de producción exitoso y 197 pruebas backend aprobadas, incluida la política CORS limitada al origen local del frontend. La validación funcional integrada de los módulos posteriores permanece pendiente.
 
 ## Desarrollo local
 
