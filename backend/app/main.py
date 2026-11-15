@@ -31,8 +31,6 @@ def create_app(*, repository: JsonRepository | None = None) -> FastAPI:
 
     @asynccontextmanager
     async def lifespan(application: FastAPI) -> AsyncIterator[None]:
-        application.state.repository = data_repository
-        application.state.backup_service = BackupService(data_repository)
         data_repository.create_weekly_backup_if_due()
         yield
 
@@ -41,6 +39,10 @@ def create_app(*, repository: JsonRepository | None = None) -> FastAPI:
         version="1.0.0",
         lifespan=lifespan,
     )
+    # Services are available as soon as the app is constructed. The lifespan
+    # is reserved for startup work and must not be required by route handlers.
+    application.state.repository = data_repository
+    application.state.backup_service = BackupService(data_repository)
 
     @application.exception_handler(RequestValidationError)
     async def validation_exception_handler(
