@@ -244,6 +244,15 @@ def test_pdf_and_xlsx_exports_return_binary_downloads_and_period_scope_ignores_f
     # The second activity is cancelled and receives the dedicated visual fill.
     assert activity_sheet["A3"].fill.fgColor.rgb.endswith("FCE4D6")
 
+    for report_type in ("general", "budget"):
+        for file_format, signature in (("pdf", b"%PDF"), ("xlsx", b"PK")):
+            exported = client.get(
+                f"/api/v1/periods/{period['id']}/reports/{report_type}",
+                params={"format": file_format, "scope": "period"},
+            )
+            assert exported.status_code == 200, exported.text
+            assert exported.content.startswith(signature)
+
 
 def test_export_requires_format_and_scope_and_rejects_invalid_values(tmp_path):
     client = _client(tmp_path)
