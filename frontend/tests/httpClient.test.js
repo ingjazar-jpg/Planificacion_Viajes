@@ -43,7 +43,8 @@ describe("HTTP client", () => {
 
   it("normalizes network failures", async () => {
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new TypeError("offline")));
-    await expect(request("/periods")).rejects.toBeInstanceOf(ApiError);
-    await expect(request("/periods")).rejects.toMatchObject({ code: "NETWORK_ERROR" });
+    const pendingRequest = request("/periods");
+    await expect(pendingRequest).rejects.toBeInstanceOf(ApiError);
+    await expect(pendingRequest).rejects.toMatchObject({ code: "NETWORK_ERROR" });
   });
 });
