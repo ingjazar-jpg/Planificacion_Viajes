@@ -13,6 +13,8 @@ function PeriodManagementDialog({ open, onClose }) {
   const [isSaving, setIsSaving] = useState(false);
   const closeButtonRef = useRef(null);
   const previousFocusRef = useRef(null);
+  const isSavingRef = useRef(false);
+  isSavingRef.current = isSaving;
 
   useEffect(() => {
     if (!open) return undefined;
@@ -20,14 +22,26 @@ function PeriodManagementDialog({ open, onClose }) {
     closeButtonRef.current?.focus();
 
     function handleKeyDown(event) {
-      if (event.key === "Escape" && !isSaving) onClose();
+      if (event.key === "Escape" && !isSavingRef.current) onClose();
+      if (event.key === "Tab") {
+        const dialog = document.querySelector(".period-dialog");
+        const focusable = dialog?.querySelectorAll("button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled)");
+        if (!focusable?.length) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault(); last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault(); first.focus();
+        }
+      }
     }
     document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
       previousFocusRef.current?.focus?.();
     };
-  }, [open, isSaving, onClose]);
+  }, [open, onClose]);
 
   useEffect(() => {
     if (open) {
