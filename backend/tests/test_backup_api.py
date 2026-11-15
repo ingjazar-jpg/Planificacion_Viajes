@@ -110,6 +110,25 @@ def test_restore_backup_returns_not_found_for_unknown_identifier(tmp_path):
     assert response.json()["error"]["code"] == "BACKUP_NOT_FOUND"
 
 
+def test_restore_backup_rejects_invalid_weekly_file_without_changing_current_data(tmp_path):
+    repository = _repository(tmp_path)
+    weekly = repository.backup_manager.create_backup(backup_type="weekly", now=NOW)
+    current = DataDocument.empty(now=NOW.replace(hour=13))
+    repository.save(current)
+    backup_path = repository.backup_manager.backup_dir / weekly.file_reference
+    backup_path.write_text("{invalid json", encoding="utf-8")
+    client = TestClient(create_app(repository=repository))
+
+    response = client.post(
+        "/api/v1/backups/restore",
+        json={"backup_id": str(weekly.backup_id), "confirmed": True},
+    )
+
+    assert response.status_code == 409
+    assert response.json()["error"]["code"] == "BACKUP_NOT_RESTORABLE"
+    assert repository.load().metadata.created_at == current.metadata.created_at
+
+
 def test_restore_backup_rejects_missing_confirmation_with_specific_error(tmp_path):
     client = TestClient(create_app(repository=_repository(tmp_path)))
 
