@@ -3,7 +3,7 @@ import { request } from "./httpClient.js";
 export async function evaluateAlerts(periodId) {
   return request("/alerts/evaluate", {
     method: "POST",
-    body: { period_id: periodId },
+    body: JSON.stringify({ period_id: periodId }),
   });
 }
 
