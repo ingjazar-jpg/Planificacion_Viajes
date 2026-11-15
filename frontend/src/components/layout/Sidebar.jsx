@@ -11,7 +11,7 @@ function Sidebar({ activeSection, onNavigate }) {
         </div>
       </div>
 
-      <nav className="sidebar-nav">
+      <nav className="sidebar-nav" aria-label="Navegación principal">
         <p className="navigation-caption">MENÚ PRINCIPAL</p>
         {navigationItems.map((item) => (
           <button
