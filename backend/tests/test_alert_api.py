@@ -173,9 +173,13 @@ def test_review_unknown_alert_returns_404(tmp_path):
 def test_reviewed_alert_is_deactivated_and_reactivated_without_losing_review(tmp_path):
     client, repository = _client(tmp_path)
     period = _period(client)
-    _activity(client, period["id"], priority="Alta")
+    _activity(
+        client, period["id"], priority="Alta",
+        start_date="2026-11-17", end_date="2026-11-17",
+    )
     _evaluate_at(repository, period["id"])
     alert = repository.load().alerts[0]
+    assert alert.type == AlertType.HIGH_PRIORITY
     assert client.patch(f"/api/v1/alerts/{alert.id}/review").status_code == 200
 
     document = repository.load()
@@ -284,3 +288,11 @@ def test_alert_evaluation_rejects_missing_and_extra_request_fields(tmp_path):
     assert client.post("/api/v1/alerts/evaluate", json={
         "period_id": str(uuid4()), "extra": True
     }).status_code == 422
+
+
+
+def test_get_alerts_returns_404_for_unknown_period_or_activity_filters(tmp_path):
+    client, _ = _client(tmp_path)
+    missing = str(uuid4())
+    assert client.get("/api/v1/alerts", params={"period_id": missing}).status_code == 404
+    assert client.get("/api/v1/alerts", params={"activity_id": missing}).status_code == 404
