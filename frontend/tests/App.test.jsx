@@ -5,7 +5,7 @@ import { getPeriods } from "../src/services/api/periodsService.js";
 import { getDashboard } from "../src/services/api/dashboardService.js";
 import { evaluateAlerts, getPendingActiveAlerts } from "../src/services/api/alertsService.js";
 
-vi.mock("../src/services/api/periodsService.js", () => ({ getPeriods: vi.fn() }));
+vi.mock("../src/services/api/periodsService.js", () => ({ getPeriods: vi.fn(), createPeriod: vi.fn(), updatePeriod: vi.fn() }));
 vi.mock("../src/services/api/dashboardService.js", () => ({ getDashboard: vi.fn() }));
 vi.mock("../src/services/api/alertsService.js", () => ({
   evaluateAlerts: vi.fn(), getPendingActiveAlerts: vi.fn(), reviewAlert: vi.fn(),
@@ -110,4 +110,16 @@ describe("App FE-001 foundation", () => {
     await waitFor(() => expect(screen.getByRole("combobox", { name: "Período activo" }))
       .toHaveValue("period-1"));
   });
+  it("opens period administration from the global Topbar", async () => {
+    getPeriods.mockResolvedValue([{ id: "period-1", name: "Vacaciones", year: 2026,
+      start_date: "2026-12-20", end_date: "2027-01-10" }]);
+    render(<App />);
+
+    await screen.findByRole("combobox", { name: "Período activo" });
+    fireEvent.click(screen.getByRole("button", { name: "Administrar períodos" }));
+    expect(screen.getByRole("dialog", { name: "Administrar períodos" })).toBeInTheDocument();
+    expect(screen.getByText("Vacaciones")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /eliminar/i })).not.toBeInTheDocument();
+  });
+
 });
