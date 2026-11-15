@@ -28,7 +28,7 @@ function AppLayout() {
   const [isAlertsOpen, setIsAlertsOpen] = useState(false);
   const [activityDestinationId, setActivityDestinationId] = useState(null);
   const [dashboardRevision, setDashboardRevision] = useState(0);
-  const { alerts, count, isLoading: alertsLoading, error: alertsError, notice, noticeIsError, isReviewing, refreshAlerts, markReviewed } = useAlerts();
+  const { count, isLoading: alertsLoading, error: alertsError, notice, noticeIsError, isReviewing, refreshAlerts, markReviewed } = useAlerts();
   const { periods, isLoading, error, refreshPeriods } = usePeriod();
   const CurrentPage = pageComponents[activeSection] ?? DashboardPage;
   const closeAlerts = useCallback(() => setIsAlertsOpen(false), []);
