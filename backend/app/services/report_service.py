@@ -340,9 +340,17 @@ class ReportService:
                     ["Saldo", budget["balance"]],
                     ["Ejecución (%)", budget["execution_percentage"]],
                 ]))
+        if "summary" in data and isinstance(data["summary"], dict):
+            summary = data["summary"]
+            sheets.append(("Resumen de actividades", [
+                ["Total", str(summary["total"])],
+                ["Cumplimiento (%)", summary["completion_percentage"]],
+                ["Estado", "Cantidad"],
+                *[[str(x["status"].value), str(x["count"])] for x in summary["by_status"]],
+            ]))
         if "activities" in data:
             activities = data["activities"]
-            if "by_status" in activities:
+            if isinstance(activities, dict) and "by_status" in activities:
                 sheets.append(("Actividades", [
                     ["Total", str(activities["total"])],
                     ["Cumplimiento (%)", activities["completion_percentage"]],
