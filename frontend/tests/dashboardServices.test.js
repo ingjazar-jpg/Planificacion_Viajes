@@ -20,7 +20,7 @@ describe("FE-002 API services", () => {
     request.mockResolvedValue({ data: {} });
     await evaluateAlerts("p1");
     expect(request).toHaveBeenCalledWith("/alerts/evaluate", {
-      method: "POST", body: { period_id: "p1" },
+      method: "POST", body: JSON.stringify({ period_id: "p1" }),
     });
   });
 
