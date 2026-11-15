@@ -14,6 +14,7 @@ function PeriodManagementDialog({ open, onClose }) {
   const closeButtonRef = useRef(null);
   const previousFocusRef = useRef(null);
   const isSavingRef = useRef(false);
+  const requestCloseRef = useRef(null);
   isSavingRef.current = isSaving;
 
   useEffect(() => {
@@ -22,7 +23,7 @@ function PeriodManagementDialog({ open, onClose }) {
     closeButtonRef.current?.focus();
 
     function handleKeyDown(event) {
-      if (event.key === "Escape" && !isSavingRef.current) onClose();
+      if (event.key === "Escape" && !isSavingRef.current) requestCloseRef.current?.();
       if (event.key === "Tab") {
         const dialog = document.querySelector(".period-dialog");
         const focusable = dialog?.querySelectorAll("button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled)");
@@ -78,6 +79,34 @@ function PeriodManagementDialog({ open, onClose }) {
     setForm((current) => ({ ...current, [name]: value }));
   }
 
+  function requestClose() {
+    if (isSaving) return;
+    const baseline = editingPeriod
+      ? { name: editingPeriod.name, start_date: editingPeriod.start_date, end_date: editingPeriod.end_date }
+      : EMPTY_FORM;
+    const hasChanges = mode === "form" && (
+      form.name !== baseline.name
+      || form.start_date !== baseline.start_date
+      || form.end_date !== baseline.end_date
+    );
+    if (hasChanges && !window.confirm("Hay cambios sin guardar. ¿Deseas descartarlos?")) return;
+    onClose();
+  }
+
+  function requestBackToList() {
+    const baseline = editingPeriod
+      ? { name: editingPeriod.name, start_date: editingPeriod.start_date, end_date: editingPeriod.end_date }
+      : EMPTY_FORM;
+    const hasChanges = form.name !== baseline.name
+      || form.start_date !== baseline.start_date
+      || form.end_date !== baseline.end_date;
+    if (hasChanges && !window.confirm("Hay cambios sin guardar. ¿Deseas descartarlos?")) return;
+    setMode("list");
+    setError("");
+  }
+
+  requestCloseRef.current = requestClose;
+
   async function handleSubmit(event) {
     event.preventDefault();
     setError("");
@@ -114,7 +143,7 @@ function PeriodManagementDialog({ open, onClose }) {
 
   return (
     <div className="period-dialog-backdrop" onMouseDown={(event) => {
-      if (event.target === event.currentTarget && !isSaving) onClose();
+      if (event.target === event.currentTarget && !isSaving) requestClose();
     }}>
       <section className="period-dialog" role="dialog" aria-modal="true"
         aria-labelledby="period-dialog-title" aria-describedby="period-dialog-description">
@@ -125,7 +154,7 @@ function PeriodManagementDialog({ open, onClose }) {
             <p id="period-dialog-description">Crea y actualiza los períodos de planificación.</p>
           </div>
           <button ref={closeButtonRef} className="icon-button" type="button"
-            aria-label="Cerrar administración de períodos" onClick={onClose} disabled={isSaving}>×</button>
+            aria-label="Cerrar administración de períodos" onClick={requestClose} disabled={isSaving}>×</button>
         </header>
 
         {mode === "list" ? (
@@ -152,7 +181,7 @@ function PeriodManagementDialog({ open, onClose }) {
               </ul>
             )}
             <footer className="period-dialog-footer">
-              <button className="secondary-action" type="button" onClick={onClose}>Cerrar</button>
+              <button className="secondary-action" type="button" onClick={requestClose}>Cerrar</button>
             </footer>
           </>
         ) : (
@@ -175,9 +204,7 @@ function PeriodManagementDialog({ open, onClose }) {
             </div>
             {error && <p className="period-form-error" role="alert">{error}</p>}
             <footer className="period-dialog-footer">
-              <button className="secondary-action" type="button" onClick={() => {
-                setMode("list"); setError("");
-              }} disabled={isSaving}>Volver</button>
+              <button className="secondary-action" type="button" onClick={requestBackToList} disabled={isSaving}>Volver</button>
               <button className="state-action" type="submit" disabled={isSaving}>
                 {isSaving ? "Guardando…" : "Guardar período"}
               </button>
