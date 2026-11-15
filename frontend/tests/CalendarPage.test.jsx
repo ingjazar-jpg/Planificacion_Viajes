@@ -50,7 +50,7 @@ describe("CalendarPage", () => {
       start_date: "2026-10-26",
       end_date: "2026-12-06",
     }));
-    expect(screen.getByText("Reuniones familiares")).toBeInTheDocument();
+    expect(screen.getByRole("option", { name: "Reuniones familiares" })).toBeInTheDocument();
   });
 
   it("navigates months without clearing the selected filters", async () => {
@@ -101,6 +101,22 @@ describe("CalendarPage", () => {
     fireEvent.click(within(dayAgenda).getByRole("button", { name: /Cena familiar/ }));
     expect(screen.getByRole("region", { name: "Detalle de actividad" })).toHaveTextContent("Casa");
     expect(screen.getByRole("region", { name: "Detalle de actividad" })).toHaveTextContent("19:00–22:00");
+  });
+
+  it("ignores a late response from the previous month", async () => {
+    let resolvePrevious;
+    const nextActivity = { ...activities[0], id: "activity-next", name: "Plan de viaje", start_date: "2026-12-01", end_date: "2026-12-02" };
+    getCalendar
+      .mockImplementationOnce(() => new Promise((resolve) => { resolvePrevious = resolve; }))
+      .mockResolvedValueOnce([nextActivity]);
+    render(<CalendarPage />);
+
+    await waitFor(() => expect(getCalendar).toHaveBeenCalledTimes(1));
+    fireEvent.click(screen.getByRole("button", { name: "Mes siguiente" }));
+    expect(await screen.findByRole("button", { name: /Plan de viaje/ })).toBeInTheDocument();
+
+    resolvePrevious(activities);
+    await waitFor(() => expect(screen.queryByRole("button", { name: /Cena familiar/ })).not.toBeInTheDocument());
   });
 
   it("shows an empty state when the API returns no activities", async () => {
