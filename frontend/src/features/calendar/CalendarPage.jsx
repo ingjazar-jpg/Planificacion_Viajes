@@ -159,6 +159,7 @@ function CalendarPage() {
     setIsLoading(true);
     setError(null);
     setActivities([]);
+    setSelectedActivity(null);
     try {
       const result = await getCalendar({
         period_id: selectedPeriodId,
