@@ -22,7 +22,7 @@ El resultado de 153 pruebas corresponde a la ejecución completa más reciente; 
 | BE-004 | API de consulta y restauración de backups | Validado | 127 passed |
 | BE-005 | API de períodos y actividades | Validado | 141 passed |
 | BE-006 | API y ciclo de vida de alertas | Validado | 153 passed |
-| BE-007 | API de presupuestos y gastos | Pendiente de implementación | — |
+| BE-007 | API de presupuestos y gastos | Implementación publicada; pendiente de validación local | 16 pruebas nuevas definidas; resultado pendiente |
 
 **Nota:** las cifras de cada fila son resultados acumulativos reportados después de cada bloque. El último resultado vigente es 153 pruebas aprobadas.
 
@@ -63,7 +63,7 @@ El resultado de 153 pruebas corresponde a la ejecución completa más reciente; 
 
 ## 4. Bloque siguiente: BE-007 — API de presupuestos y gastos
 
-**Estado:** pendiente de implementación.  
+**Estado:** implementación publicada en GitHub; pendiente de sincronización y validación local.  
 **Fuentes normativas:** SPEC-004 v0.2, DATA-001 v0.2 y API-001 v0.7.
 
 ### Alcance previsto
@@ -92,7 +92,7 @@ El resultado de 153 pruebas corresponde a la ejecución completa más reciente; 
 
 ### Criterio de cierre
 
-El bloque se considerará validado solo después de publicar los cambios en GitHub, sincronizarlos al repositorio local y recibir el resultado real de la ejecución completa de `python -m pytest -v`.
+El bloque se considerará validado solo después de sincronizar los cambios al repositorio local, ejecutar la suite completa con `python -m pytest -v` y revisar el resultado real. Las 16 pruebas nuevas de `backend/tests/test_budget_expense_api.py` están definidas, pero todavía no se reportan como aprobadas.
 
 ## 5. Trabajo pendiente del backend
 
@@ -145,11 +145,11 @@ Las especificaciones aprobadas siguen siendo la fuente de verdad funcional y té
 
 ## 10. Próximos pasos inmediatos
 
-1. Iniciar BE-007 con una revisión final de los contratos request/response de presupuestos y gastos en API-001 v0.7.
-2. Implementar schemas, servicios, routers y pruebas del bloque en GitHub.
-3. Revisar los cambios y sus contratos antes de sincronizar.
-4. Ejecutar la suite completa en el entorno local.
-5. Actualizar este estado con la evidencia real de validación y continuar con el siguiente bloque.
+1. Sincronizar los cambios de BE-007 publicados en GitHub, después de revisar el estado local de Git.
+2. Ejecutar la suite completa en el entorno local y revisar cualquier fallo.
+3. Corregir en GitHub, volver a sincronizar y repetir pruebas si fuera necesario.
+4. Registrar el resultado real y cerrar BE-007 solo cuando la suite esté aprobada.
+5. Continuar con el siguiente bloque backend pendiente.
 
 ---
 
