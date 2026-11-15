@@ -85,7 +85,7 @@ function DashboardPage() {
         </div>
       </section>
       <section className="charts-grid" aria-label="Gráficos del período">
-        <ActivityStatusChart data={charts.activities_by_status || []} />
+        <ActivityStatusChart data={charts.activities_by_status || []} total={activities.total} />
         <BudgetComparisonChart data={charts.budget_vs_expenses_by_category || []} />
         <ExpenseCategoryChart data={charts.expenses_by_category || []} />
         <ComplianceIndicator value={charts.completion_percentage} />
