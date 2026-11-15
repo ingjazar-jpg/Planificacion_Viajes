@@ -23,6 +23,7 @@ El resultado de 169 pruebas corresponde a la ejecución completa más reciente; 
 | BE-005 | API de períodos y actividades | Validado | 141 passed |
 | BE-006 | API y ciclo de vida de alertas | Validado | 153 passed |
 | BE-007 | API de presupuestos y gastos | Validado | 169 passed (suite completa) |
+| BE-008 | API de calendario | Implementación publicada; pendiente de validación local | 9 pruebas nuevas definidas |
 
 **Nota:** las cifras de cada fila son resultados acumulativos reportados después de cada bloque. El último resultado vigente es 169 pruebas aprobadas.
 
@@ -61,6 +62,13 @@ El resultado de 169 pruebas corresponde a la ejecución completa más reciente; 
 - Marcado idempotente como Revisada.
 - Reevaluación ante creación o modificación de actividades, sin procesos permanentes.
 
+### 3.5 Calendario
+
+- Endpoint GET /api/v1/calendar con rango inclusivo y filtros combinables.
+- Actividades multidiarias devueltas una sola vez con sus fechas originales.
+- Actividades canceladas incluidas cuando no se filtra por estado.
+- Indicador is_overdue calculado por backend en America/Bogota, sin persistirlo.
+- Sin paginación, conforme a API-001.
 ## 4. BE-007 — API de presupuestos y gastos
 
 **Estado:** implementación publicada en GitHub y validada localmente: **169 passed, 0 failed**.  
@@ -98,7 +106,8 @@ La usuaria sincronizó los cambios desde GitHub y reportó la ejecución complet
 
 Después de BE-007, y conforme a los contratos existentes, quedan por implementar y validar:
 
-- API de calendario y su consulta de actividades por rango.
+- API de Dashboard e indicadores y agregaciones definidos en SPEC-005.
+- API de informes, filtros, agrupaciones, comparación histórica y exportaciones PDF/XLSX.
 - API del Dashboard e indicadores y agregaciones definidos en SPEC-005.
 - API de informes, filtros, agrupaciones, comparación histórica y exportaciones PDF/XLSX.
 - Cualquier endpoint transversal que la revisión de implementación identifique como faltante, sin alterar contratos aprobados.
@@ -145,9 +154,9 @@ Las especificaciones aprobadas siguen siendo la fuente de verdad funcional y té
 
 ## 10. Próximos pasos inmediatos
 
-1. Revisar la preparación y dependencias del siguiente bloque backend pendiente, manteniendo API-001 y las SPEC aprobadas como fuente de verdad.
-2. Definir el siguiente bloque de implementación con alcance y criterios de validación verificables antes de modificar código.
-3. Continuar el flujo GitHub → sincronización local → suite completa, protegiendo los archivos locales no rastreados.
+1. Sincronizar y validar localmente BE-008 con la suite completa.
+2. Corregir cualquier fallo primero en GitHub, volver a sincronizar y repetir las pruebas.
+3. Tras cerrar BE-008, refinar Dashboard e informes en bloques independientes, conforme a SPEC-005 y API-001.
 
 ---
 
