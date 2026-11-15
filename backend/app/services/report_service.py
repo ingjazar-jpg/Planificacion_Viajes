@@ -455,10 +455,15 @@ class ReportService:
             table_data = [[Paragraph(escape(str(value)), styles["BodyText"]) for value in row]
                           for row in rows]
             if table_data:
-                table = Table(table_data, repeatRows=1, hAlign="LEFT")
+                header_row = (
+                    4 if sheet_title == "Gastos por categoría"
+                    else 1 if sheet_title == "Presupuesto" and len(rows) > 1
+                    else 0
+                )
+                table = Table(table_data, repeatRows=header_row + 1, hAlign="LEFT")
                 table_commands = [
-                    ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#315B68")),
-                    ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+                    ("BACKGROUND", (0, header_row), (-1, header_row), colors.HexColor("#315B68")),
+                    ("TEXTCOLOR", (0, header_row), (-1, header_row), colors.white),
                     ("GRID", (0, 0), (-1, -1), 0.35, colors.HexColor("#B7C5C9")),
                     ("VALIGN", (0, 0), (-1, -1), "TOP"),
                     ("LEFTPADDING", (0, 0), (-1, -1), 5),
