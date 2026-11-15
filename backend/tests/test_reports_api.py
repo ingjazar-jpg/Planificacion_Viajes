@@ -1,4 +1,5 @@
 """Contract, aggregation, filtering, comparison, and export tests for reports."""
+from decimal import Decimal
 from io import BytesIO
 
 from openpyxl import load_workbook
@@ -55,10 +56,13 @@ def _expense(client, period_id, amount, day, *, category="Viajes", activity_id=N
 
 
 def _budget(client, period_id, total="1000.00"):
-    return client.post(f"/api/v1/periods/{period_id}/budget", json={
+    allocation = format(min(Decimal(total) * Decimal("0.60"), Decimal("600.00")), ".2f")
+    response = client.post(f"/api/v1/periods/{period_id}/budget", json={
         "total_budget": total,
-        "category_budgets": [{"category": "Viajes", "amount": "600.00"}],
+        "category_budgets": [{"category": "Viajes", "amount": allocation}],
     })
+    assert response.status_code == 201, response.text
+    return response
 
 
 def test_general_report_applies_activity_and_expense_filters_independently_without_budget(tmp_path):
