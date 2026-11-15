@@ -18,6 +18,7 @@ describe("App FE-001 foundation", () => {
       period: { name: "Vacaciones", year: 2026 },
       financial: { total_budget: "0.00", total_expenses: "0.00", balance: "0.00", execution_percentage: "0.00" },
       activities: { total: 0, by_status: [], completion_percentage: "0.00", overdue_count: 0 },
+      alerts: { upcoming_pending: 0, overdue_pending: 0, high_priority_pending: 0 },
       charts: { activities_by_status: [], budget_vs_expenses_by_category: [], expenses_by_category: [], completion_percentage: "0.00" },
     });
     evaluateAlerts.mockResolvedValue({ data: {} });
