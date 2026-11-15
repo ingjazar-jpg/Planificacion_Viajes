@@ -401,7 +401,8 @@ class ReportService:
                 sheet.append(row)
             sheet.freeze_panes = "A2"
             sheet.auto_filter.ref = sheet.dimensions
-            for cell in sheet[1]:
+            header_row = 5 if sheet.title == "Gastos por categoría" else 1
+            for cell in sheet[header_row]:
                 cell.font = Font(bold=True, color="FFFFFF")
                 cell.fill = PatternFill("solid", fgColor="315B68")
             if sheet.title == "Actividades":
