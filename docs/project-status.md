@@ -8,9 +8,9 @@
 
 ## 1. Resumen ejecutivo
 
-La implementación del backend está en curso. Se completaron y validaron los bloques BE-001 a BE-007. La validación local más reciente de la suite completa reportada por la usuaria fue **169 passed**.
+La implementación del backend está en curso. Se completaron y validaron los bloques BE-001 a BE-008. La validación local más reciente de la suite completa reportada por la usuaria fue **178 passed, 0 failed**.
 
-El resultado de 169 pruebas corresponde a la ejecución completa más reciente; los resultados históricos por bloque que se muestran abajo son hitos acumulativos, no cantidades que deban sumarse.
+El resultado de 178 pruebas corresponde a la ejecución completa más reciente; los resultados históricos por bloque que se muestran abajo son hitos acumulativos, no cantidades que deban sumarse.
 
 ## 2. Estado por bloque de implementación
 
@@ -23,9 +23,9 @@ El resultado de 169 pruebas corresponde a la ejecución completa más reciente; 
 | BE-005 | API de períodos y actividades | Validado | 141 passed |
 | BE-006 | API y ciclo de vida de alertas | Validado | 153 passed |
 | BE-007 | API de presupuestos y gastos | Validado | 169 passed (suite completa) |
-| BE-008 | API de calendario | Implementación publicada; pendiente de validación local | 9 pruebas nuevas definidas |
+| BE-008 | API de calendario | Validado | 178 passed (suite completa; 9 pruebas nuevas) |
 
-**Nota:** las cifras de cada fila son resultados acumulativos reportados después de cada bloque. El último resultado vigente es 169 pruebas aprobadas.
+**Nota:** las cifras de cada fila son resultados acumulativos reportados después de cada bloque. El último resultado vigente es 178 pruebas aprobadas, 0 fallidas.
 
 ## 3. Capacidades backend ya implementadas
 
@@ -69,6 +69,9 @@ El resultado de 169 pruebas corresponde a la ejecución completa más reciente; 
 - Actividades canceladas incluidas cuando no se filtra por estado.
 - Indicador is_overdue calculado por backend en America/Bogota, sin persistirlo.
 - Sin paginación, conforme a API-001.
+
+**Validación:** la usuaria confirmó la ejecución local de `python -m pytest -v` con **178 passed, 0 failed**, incluyendo las 9 pruebas nuevas de `backend/tests/test_calendar_api.py`.
+
 ## 4. BE-007 — API de presupuestos y gastos
 
 **Estado:** implementación publicada en GitHub y validada localmente: **169 passed, 0 failed**.  
@@ -104,11 +107,9 @@ La usuaria sincronizó los cambios desde GitHub y reportó la ejecución complet
 
 ## 5. Trabajo pendiente del backend
 
-Después de BE-007, y conforme a los contratos existentes, quedan por implementar y validar:
+Después de BE-008, y conforme a los contratos existentes, quedan por implementar y validar:
 
 - API de Dashboard e indicadores y agregaciones definidos en SPEC-005.
-- API de informes, filtros, agrupaciones, comparación histórica y exportaciones PDF/XLSX.
-- API del Dashboard e indicadores y agregaciones definidos en SPEC-005.
 - API de informes, filtros, agrupaciones, comparación histórica y exportaciones PDF/XLSX.
 - Cualquier endpoint transversal que la revisión de implementación identifique como faltante, sin alterar contratos aprobados.
 
@@ -128,7 +129,7 @@ El shell y la navegación inicial del frontend ya habían sido validados localme
 
 ## 7. Calidad y validación
 
-- Última suite backend completa reportada: **169 passed, 0 failed**.
+- Última suite backend completa reportada: **178 passed, 0 failed**.
 - Los resultados anteriores por bloque son históricos y acumulativos.
 - No se declara cobertura mínima del 80 % hasta disponer de un informe de cobertura verificable.
 - La advertencia de Starlette relacionada con `httpx` observada en la última ejecución no produjo fallos en las pruebas; no se modifica la dependencia sin necesidad y revisión.
@@ -136,7 +137,7 @@ El shell y la navegación inicial del frontend ya habían sido validados localme
 ## 8. Entorno y tareas técnicas pendientes
 
 - La línea base Sprint 0 aprobada fija Python 3.14.10. La usuaria reportó un entorno local con Python 3.15.2; la validación reproducible en Python 3.14.10 sigue pendiente.
-- La validación del backend con 169 pruebas acredita el entorno local utilizado, pero no reemplaza la comprobación en la versión fijada.
+- La validación del backend con 178 pruebas acredita el entorno local utilizado, pero no reemplaza la comprobación en la versión fijada.
 - `backend/pylock.toml` y `frontend/package-lock.json` se identificaron como archivos locales no versionados en el último estado conocido. Deben preservarse y revisarse antes de decidir su incorporación.
 - No eliminar, sobrescribir ni limpiar archivos locales no rastreados durante sincronizaciones.
 
@@ -154,9 +155,9 @@ Las especificaciones aprobadas siguen siendo la fuente de verdad funcional y té
 
 ## 10. Próximos pasos inmediatos
 
-1. Sincronizar y validar localmente BE-008 con la suite completa.
-2. Corregir cualquier fallo primero en GitHub, volver a sincronizar y repetir las pruebas.
-3. Tras cerrar BE-008, refinar Dashboard e informes en bloques independientes, conforme a SPEC-005 y API-001.
+1. Iniciar Refinement de la API de Dashboard, identificando indicadores, agregaciones, filtros, dependencias y criterios de aceptación en SPEC-005 y API-001.
+2. Mantener los informes como bloque independiente, con filtros, agrupaciones, comparación histórica y exportaciones PDF/XLSX.
+3. Continuar el flujo GitHub → sincronización local → suite completa, protegiendo los archivos locales no rastreados.
 
 ---
 
