@@ -41,7 +41,9 @@ function DashboardPage() {
   useEffect(() => {
     if (mountedOnce.current) refreshAlerts();
     mountedOnce.current = true;
-  }, [refreshAlerts]);
+    // Solo al montar la página (regreso desde otra sección), no por cada cambio de período.
+    // El proveedor global ya gestiona los cambios de período.
+  }, []);
 
   if (isLoading) return <LoadingState message="Cargando el resumen del período…" />;
   if (error) return <ErrorState message={error.message} onRetry={loadDashboard} />;
@@ -53,8 +55,8 @@ function DashboardPage() {
   return (
     <div className="dashboard-page">
       <header className="dashboard-heading">
-        <div><p className="eyebrow">RESUMEN DEL PERÍODO</p><h1>{dashboard.period?.name || selectedPeriod?.name || "Dashboard"}</h1>
-          <p>Indicadores y seguimiento de tus vacaciones decembrinas.</p></div>
+        <div><p className="eyebrow">RESUMEN DEL PERÍODO</p><h1>Dashboard</h1>
+          <p>{dashboard.period?.name || selectedPeriod?.name || "Período seleccionado"} · Indicadores y seguimiento de tus vacaciones decembrinas.</p></div>
         <span className="period-tag">{dashboard.period?.year || selectedPeriod?.year}</span>
       </header>
       <section className="metric-section" aria-labelledby="financial-title">
