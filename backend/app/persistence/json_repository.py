@@ -13,7 +13,12 @@ from zoneinfo import ZoneInfo
 
 from pydantic import ValidationError
 
-from app.persistence.backup_manager import BackupManager, BackupRecord
+from app.persistence.backup_manager import (
+    BackupManager,
+    BackupNotFoundError,
+    BackupNotRestorableError,
+    BackupRecord,
+)
 from app.persistence.document import DataDocument
 
 
@@ -36,6 +41,14 @@ class RepositoryWriteError(PersistenceError):
 
 class RepositoryConfigurationError(PersistenceError):
     """Raised when a required persistence dependency is not configured."""
+
+
+class RestoreConfirmationRequiredError(PersistenceError):
+    """Raised when a restore operation lacks explicit user confirmation."""
+
+
+class RepositoryRestoreError(PersistenceError):
+    """Raised when a validated backup cannot safely replace the main document."""
 
 
 def _atomic_replace(source: Path, target: Path) -> None:
@@ -159,6 +172,77 @@ class JsonRepository:
                         temporary_path.unlink(missing_ok=True)
                     except OSError:
                         # A leftover temp file is safer than masking the original failure.
+                        pass
+
+    def restore_backup(
+        self, backup_id: str, *, confirmed: bool
+    ) -> BackupRecord:
+        """Restore a validated weekly backup after explicit confirmation."""
+        if confirmed is not True:
+            raise RestoreConfirmationRequiredError(
+                "Se requiere confirmación explícita para restaurar la copia."
+            )
+
+        with self._lock:
+            try:
+                record, payload = self.backup_manager.read_weekly_backup(backup_id)
+            except (BackupNotFoundError, BackupNotRestorableError):
+                raise
+
+            self.file_path.parent.mkdir(parents=True, exist_ok=True)
+            if self.file_path.exists():
+                try:
+                    self.load()
+                except DataCorruptionError:
+                    # Keep the damaged source byte-for-byte for later diagnosis.
+                    try:
+                        damaged_payload = self.file_path.read_bytes()
+                        self.backup_manager.preserve_corrupt_data(damaged_payload)
+                    except OSError as exc:
+                        raise RepositoryRestoreError(
+                            "No fue posible preservar el archivo principal dañado."
+                        ) from exc
+                else:
+                    try:
+                        self.backup_manager.create_backup(
+                            self.file_path, backup_type="pre_write"
+                        )
+                    except Exception as exc:
+                        raise RepositoryRestoreError(
+                            "No fue posible crear el respaldo previo; no se inició la restauración."
+                        ) from exc
+
+            temporary_path: Path | None = None
+            try:
+                with tempfile.NamedTemporaryFile(
+                    mode="wb",
+                    dir=self.file_path.parent,
+                    prefix=f".{self.file_path.name}.",
+                    suffix=".restore.tmp",
+                    delete=False,
+                ) as temporary:
+                    temporary_path = Path(temporary.name)
+                    temporary.write(payload)
+                    temporary.flush()
+                    os.fsync(temporary.fileno())
+
+                # Validate the exact backup bytes staged for atomic replacement.
+                with temporary_path.open("rb") as candidate:
+                    DataDocument.model_validate_json(candidate.read())
+
+                _atomic_replace(temporary_path, self.file_path)
+                temporary_path = None
+                self._sync_parent_directory()
+                return record
+            except (OSError, UnicodeDecodeError, ValidationError, ValueError) as exc:
+                raise RepositoryRestoreError(
+                    "No se pudo completar la restauración; se conservaron los datos anteriores."
+                ) from exc
+            finally:
+                if temporary_path is not None:
+                    try:
+                        temporary_path.unlink(missing_ok=True)
+                    except OSError:
                         pass
 
     def _sync_parent_directory(self) -> None:
