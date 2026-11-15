@@ -263,7 +263,9 @@ class BackupManager:
             if record.backup_id in identifiers:
                 raise BackupError("El manifiesto contiene backup_id duplicados.")
             identifiers.add(record.backup_id)
-            self._path_for_record(record)
+            backup_path = self._path_for_record(record)
+            if not backup_path.is_file():
+                raise BackupError("El manifiesto referencia un archivo de respaldo inexistente.")
 
     def _path_for_record(self, record: BackupRecord) -> Path:
         reference = Path(record.file_reference)
