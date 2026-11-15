@@ -63,22 +63,40 @@ def create_app(*, repository: JsonRepository | None = None) -> FastAPI:
     ) -> JSONResponse:
         """Translate FastAPI/Pydantic validation failures to API-001 format."""
         details = []
+        response_status = 422
+        response_code = "VALIDATION_ERROR"
         for error in exc.errors():
+            error_type = str(error.get("type", "validation_error"))
             location = error.get("loc", ())
             field = ".".join(str(part) for part in location if part != "body")
             detail = {
-                "code": str(error.get("type", "validation_error")),
+                "code": error_type,
                 "message": str(error.get("msg", "El valor enviado no es válido.")),
             }
             if field:
                 detail["field"] = field
+            if error_type == "category_budget_exceeds_total":
+                response_status = 409
+                response_code = "CATEGORY_BUDGET_EXCEEDS_TOTAL"
+                detail["code"] = response_code
+                detail["field"] = "category_budgets"
+            elif error_type == "immutable_field":
+                response_code = "IMMUTABLE_FIELD"
+                detail["code"] = response_code
+                detail["field"] = "period_id"
             details.append(detail)
         return JSONResponse(
-            status_code=422,
+            status_code=response_status,
             content={
                 "error": {
-                    "code": "VALIDATION_ERROR",
-                    "message": "La solicitud contiene datos inválidos.",
+                    "code": response_code,
+                    "message": (
+                        "La asignación presupuestaria supera el presupuesto general."
+                        if response_code == "CATEGORY_BUDGET_EXCEEDS_TOTAL"
+                        else "El campo period_id es inmutable."
+                        if response_code == "IMMUTABLE_FIELD"
+                        else "La solicitud contiene datos inválidos."
+                    ),
                     "details": details,
                 }
             },
