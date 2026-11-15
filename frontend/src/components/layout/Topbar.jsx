@@ -1,4 +1,19 @@
+import { usePeriod } from "../../context/PeriodContext.jsx";
+
 function Topbar({ onMenuClick }) {
+  const {
+    periods,
+    selectedPeriodId,
+    isLoading,
+    error,
+    selectPeriod,
+  } = usePeriod();
+
+  let placeholder = "Selecciona un período";
+  if (isLoading) placeholder = "Cargando períodos…";
+  else if (error) placeholder = "No disponible";
+  else if (periods.length === 0) placeholder = "No hay períodos";
+
   return (
     <header className="topbar">
       <button
@@ -12,8 +27,19 @@ function Topbar({ onMenuClick }) {
 
       <div className="topbar-context">
         <label htmlFor="period-selector">Período</label>
-        <select id="period-selector" disabled defaultValue="">
-          <option value="">Disponible al conectar la API</option>
+        <select
+          id="period-selector"
+          aria-label="Período activo"
+          value={selectedPeriodId || ""}
+          disabled={isLoading || Boolean(error) || periods.length === 0}
+          onChange={(event) => selectPeriod(event.target.value)}
+        >
+          <option value="">{placeholder}</option>
+          {periods.map((period) => (
+            <option key={period.id} value={period.id}>
+              {period.name} ({period.year})
+            </option>
+          ))}
         </select>
       </div>
 
@@ -22,8 +48,8 @@ function Topbar({ onMenuClick }) {
           className="alerts-button"
           type="button"
           disabled
-          aria-label="Alertas disponibles al conectar la API"
-          title="Las alertas estarán disponibles al conectar la API"
+          aria-label="Alertas disponibles en el siguiente bloque"
+          title="Las alertas se habilitarán en FE-002"
         >
           <span aria-hidden="true">🔔</span>
           <span>Alertas</span>
