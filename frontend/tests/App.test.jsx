@@ -55,6 +55,7 @@ describe("App FE-001 foundation", () => {
     fireEvent.click(screen.getByRole("button", { name: /Abrir alertas/ }));
     expect(screen.getByRole("dialog", { name: "Alertas pendientes" })).toBeInTheDocument();
     expect(screen.getByText("No tienes alertas pendientes")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Cerrar alertas" }));
 
     fireEvent.click(screen.getByRole("button", { name: "Calendario" }));
     fireEvent.click(screen.getByRole("button", { name: "Dashboard" }));
