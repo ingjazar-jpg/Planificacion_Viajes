@@ -10,11 +10,11 @@ Aplicación web local para planificar períodos de vacaciones decembrinas, admin
 - Contratos REST API-001 v0.8: aprobados.
 - Interfaz UI-001 v0.1: aprobada.
 - Línea base técnica Sprint 0: aprobada el 14-11-2026.
-- Backend: BE-001 a BE-010 validados; BE-010 cerró con **195 passed, 0 failed** en la suite completa local.
+- Backend: BE-001 a BE-010 validados; regresión completa posterior al ajuste CORS: **197 passed, 0 failed**.
 - BE-007 — API de presupuestos y gastos: implementada y validada; las 16 pruebas nuevas del bloque pasan dentro de la suite completa.
 - BE-009 — API de Dashboard: validada localmente; incluye respuesta con importes cero cuando no existe presupuesto.
 - BE-010 — API de informes: validada localmente; tres informes, comparación histórica, filtros, agrupaciones y exportaciones PDF/XLSX; 10 pruebas nuevas incluidas en las 195 aprobadas.
-- Frontend: implementación de FE-001 publicada en curso; cliente HTTP, contexto global de período y selector conectados en código. Pruebas locales y build pendientes.
+- Frontend: FE-001 con pruebas automatizadas locales aprobadas (**12 passed, 0 failed**) y build de producción exitoso.
 - Validación reproducible del backend con Python 3.14.10 y revisión/incorporación de lockfiles: pendientes.
 
 Consulta el [estado detallado del proyecto](docs/project-status.md) para ver capacidades completadas, trabajo pendiente, criterios de cierre y flujo de validación.
@@ -87,7 +87,7 @@ Los documentos funcionales, de arquitectura, datos, API e interfaz aprobados se 
 - [Mapa de implementación frontend — seis bloques FE](docs/FE-ROADMAP.md)
 - [FE-001 — Especificación de fundación frontend](docs/FE-001.md)
 
-FE-001 está refinado y aprobado. Su implementación inicial ya está publicada en la rama de trabajo: cliente HTTP centralizado, contexto global del período, selector conectado a la API y estados comunes. Se añadió la política CORS limitada al origen local del frontend. La ejecución local de pruebas frontend/backend y el build siguen pendientes; FE-001 no se considera validado.
+FE-001 está refinado y aprobado. La implementación inicial está publicada en la rama de trabajo: cliente HTTP centralizado, contexto global del período, selector conectado a la API y estados comunes. La validación local reportada incluye 12 pruebas frontend aprobadas, build de producción exitoso y 197 pruebas backend aprobadas, incluida la política CORS limitada al origen local del frontend. La validación funcional integrada de los módulos posteriores permanece pendiente.
 
 ## Desarrollo local
 
