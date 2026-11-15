@@ -153,10 +153,13 @@ def _pagination(request: Request, exporting: bool):
 
 def _report_response(report_type: str, result: dict):
     if report_type == "general":
-        return GeneralReportResponse.model_validate(result)
-    if report_type == "activities":
-        return ActivityReportResponse.model_validate(result)
-    return BudgetReportResponse.model_validate(result)
+        response = GeneralReportResponse.model_validate(result)
+    elif report_type == "activities":
+        response = ActivityReportResponse.model_validate(result)
+    else:
+        response = BudgetReportResponse.model_validate(result)
+    # API-001 only includes pagination metadata when both parameters are sent.
+    return response.model_dump(mode="json", exclude_none=True)
 
 
 def _run_report(report_type: str, period_id: UUID, request: Request):
