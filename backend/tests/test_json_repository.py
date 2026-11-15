@@ -162,3 +162,42 @@ def test_save_rejects_non_document_input(tmp_path):
 
     with pytest.raises(TypeError, match="DataDocument"):
         repository.save({"schema_version": "1.0"})
+
+
+
+def test_save_keeps_pre_write_backup_when_atomic_replacement_fails(tmp_path, monkeypatch):
+    file_path = tmp_path / "datos_vacaciones.json"
+    original_document = DataDocument.empty(now=NOW)
+    original_text = json.dumps(original_document.model_dump(mode="json"))
+    file_path.write_text(original_text, encoding="utf-8")
+    repository = JsonRepository(file_path)
+
+    def fail_replace(_: Path, __: Path) -> None:
+        raise OSError("replace failed")
+
+    monkeypatch.setattr("app.persistence.json_repository.os.replace", fail_replace)
+
+    with pytest.raises(RepositoryWriteError):
+        repository.save(make_document())
+
+    catalog = repository.backup_manager.load_catalog()
+    assert len(catalog.backups) == 1
+    assert catalog.backups[0].type == "pre_write"
+    assert file_path.read_text(encoding="utf-8") == original_text
+
+
+def test_weekly_backup_check_delegates_to_backup_manager(tmp_path):
+    file_path = tmp_path / "datos_vacaciones.json"
+    file_path.write_text(
+        json.dumps(DataDocument.empty(now=NOW).model_dump(mode="json")),
+        encoding="utf-8",
+    )
+    repository = JsonRepository(file_path)
+
+    first = repository.create_weekly_backup_if_due(now=NOW)
+    second = repository.create_weekly_backup_if_due(
+        now=NOW.replace(day=21)
+    )
+
+    assert first is not None
+    assert second is None
