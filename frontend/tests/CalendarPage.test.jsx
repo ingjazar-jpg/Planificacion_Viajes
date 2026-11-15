@@ -117,7 +117,7 @@ describe("CalendarPage", () => {
     const moreButton = await screen.findByRole("button", { name: /Ver 1 actividades más/ });
     fireEvent.click(moreButton);
     const agenda = screen.getByRole("region", { name: /Actividades del lunes, 16 de noviembre/ });
-    expect(within(agenda).getAllByRole("button")).toHaveLength(4);
+    expect(within(agenda).getAllByRole("button", { name: /Actividad [1-4]/ })).toHaveLength(4);
   });
 
   it("ignores a late response from the previous month", async () => {
