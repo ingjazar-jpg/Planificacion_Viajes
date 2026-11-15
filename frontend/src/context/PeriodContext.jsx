@@ -16,7 +16,7 @@ export function PeriodProvider({ children }) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const refreshPeriods = useCallback(async () => {
+  const refreshPeriods = useCallback(async (preferredPeriodId = null) => {
     setIsLoading(true);
     setError(null);
 
@@ -24,6 +24,9 @@ export function PeriodProvider({ children }) {
       const nextPeriods = await getPeriods();
       setPeriods(nextPeriods);
       setSelectedPeriodId((currentId) => {
+        if (preferredPeriodId && nextPeriods.some((period) => period.id === preferredPeriodId)) {
+          return preferredPeriodId;
+        }
         if (currentId && nextPeriods.some((period) => period.id === currentId)) {
           return currentId;
         }
