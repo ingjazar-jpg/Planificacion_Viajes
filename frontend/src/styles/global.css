@@ -508,7 +508,7 @@ select:disabled {
 .bar-series { display: grid; gap: .28rem; }
 .bar-track { display: flex; min-width: 0; align-items: center; gap: .4rem; }
 .bar-track span { min-width: 92px; color: var(--color-text-secondary); font-size: .68rem; white-space: nowrap; }
-.bar-fill { height: 10px; min-width: 2px; border-radius: 99px; }
+.bar-fill { height: 10px; min-width: 0; border-radius: 99px; }
 .bar-series-0 { background: #477da8; }
 .bar-series-1 { background: #2e8b68; }
 .bar-legend { display: flex; flex-wrap: wrap; gap: 1rem; padding-top: .35rem; font-size: .75rem; }
