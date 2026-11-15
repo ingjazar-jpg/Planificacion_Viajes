@@ -163,13 +163,19 @@ Decisiones aprobadas para FE-001:
 - Estado global del período: React Context y hooks.
 - Persistencia de selección: no persistir en almacenamiento del navegador; seleccionar al iniciar el período más reciente devuelto por backend.
 
-La base existente de shell y navegación se conservará. FE-001 ampliará esa base con el selector global conectado a `GET /api/v1/periods`, cliente HTTP común, normalización de errores y contexto global. La implementación no ha comenzado; pruebas funcionales e integración FE-001 siguen pendientes.
+La implementación de FE-001 está en curso en `feat/backend-domain-foundation`. Ya están publicados el cliente HTTP centralizado con `fetch`, configuración `VITE_API_URL`, servicio de períodos, React Context, selector global, estados compartidos de carga/error/vacío y pruebas frontend iniciales. Se conserva el shell existente y no se han añadido dependencias.
+
+Durante la integración se detectó que `backend/app/main.py` no aplicaba CORS, aunque la línea base Sprint 0 requiere permitir únicamente el origen local `http://localhost:5173`. Se incorporó `CORSMiddleware` con ese origen exacto y una prueba específica para aceptar el frontend local y rechazar otros orígenes. Este cambio requiere repetir la suite backend completa junto con las pruebas nuevas.
+
+La implementación está publicada, pero todavía no está validada localmente. La suite frontend, el build de producción y la regresión backend deben ejecutarse después de sincronizar los cambios. FE-001 no se marcará validado hasta recibir la evidencia local de la usuaria.
 
 Los bloques FE-002 a FE-006 permanecen pendientes de refinement. El mapa no modifica ni reabre los contratos aprobados de UI-001, API-001 ni las SPEC.
 
 ## 7. Calidad y validación
 
-- Última suite backend completa confirmada por la usuaria: **195 passed, 0 failed**, incluyendo las 10 pruebas nuevas de BE-010.
+- Última suite backend completa confirmada por la usuaria antes del ajuste CORS: **195 passed, 0 failed**, incluyendo las 10 pruebas nuevas de BE-010.
+- El ajuste CORS y su prueba específica están publicados, pero todavía no cuentan con evidencia de ejecución local; la cifra de 195 pruebas no representa la suite posterior a este cambio.
+- La nueva suite frontend FE-001 aún no ha sido ejecutada localmente; pruebas y build pendientes.
 - Los resultados anteriores por bloque son históricos y acumulativos.
 - No se declara cobertura mínima del 80 % hasta disponer de un informe de cobertura verificable.
 - La advertencia de Starlette relacionada con `httpx` observada en la última ejecución no produjo fallos en las pruebas; no se modifica la dependencia sin necesidad y revisión.
@@ -197,8 +203,10 @@ Las especificaciones aprobadas siguen siendo la fuente de verdad funcional y té
 
 1. Revisar `git status --short` y proteger los archivos locales no rastreados antes de sincronizar.
 2. Sincronizar `feat/backend-domain-foundation` mediante `git pull --ff-only`.
-3. BE-010 queda cerrada con 195 pruebas aprobadas y cero fallos.
-4. Continuar con el refinement y la implementación del siguiente bloque del backend/frontend según las especificaciones aprobadas.
+3. Ejecutar la suite backend completa, incluyendo la nueva prueba CORS.
+4. Ejecutar la suite frontend y `npm run build`.
+5. Corregir cualquier fallo mediante cambios en GitHub y repetir la validación local.
+6. Confirmar FE-001 únicamente después de recibir las salidas satisfactorias de la usuaria.
 
 ---
 
