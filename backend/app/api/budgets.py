@@ -3,7 +3,6 @@
 from uuid import UUID
 
 from fastapi import APIRouter, Request
-from fastapi.exceptions import RequestValidationError
 
 from app.schemas.budgets import BudgetCreateResponse, BudgetResponse
 from app.schemas.budgets import BudgetInput
