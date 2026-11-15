@@ -135,9 +135,9 @@ function PeriodManagementDialog({ open, onClose }) {
       const preferredId = editingPeriod ? null : savedPeriod?.id ?? null;
       setPreferredRefreshId(preferredId);
       const refreshedPeriods = await refreshPeriods(preferredId);
-      if (!refreshedPeriods) {
+      if (!refreshedPeriods || (preferredId && !refreshedPeriods.some((period) => period.id === preferredId))) {
         setRefreshPending(true);
-        setError("El período se guardó, pero no fue posible actualizar el listado. Reintenta la consulta.");
+        setError("El período se guardó, pero todavía no aparece en el listado actualizado. Reintenta la consulta.");
         return;
       }
       setRefreshPending(false);
@@ -154,7 +154,7 @@ function PeriodManagementDialog({ open, onClose }) {
     setError("");
     try {
       const refreshedPeriods = await refreshPeriods(preferredRefreshId);
-      if (refreshedPeriods) {
+      if (refreshedPeriods && (!preferredRefreshId || refreshedPeriods.some((period) => period.id === preferredRefreshId))) {
         setRefreshPending(false);
         onClose();
       } else {
