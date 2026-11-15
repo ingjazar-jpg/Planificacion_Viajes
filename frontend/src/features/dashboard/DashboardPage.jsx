@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { usePeriod } from "../../context/PeriodContext.jsx";
 import { getDashboard } from "../../services/api/dashboardService.js";
 import { ErrorState, LoadingState } from "../../components/common/AsyncState.jsx";
@@ -19,18 +19,23 @@ function DashboardPage() {
   const [dashboard, setDashboard] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const requestSequence = useRef(0);
 
   const loadDashboard = useCallback(async () => {
-    if (!selectedPeriodId) { setDashboard(null); return; }
+    const requestId = ++requestSequence.current;
+    if (!selectedPeriodId) { setDashboard(null); setIsLoading(false); return; }
     setIsLoading(true);
     setError(null);
     try {
-      setDashboard(await getDashboard(selectedPeriodId));
+      const data = await getDashboard(selectedPeriodId);
+      if (requestId === requestSequence.current) setDashboard(data);
     } catch (requestError) {
-      setDashboard(null);
-      setError(requestError);
+      if (requestId === requestSequence.current) {
+        setDashboard(null);
+        setError(requestError);
+      }
     } finally {
-      setIsLoading(false);
+      if (requestId === requestSequence.current) setIsLoading(false);
     }
   }, [selectedPeriodId]);
 
