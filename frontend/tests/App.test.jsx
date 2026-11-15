@@ -43,6 +43,24 @@ describe("App FE-001 foundation", () => {
     expect(await screen.findByRole("heading", { name: "Dashboard" })).toBeInTheDocument();
   });
 
+  it("evaluates the selected period once and opens the empty alerts drawer", async () => {
+    getPeriods.mockResolvedValue([{ id: "period-alerts", name: "Vacaciones", year: 2026 }]);
+    render(<App />);
+    await screen.findByRole("heading", { name: "Dashboard" });
+    await waitFor(() => {
+      expect(evaluateAlerts).toHaveBeenCalledTimes(1);
+      expect(getPendingActiveAlerts).toHaveBeenCalled();
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: /Abrir alertas/ }));
+    expect(screen.getByRole("dialog", { name: "Alertas pendientes" })).toBeInTheDocument();
+    expect(screen.getByText("No tienes alertas pendientes")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Calendario" }));
+    fireEvent.click(screen.getByRole("button", { name: "Dashboard" }));
+    await waitFor(() => expect(evaluateAlerts).toHaveBeenCalledTimes(1));
+  });
+
   it("navigates between sections and marks the active section", async () => {
     getPeriods.mockResolvedValue([{ id: "period-1", name: "Vacaciones", year: 2026 }]);
     render(<App />);
