@@ -10,8 +10,8 @@ describe("Dashboard SVG charts", () => {
     expect(screen.getByText("No hay actividades registradas en este período.")).toBeInTheDocument();
   });
 
-  it("renders the status legend and counts from the API response", () => {
-    render(<ActivityStatusChart data={[
+  it("renders the status legend and backend total from the API response", () => {
+    render(<ActivityStatusChart total={5} data={[
       { status: "Pendiente", count: 2 }, { status: "Completada", count: 3 },
     ]} />);
     expect(screen.getByText("Pendiente")).toBeInTheDocument();
