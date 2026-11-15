@@ -36,7 +36,7 @@ function AppLayout() {
     if (error) {
       return <ErrorState message={error.message} onRetry={refreshPeriods} />;
     }
-    if (periods.length === 0) {
+    if (periods.length === 0 && activeSection !== "activities") {
       return (
         <EmptyState
           title="Aún no hay períodos registrados"
