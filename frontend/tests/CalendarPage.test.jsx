@@ -12,7 +12,7 @@ const period = {
   name: "Vacaciones 2026",
   year: 2026,
   start_date: "2026-01-01",
-  end_date: "2026-12-31",
+  end_date: "2026-11-30",
 };
 
 const activities = [{
@@ -122,14 +122,14 @@ describe("CalendarPage", () => {
 
   it("ignores a late response from the previous month", async () => {
     let resolvePrevious;
-    const nextActivity = { ...activities[0], id: "activity-next", name: "Plan de viaje", start_date: "2026-12-01", end_date: "2026-12-02" };
+    const nextActivity = { ...activities[0], id: "activity-next", name: "Plan de viaje", start_date: "2026-10-01", end_date: "2026-10-02" };
     getCalendar
       .mockImplementationOnce(() => new Promise((resolve) => { resolvePrevious = resolve; }))
       .mockResolvedValueOnce([nextActivity]);
     render(<CalendarPage />);
 
     await waitFor(() => expect(getCalendar).toHaveBeenCalledTimes(1));
-    fireEvent.click(screen.getByRole("button", { name: "Mes siguiente" }));
+    fireEvent.click(screen.getByRole("button", { name: "Mes anterior" }));
     expect((await screen.findAllByRole("button", { name: /Plan de viaje/ })).length).toBeGreaterThan(0);
 
     resolvePrevious(activities);
