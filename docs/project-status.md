@@ -163,11 +163,11 @@ Decisiones aprobadas para FE-001:
 - Estado global del período: React Context y hooks.
 - Persistencia de selección: no persistir en almacenamiento del navegador; seleccionar al iniciar el período más reciente devuelto por backend.
 
-La implementación de FE-001 está publicada en `feat/backend-domain-foundation`. Incluye cliente HTTP centralizado con `fetch`, configuración `VITE_API_URL`, servicio de períodos, React Context, selector global y estados compartidos de carga/error/vacío. Se conserva el shell existente y no se han añadido dependencias. La usuaria confirmó localmente **12 pruebas frontend aprobadas, 0 fallidas**, y `npm run build` completado correctamente.
+La implementación de FE-001 está publicada en `feat/backend-domain-foundation`. Incluye cliente HTTP centralizado con `fetch`, configuración `VITE_API_URL`, servicio de períodos, React Context, selector global y estados compartidos de carga/error/vacío. Se conserva el shell existente y no se han añadido dependencias.
 
-Durante la integración se detectó que `backend/app/main.py` no aplicaba CORS, aunque la línea base Sprint 0 requiere permitir únicamente el origen local `http://localhost:5173`. Se incorporó `CORSMiddleware` con ese origen exacto y una prueba específica para aceptar el frontend local y rechazar otros orígenes. Este cambio requiere repetir la suite backend completa junto con las pruebas nuevas.
+**FE-001: VALIDADO Y CERRADO el 15-11-2026.** La usuaria confirmó localmente **12 pruebas frontend aprobadas, 0 fallidas**, `npm run build` exitoso y regresión backend completa con **197 passed, 0 failed**, incluidos los dos tests CORS. También confirmó la integración real con FastAPI y Vite simultáneos, carga correcta de la aplicación, consulta real de `GET /api/v1/periods`, selector de período conectado y consola sin errores visibles. Las comprobaciones manuales responsive a 360 × 800 px, navegación móvil, foco visible, operación por teclado y activación mediante `Enter` o `Espacio` fueron satisfactorias.
 
-La usuaria sincronizó los cambios y confirmó la regresión backend completa con **197 passed, 0 failed**, incluyendo los dos tests CORS. La ejecución reportó una advertencia deprecatoria de Starlette relacionada con `httpx`; no produjo fallos. Las pruebas frontend (12/12) y el build también fueron satisfactorios. La validación automatizada local de FE-001 queda aprobada; antes de cerrar el bloque deben verificarse los criterios de aceptación que requieran comprobación manual o integración real.
+La advertencia deprecatoria de Starlette relacionada con `httpx` no produjo fallos y queda registrada como observación técnica no bloqueante. La validación reproducible con Python 3.14.10 permanece pendiente como tarea transversal de Sprint 0; no bloquea el cierre funcional de FE-001.
 
 Los bloques FE-002 a FE-006 permanecen pendientes de refinement. El mapa no modifica ni reabre los contratos aprobados de UI-001, API-001 ni las SPEC.
 
