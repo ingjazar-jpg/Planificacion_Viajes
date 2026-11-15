@@ -110,6 +110,18 @@ def test_restore_backup_returns_not_found_for_unknown_identifier(tmp_path):
     assert response.json()["error"]["code"] == "BACKUP_NOT_FOUND"
 
 
+def test_restore_backup_rejects_missing_confirmation_with_specific_error(tmp_path):
+    client = TestClient(create_app(repository=_repository(tmp_path)))
+
+    response = client.post(
+        "/api/v1/backups/restore",
+        json={"backup_id": str(uuid4())},
+    )
+
+    assert response.status_code == 422
+    assert response.json()["error"]["code"] == "RESTORE_CONFIRMATION_REQUIRED"
+
+
 def test_restore_backup_rejects_malformed_payload_with_uniform_error(tmp_path):
     client = TestClient(create_app(repository=_repository(tmp_path)))
 
