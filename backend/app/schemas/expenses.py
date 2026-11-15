@@ -7,6 +7,7 @@ from typing import Any
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic_core import PydanticCustomError
 
 from app.domain.enums import ActivityCategory, ExpenseModificationType
 
@@ -144,7 +145,9 @@ class ExpensePatch(BaseModel):
             if getattr(self, field_name) is None:
                 raise ValueError(f"{field_name} no admite null.")
         if "period_id" in self.model_fields_set:
-            raise ValueError("period_id es inmutable y no puede enviarse en PATCH.")
+            raise PydanticCustomError(
+                "immutable_field", "period_id es inmutable y no puede enviarse en PATCH."
+            )
         return self
 
 
