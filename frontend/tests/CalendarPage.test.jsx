@@ -103,6 +103,23 @@ describe("CalendarPage", () => {
     expect(screen.getByRole("region", { name: "Detalle de actividad" })).toHaveTextContent("19:00–22:00");
   });
 
+  it("limits dense day cells and keeps every event available in the day agenda", async () => {
+    const denseActivities = Array.from({ length: 4 }, (_, index) => ({
+      ...activities[0],
+      id: `dense-${index + 1}`,
+      name: `Actividad ${index + 1}`,
+      start_date: "2026-11-16",
+      end_date: "2026-11-16",
+    }));
+    getCalendar.mockResolvedValue(denseActivities);
+    render(<CalendarPage />);
+
+    const moreButton = await screen.findByRole("button", { name: /Ver 1 actividades más/ });
+    fireEvent.click(moreButton);
+    const agenda = screen.getByRole("region", { name: /Actividades del lunes, 16 de noviembre/ });
+    expect(within(agenda).getAllByRole("button")).toHaveLength(4);
+  });
+
   it("ignores a late response from the previous month", async () => {
     let resolvePrevious;
     const nextActivity = { ...activities[0], id: "activity-next", name: "Plan de viaje", start_date: "2026-12-01", end_date: "2026-12-02" };
