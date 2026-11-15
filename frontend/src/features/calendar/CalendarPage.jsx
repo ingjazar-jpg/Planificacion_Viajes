@@ -202,8 +202,8 @@ function CalendarPage() {
     setStatus("");
   };
 
-  const selectActivity = (activity) => {
-    setSelectedDate(activity.start_date);
+  const selectActivity = (activity, dayKey) => {
+    setSelectedDate(dayKey);
     setSelectedActivity(activity);
   };
 
@@ -284,6 +284,8 @@ function CalendarPage() {
                     const dayActivities = activities.filter((activity) => (
                       activity.start_date <= dayKey && activity.end_date >= dayKey
                     ));
+                    const visibleDayActivities = dayActivities.slice(0, 3);
+                    const remainingActivities = dayActivities.length - visibleDayActivities.length;
                     const isCurrentMonth = day.getMonth() === visibleDate.getMonth();
                     const isToday = dayKey === toDateKey(new Date());
                     const isSelected = selectedDate === dayKey;
@@ -305,14 +307,24 @@ function CalendarPage() {
                           {day.getDate()}
                         </button>
                         <div className="calendar-day-events">
-                          {dayActivities.map((activity) => (
+                          {visibleDayActivities.map((activity) => (
                             <CalendarActivity
                               key={activity.id}
                               activity={activity}
                               dayKey={dayKey}
-                              onSelect={selectActivity}
+                              onSelect={(item) => selectActivity(item, dayKey)}
                             />
                           ))}
+                          {remainingActivities > 0 && (
+                            <button
+                              className="calendar-more-events"
+                              type="button"
+                              aria-label={`Ver ${remainingActivities} actividades más, ${formatLongDate(day)}`}
+                              onClick={() => { setSelectedDate(dayKey); setSelectedActivity(null); }}
+                            >
+                              +{remainingActivities} más
+                            </button>
+                          )}
                         </div>
                       </div>
                     );
