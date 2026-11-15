@@ -94,6 +94,7 @@ describe("CalendarPage", () => {
     render(<CalendarPage />);
     await screen.findByRole("heading", { name: "Noviembre de 2026" });
 
+    await screen.findAllByRole("button", { name: /Cena familiar/ });
     fireEvent.click(screen.getByRole("button", { name: /16 de noviembre de 2026/ }));
     expect(screen.getByRole("region", { name: /Actividades del lunes, 16 de noviembre/ })).toBeInTheDocument();
 
@@ -149,6 +150,6 @@ describe("CalendarPage", () => {
 
     expect(await screen.findByRole("alert")).toHaveTextContent("API no disponible");
     fireEvent.click(screen.getByRole("button", { name: "Reintentar" }));
-    expect(await screen.findByRole("heading", { name: "Noviembre de 2026" })).toBeInTheDocument();
+    expect((await screen.findAllByRole("button", { name: /Cena familiar/ })).length).toBeGreaterThan(0);
   });
 });
