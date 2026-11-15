@@ -46,6 +46,12 @@ function ActivitiesPage({ activityId = null }) {
       setError(null);
       return;
     }
+    if (filters.start_date && filters.end_date && filters.start_date > filters.end_date) {
+      setActivities([]);
+      setIsLoading(false);
+      setError(null);
+      return;
+    }
     setIsLoading(true);
     setError(null);
     setActivities([]);
@@ -171,14 +177,14 @@ function ActivitiesPage({ activityId = null }) {
         ) : (
           <>
             <div className="activities-table-wrap">
-              <table className="activities-table">
+              <table className="activities-table" aria-label="Listado de actividades">
                 <thead><tr>
                   <th scope="col">Actividad</th><th scope="col">Fechas</th><th scope="col">Horario</th>
                   <th scope="col">Categoría</th><th scope="col">Prioridad</th><th scope="col">Estado</th>
                 </tr></thead>
                 <tbody>{activities.map((activity) => (
                   <tr key={activity.id} data-activity-id={activity.id}>
-                    <td><ActivityFields activity={activity} /></td>
+                    <td><span className="activity-name">{activity.name}</span></td>
                     <td>{activity.start_date} – {activity.end_date}</td>
                     <td>{activity.start_time}–{activity.end_time}</td>
                     <td>{activity.category}</td><td>{activity.priority}</td>
