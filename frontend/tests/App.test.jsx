@@ -4,9 +4,11 @@ import App from "../src/App.jsx";
 import { getPeriods } from "../src/services/api/periodsService.js";
 import { getDashboard } from "../src/services/api/dashboardService.js";
 import { evaluateAlerts, getPendingActiveAlerts } from "../src/services/api/alertsService.js";
+import { getCalendar } from "../src/services/api/calendarService.js";
 
 vi.mock("../src/services/api/periodsService.js", () => ({ getPeriods: vi.fn(), createPeriod: vi.fn(), updatePeriod: vi.fn() }));
 vi.mock("../src/services/api/dashboardService.js", () => ({ getDashboard: vi.fn() }));
+vi.mock("../src/services/api/calendarService.js", () => ({ getCalendar: vi.fn() }));
 vi.mock("../src/services/api/alertsService.js", () => ({
   evaluateAlerts: vi.fn(), getPendingActiveAlerts: vi.fn(), reviewAlert: vi.fn(),
 }));
@@ -14,6 +16,7 @@ vi.mock("../src/services/api/alertsService.js", () => ({
 describe("App FE-001 foundation", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    getCalendar.mockResolvedValue([]);
     getDashboard.mockResolvedValue({
       period: { name: "Vacaciones", year: 2026 },
       financial: { total_budget: "0.00", total_expenses: "0.00", balance: "0.00", execution_percentage: "0.00" },
