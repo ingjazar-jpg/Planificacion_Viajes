@@ -143,6 +143,8 @@ class ExpensePatch(BaseModel):
         for field_name in non_nullable & self.model_fields_set:
             if getattr(self, field_name) is None:
                 raise ValueError(f"{field_name} no admite null.")
+        if "period_id" in self.model_fields_set:
+            raise ValueError("period_id es inmutable y no puede enviarse en PATCH.")
         return self
 
 
