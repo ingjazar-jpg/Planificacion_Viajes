@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useAlerts } from "../features/dashboard/AlertsContext.jsx";
+import { AlertsDrawer } from "../features/dashboard/AlertsDrawer.jsx";
 import ActivitiesPage from "../features/activities/ActivitiesPage.jsx";
 import BudgetExpensesPage from "../features/budget-expenses/BudgetExpensesPage.jsx";
 import CalendarPage from "../features/calendar/CalendarPage.jsx";
@@ -23,11 +25,15 @@ const pageComponents = {
 function AppLayout() {
   const [activeSection, setActiveSection] = useState("dashboard");
   const [isMobileNavigationOpen, setIsMobileNavigationOpen] = useState(false);
+  const [isAlertsOpen, setIsAlertsOpen] = useState(false);
+  const [activityDestinationId, setActivityDestinationId] = useState(null);
+  const { alerts, count, isLoading: alertsLoading, error: alertsError, notice, isReviewing, refreshAlerts, markReviewed } = useAlerts();
   const { periods, isLoading, error, refreshPeriods } = usePeriod();
   const CurrentPage = pageComponents[activeSection] ?? DashboardPage;
 
-  function handleNavigate(sectionId) {
+  function handleNavigate(sectionId, activityId = null) {
     setActiveSection(sectionId);
+    if (sectionId === "activities" && activityId) setActivityDestinationId(activityId);
     setIsMobileNavigationOpen(false);
   }
 
@@ -54,11 +60,16 @@ function AppLayout() {
       <Sidebar activeSection={activeSection} onNavigate={handleNavigate} />
 
       <div className="main-column">
-        <Topbar onMenuClick={() => setIsMobileNavigationOpen(true)} />
+        <Topbar onMenuClick={() => setIsMobileNavigationOpen(true)} alertCount={count} onAlertsClick={() => setIsAlertsOpen(true)} />
         <main className="main-content" id="main-content" tabIndex="-1">
-          {renderContent()}
+          {activeSection === "activities" ? <CurrentPage activityId={activityDestinationId} /> : renderContent()}
         </main>
       </div>
+
+      <AlertsDrawer open={isAlertsOpen} onClose={() => setIsAlertsOpen(false)} alerts={alerts}
+        isLoading={alertsLoading} error={alertsError} notice={notice} isReviewing={isReviewing}
+        onRetry={refreshAlerts} onReview={markReviewed}
+        onNavigate={(activityId) => { setIsAlertsOpen(false); handleNavigate("activities", activityId); }} />
 
       <MobileNavigation
         activeSection={activeSection}
