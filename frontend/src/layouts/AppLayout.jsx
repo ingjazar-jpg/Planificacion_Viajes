@@ -60,7 +60,9 @@ function AppLayout() {
         />
       );
     }
-    return <CurrentPage />;
+    return activeSection === "activities"
+      ? <CurrentPage activityId={activityDestinationId} />
+      : <CurrentPage />;
   }
 
   return (
@@ -70,7 +72,7 @@ function AppLayout() {
       <div className="main-column">
         <Topbar onMenuClick={() => setIsMobileNavigationOpen(true)} alertCount={count} onAlertsClick={() => setIsAlertsOpen(true)} />
         <main className="main-content" id="main-content" tabIndex="-1">
-          {activeSection === "activities" ? <CurrentPage activityId={activityDestinationId} /> : activeSection === "dashboard" ? <CurrentPage key={dashboardRevision} /> : renderContent()}
+          {activeSection === "dashboard" ? <CurrentPage key={dashboardRevision} /> : renderContent()}
         </main>
       </div>
 
