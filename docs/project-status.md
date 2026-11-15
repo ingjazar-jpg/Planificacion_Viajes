@@ -151,6 +151,22 @@ Cualquier endpoint transversal adicional que la revisión identifique como falta
 
 El shell y la navegación inicial del frontend ya habían sido validados localmente con 3 pruebas y una compilación de producción satisfactoria. Esa evidencia no equivale a validar los módulos funcionales ni su integración con el backend.
 
+### 6.1 Plan de implementación frontend
+
+Se consolidó el mapa de implementación en seis bloques FE y se aprobó para implementación el refinement de FE-001:
+
+- `docs/FE-ROADMAP.md`: mapa de trazabilidad de seis bloques FE con pantallas, componentes, endpoints y dependencias.
+- `docs/FE-001.md`: especificación aprobada para la fundación frontend.
+
+Decisiones aprobadas para FE-001:
+- Cliente HTTP: `fetch` nativo centralizado.
+- Estado global del período: React Context y hooks.
+- Persistencia de selección: no persistir en almacenamiento del navegador; seleccionar al iniciar el período más reciente devuelto por backend.
+
+La base existente de shell y navegación se conservará. FE-001 ampliará esa base con el selector global conectado a `GET /api/v1/periods`, cliente HTTP común, normalización de errores y contexto global. La implementación no ha comenzado; pruebas funcionales e integración FE-001 siguen pendientes.
+
+Los bloques FE-002 a FE-006 permanecen pendientes de refinement. El mapa no modifica ni reabre los contratos aprobados de UI-001, API-001 ni las SPEC.
+
 ## 7. Calidad y validación
 
 - Última suite backend completa confirmada por la usuaria: **195 passed, 0 failed**, incluyendo las 10 pruebas nuevas de BE-010.
