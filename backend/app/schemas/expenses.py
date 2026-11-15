@@ -78,6 +78,7 @@ class ExpensePut(BaseModel):
     category: ActivityCategory
     activity_id: UUID | None
     observations: str | None
+    period_id: UUID | None = None
 
     @field_validator("concept")
     @classmethod
@@ -110,6 +111,7 @@ class ExpensePatch(BaseModel):
     category: ActivityCategory | None = None
     activity_id: UUID | None = None
     observations: str | None = None
+    period_id: UUID | None = None
 
     @field_validator("concept")
     @classmethod
