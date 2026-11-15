@@ -98,6 +98,13 @@ class ActivityPatch(BaseModel):
     def require_fields(self):
         if not self.model_fields_set:
             raise ValueError("PATCH debe incluir al menos un campo editable.")
+        required_when_present = {
+            "name", "category", "start_date", "end_date",
+            "start_time", "end_time", "priority", "status",
+        }
+        for field in required_when_present & self.model_fields_set:
+            if getattr(self, field) is None:
+                raise ValueError(f"{field} no admite null.")
         return self
 
 
