@@ -43,7 +43,7 @@ describe("CalendarPage", () => {
   it("opens the current month, queries the visible inclusive range and shows a multi-day activity", async () => {
     render(<CalendarPage />);
 
-    expect(await screen.findByRole("heading", { name: "noviembre de 2026" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Noviembre de 2026" })).toBeInTheDocument();
     expect((await screen.findAllByRole("button", { name: /Cena familiar/ })).length).toBeGreaterThan(0);
     expect(getCalendar).toHaveBeenCalledWith(expect.objectContaining({
       period_id: period.id,
@@ -55,12 +55,12 @@ describe("CalendarPage", () => {
 
   it("navigates months without clearing the selected filters", async () => {
     render(<CalendarPage />);
-    await screen.findByRole("heading", { name: "noviembre de 2026" });
+    await screen.findByRole("heading", { name: "Noviembre de 2026" });
 
     fireEvent.change(screen.getByLabelText("Categoría"), { target: { value: "Viajes" } });
     fireEvent.click(screen.getByRole("button", { name: "Mes anterior" }));
 
-    await waitFor(() => expect(screen.getByRole("heading", { name: "octubre de 2026" })).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByRole("heading", { name: "Octubre de 2026" })).toBeInTheDocument());
     expect(getCalendar).toHaveBeenLastCalledWith(expect.objectContaining({
       period_id: period.id,
       category: "Viajes",
@@ -70,7 +70,7 @@ describe("CalendarPage", () => {
 
   it("combines filters and clears them on request", async () => {
     render(<CalendarPage />);
-    await screen.findByRole("heading", { name: "noviembre de 2026" });
+    await screen.findByRole("heading", { name: "Noviembre de 2026" });
 
     fireEvent.change(screen.getByLabelText("Categoría"), { target: { value: "Viajes" } });
     fireEvent.change(screen.getByLabelText("Prioridad"), { target: { value: "Alta" } });
@@ -92,12 +92,13 @@ describe("CalendarPage", () => {
 
   it("opens the selected day agenda and activity detail", async () => {
     render(<CalendarPage />);
-    await screen.findByRole("heading", { name: "noviembre de 2026" });
+    await screen.findByRole("heading", { name: "Noviembre de 2026" });
 
     fireEvent.click(screen.getByRole("button", { name: /16 de noviembre de 2026/ }));
     expect(screen.getByRole("region", { name: /Actividades del lunes, 16 de noviembre/ })).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: /Cena familiar/ }));
+    const dayAgenda = screen.getByRole("region", { name: /Actividades del lunes, 16 de noviembre/ });
+    fireEvent.click(within(dayAgenda).getByRole("button", { name: /Cena familiar/ }));
     expect(screen.getByRole("region", { name: "Detalle de actividad" })).toHaveTextContent("Casa");
     expect(screen.getByRole("region", { name: "Detalle de actividad" })).toHaveTextContent("19:00–22:00");
   });
@@ -115,6 +116,6 @@ describe("CalendarPage", () => {
 
     expect(await screen.findByRole("alert")).toHaveTextContent("API no disponible");
     fireEvent.click(screen.getByRole("button", { name: "Reintentar" }));
-    expect(await screen.findByRole("heading", { name: "noviembre de 2026" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Noviembre de 2026" })).toBeInTheDocument();
   });
 });
