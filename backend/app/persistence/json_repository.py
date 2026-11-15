@@ -13,7 +13,7 @@ from zoneinfo import ZoneInfo
 
 from pydantic import ValidationError
 
-from app.persistence.backup_manager import BackupManager
+from app.persistence.backup_manager import BackupManager, BackupRecord
 from app.persistence.document import DataDocument
 
 
@@ -68,7 +68,9 @@ class JsonRepository:
         """Create a validated pre-write backup through the configured manager."""
         self.backup_manager.create_backup(source, backup_type="pre_write")
 
-    def create_weekly_backup_if_due(self, *, now: datetime | None = None):
+    def create_weekly_backup_if_due(
+        self, *, now: datetime | None = None
+    ) -> BackupRecord | None:
         """Create the scheduled weekly backup when the application starts.
 
         The application lifecycle should call this once during startup. If the
