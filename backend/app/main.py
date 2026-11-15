@@ -11,8 +11,11 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from app.api.backups import router as backups_router
+from app.api.periods import router as periods_router
+from app.api.activities import router as activities_router
 from app.persistence.json_repository import JsonRepository
 from app.services.backup_service import BackupService, BackupServiceError
+from app.services.period_activity_service import PeriodActivityService, PeriodActivityServiceError
 
 
 DEFAULT_DATA_FILE = (
@@ -43,6 +46,7 @@ def create_app(*, repository: JsonRepository | None = None) -> FastAPI:
     # is reserved for startup work and must not be required by route handlers.
     application.state.repository = data_repository
     application.state.backup_service = BackupService(data_repository)
+    application.state.period_activity_service = PeriodActivityService(data_repository)
 
     @application.exception_handler(RequestValidationError)
     async def validation_exception_handler(
@@ -87,7 +91,27 @@ def create_app(*, repository: JsonRepository | None = None) -> FastAPI:
             },
         )
 
+    @application.exception_handler(PeriodActivityServiceError)
+    async def period_activity_exception_handler(
+        request: Request, exc: PeriodActivityServiceError
+    ) -> JSONResponse:
+        detail = {"code": exc.code, "message": exc.message}
+        if exc.field:
+            detail["field"] = exc.field
+        return JSONResponse(
+            status_code=exc.status_code,
+            content={
+                "error": {
+                    "code": exc.code,
+                    "message": exc.message,
+                    "details": [detail],
+                }
+            },
+        )
+
     application.include_router(backups_router)
+    application.include_router(periods_router)
+    application.include_router(activities_router)
     return application
 
 
