@@ -343,17 +343,23 @@ class ReportService:
         if "summary" in data and isinstance(data["summary"], dict):
             summary = data["summary"]
             sheets.append(("Resumen de actividades", [
+                ["Indicador", "Valor"],
                 ["Total", str(summary["total"])],
                 ["Cumplimiento (%)", summary["completion_percentage"]],
+            ]))
+            sheets.append(("Actividades por estado", [
                 ["Estado", "Cantidad"],
                 *[[str(x["status"].value), str(x["count"])] for x in summary["by_status"]],
             ]))
         if "activities" in data:
             activities = data["activities"]
             if isinstance(activities, dict) and "by_status" in activities:
-                sheets.append(("Actividades", [
+                sheets.append(("Resumen de actividades", [
+                    ["Indicador", "Valor"],
                     ["Total", str(activities["total"])],
                     ["Cumplimiento (%)", activities["completion_percentage"]],
+                ]))
+                sheets.append(("Actividades por estado", [
                     ["Estado", "Cantidad"],
                     *[[str(x["status"].value if hasattr(x["status"], "value") else x["status"]), str(x["count"])]
                       for x in activities["by_status"]],
@@ -401,7 +407,11 @@ class ReportService:
                 sheet.append(row)
             sheet.freeze_panes = "A2"
             sheet.auto_filter.ref = sheet.dimensions
-            header_row = 5 if sheet.title == "Gastos por categoría" else 1
+            header_row = (
+                5 if sheet.title == "Gastos por categoría"
+                else 2 if sheet.title == "Presupuesto" and sheet.max_row > 1
+                else 1
+            )
             for cell in sheet[header_row]:
                 cell.font = Font(bold=True, color="FFFFFF")
                 cell.fill = PatternFill("solid", fgColor="315B68")
