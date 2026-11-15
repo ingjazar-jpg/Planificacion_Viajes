@@ -425,3 +425,53 @@ select:disabled {
     animation-iteration-count: 1 !important;
   }
 }
+
+.async-state {
+  display: grid;
+  justify-items: center;
+  gap: 0.65rem;
+  width: min(100%, 620px);
+  margin: clamp(2rem, 8vh, 5rem) auto;
+  padding: 2rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  text-align: center;
+  line-height: 1.6;
+}
+
+.async-state p {
+  margin: 0;
+}
+
+.async-state strong {
+  color: var(--color-primary);
+  font-size: 1.1rem;
+}
+
+.async-state-error {
+  border-color: rgb(187 81 69 / 35%);
+}
+
+.state-action {
+  min-height: 42px;
+  padding: 0.6rem 1rem;
+  border: 0;
+  border-radius: var(--radius-control);
+  color: #fff;
+  background: var(--color-secondary);
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.state-action:hover {
+  filter: brightness(0.94);
+}
+
+@media (max-width: 480px) {
+  .async-state {
+    margin: 2rem auto;
+    padding: 1.35rem 1rem;
+  }
+}
