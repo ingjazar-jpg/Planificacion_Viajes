@@ -319,7 +319,7 @@ function CalendarPage() {
                             <button
                               className="calendar-more-events"
                               type="button"
-                              aria-label={`Ver ${remainingActivities} actividades más, ${formatLongDate(day)}`}
+                              aria-label={`Ver más actividades, ${formatLongDate(day)}`}
                               onClick={() => { setSelectedDate(dayKey); setSelectedActivity(null); }}
                             >
                               +{remainingActivities} más
