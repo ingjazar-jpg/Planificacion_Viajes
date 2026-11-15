@@ -11,7 +11,7 @@ from app.schemas.periods import PeriodCreate, PeriodResponse, PeriodUpdate
 
 
 @pytest.fixture
- def valid_period_data():
+def valid_period_data():
     return {
         "id": uuid4(),
         "year": 2026,
