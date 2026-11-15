@@ -95,7 +95,8 @@ def test_budget_create_rejects_duplicate_and_excessive_allocation(tmp_path):
         {"category": "Viajes", "amount": "100.01"},
     ])
     response = client.post(f"/api/v1/periods/{period['id']}/budget", json=excessive)
-    assert response.status_code == 422
+    assert response.status_code == 409
+    assert response.json()["error"]["code"] == "CATEGORY_BUDGET_EXCEEDS_TOTAL"
 
 
 def test_budget_create_rejects_duplicate_budget_and_unknown_period(tmp_path):
@@ -206,7 +207,7 @@ def test_expense_create_validates_period_activity_and_amount(tmp_path):
     client, _ = _client(tmp_path)
     period = _period(client)
     other_period = _period(client, name="Vacaciones 2027", start="2027-12-01", end="2028-01-31")
-    activity = _activity(client, other_period["id"])
+    activity = _activity(client, other_period["id"], start_date="2027-12-10", end_date="2027-12-10")
     mismatch = client.post("/api/v1/expenses", json=_expense_payload(
         period["id"], activity_id=activity["id"],
     ))
