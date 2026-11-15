@@ -30,7 +30,7 @@ class BackupRestoreRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     backup_id: UUID
-    confirmed: Literal[True]
+    confirmed: bool = Field(default=False, strict=True)
 
 
 class BackupRestoreResult(BaseModel):
