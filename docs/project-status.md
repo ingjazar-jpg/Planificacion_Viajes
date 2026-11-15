@@ -61,9 +61,9 @@ El resultado de 169 pruebas corresponde a la ejecución completa más reciente; 
 - Marcado idempotente como Revisada.
 - Reevaluación ante creación o modificación de actividades, sin procesos permanentes.
 
-## 4. Bloque siguiente: BE-007 — API de presupuestos y gastos
+## 4. BE-007 — API de presupuestos y gastos
 
-**Estado:** implementación publicada en GitHub; pendiente de sincronización y validación local.  
+**Estado:** implementación publicada en GitHub y validada localmente: **169 passed, 0 failed**.  
 **Fuentes normativas:** SPEC-004 v0.2, DATA-001 v0.2 y API-001 v0.7.
 
 ### Alcance previsto
