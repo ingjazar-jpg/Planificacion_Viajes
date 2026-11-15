@@ -56,7 +56,11 @@ def _parse_filters(request: Request, report_type: str, *, exporting: bool) -> Re
     allowed = set(REPORT_FILTERS[report_type]) | {"page", "page_size"}
     if exporting:
         allowed |= {"format", "scope"}
+        if request.query_params.get("scope") == "period":
+            allowed |= CONTENT_FILTERS
     _validate_query_keys(request, allowed)
+    if exporting and request.query_params.get("scope") == "period":
+        return ReportFilters()
     if not exporting and ("format" in request.query_params or "scope" in request.query_params):
         _error("format", "invalid_export_parameters",
                "format y scope solo se admiten para exportar.")
@@ -92,12 +96,20 @@ def _parse_filters(request: Request, report_type: str, *, exporting: bool) -> Re
     activity_id = request.query_params.get("activity_id")
     try:
         category = ActivityCategory(category) if category is not None else None
+    except ValueError:
+        _error("category", "invalid_report_filter", "La categoría no pertenece al catálogo.", category)
+    try:
         status = ActivityStatus(status) if status is not None else None
+    except ValueError:
+        _error("status", "invalid_report_filter", "El estado no pertenece al catálogo.", status)
+    try:
         priority = Priority(priority) if priority is not None else None
+    except ValueError:
+        _error("priority", "invalid_report_filter", "La prioridad no pertenece al catálogo.", priority)
+    try:
         activity_id = UUID(activity_id) if activity_id is not None else None
-    except ValueError as exc:
-        _error("category", "invalid_report_filter",
-               "Uno de los valores de catálogo o UUID no es válido.")
+    except ValueError:
+        _error("activity_id", "invalid_report_filter", "activity_id debe ser un UUID válido.", activity_id)
     return ReportFilters(
         start_date=start_date, end_date=end_date, category=category,
         status=status, activity_id=activity_id, priority=priority,
