@@ -147,7 +147,7 @@ def test_atomic_replace_failure_preserves_original_file(tmp_path, monkeypatch):
     def fail_replace(_: Path, __: Path) -> None:
         raise OSError("replace failed")
 
-    monkeypatch.setattr("app.persistence.json_repository.os.replace", fail_replace)
+    monkeypatch.setattr("app.persistence.json_repository._atomic_replace", fail_replace)
 
     with pytest.raises(RepositoryWriteError, match="escritura segura"):
         repository.save(make_document())
@@ -174,7 +174,7 @@ def test_save_keeps_pre_write_backup_when_atomic_replacement_fails(tmp_path, mon
     def fail_replace(_: Path, __: Path) -> None:
         raise OSError("replace failed")
 
-    monkeypatch.setattr("app.persistence.json_repository.os.replace", fail_replace)
+    monkeypatch.setattr("app.persistence.json_repository._atomic_replace", fail_replace)
 
     with pytest.raises(RepositoryWriteError):
         repository.save(make_document())
