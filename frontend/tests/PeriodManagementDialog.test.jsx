@@ -58,8 +58,8 @@ describe("PeriodManagementDialog", () => {
       start_date: "2027-12-18",
       end_date: "2028-01-08",
     }));
-    expect(refreshPeriods).toHaveBeenCalledOnce();
-    expect(selectPeriod).toHaveBeenCalledWith("period-created");
+    expect(refreshPeriods).toHaveBeenCalledWith("period-created");
+    expect(selectPeriod).not.toHaveBeenCalled();
     expect(onClose).toHaveBeenCalledOnce();
   });
 
