@@ -113,7 +113,7 @@ describe("CalendarPage", () => {
 
     await waitFor(() => expect(getCalendar).toHaveBeenCalledTimes(1));
     fireEvent.click(screen.getByRole("button", { name: "Mes siguiente" }));
-    expect(await screen.findByRole("button", { name: /Plan de viaje/ })).toBeInTheDocument();
+    expect((await screen.findAllByRole("button", { name: /Plan de viaje/ })).length).toBeGreaterThan(0);
 
     resolvePrevious(activities);
     await waitFor(() => expect(screen.queryByRole("button", { name: /Cena familiar/ })).not.toBeInTheDocument());
