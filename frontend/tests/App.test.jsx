@@ -66,6 +66,10 @@ describe("App FE-001 foundation", () => {
     getPeriods.mockResolvedValue([{ id: "period-1", name: "Vacaciones", year: 2026 }]);
     render(<App />);
     await screen.findByRole("combobox", { name: "Período activo" });
+    await screen.findByText("Presupuesto general");
+    fireEvent.click(screen.getByRole("button", { name: /Abrir alertas/ }));
+    expect(await screen.findByText("No tienes alertas pendientes")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Cerrar alertas" }));
 
     fireEvent.click(screen.getByRole("button", { name: "Calendario" }));
     expect(screen.getByRole("heading", { name: "Calendario" })).toBeInTheDocument();
@@ -76,6 +80,10 @@ describe("App FE-001 foundation", () => {
     getPeriods.mockResolvedValue([{ id: "period-1", name: "Vacaciones", year: 2026 }]);
     render(<App />);
     await screen.findByRole("combobox", { name: "Período activo" });
+    await screen.findByText("Presupuesto general");
+    fireEvent.click(screen.getByRole("button", { name: /Abrir alertas/ }));
+    expect(await screen.findByText("No tienes alertas pendientes")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Cerrar alertas" }));
 
     fireEvent.click(screen.getByRole("button", { name: "Abrir menú de navegación" }));
     expect(screen.getByRole("dialog", { name: "Menú de navegación" })).toBeInTheDocument();
