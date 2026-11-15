@@ -75,8 +75,17 @@ function DashboardPage() {
           <Metric label="Completadas" value={statuses.find((item) => item.status === "Completada")?.count || 0} />
           <Metric label="En progreso" value={statuses.find((item) => item.status === "En progreso")?.count || 0} />
           <Metric label="Pendientes" value={statuses.find((item) => item.status === "Pendiente")?.count || 0} />
+          <Metric label="Canceladas" value={statuses.find((item) => item.status === "Cancelada")?.count || 0} />
           <Metric label="Cumplimiento" value={`${activities.completion_percentage}%`} />
           <Metric label="Actividades vencidas" value={activities.overdue_count} />
+        </div>
+      </section>
+      <section className="metric-section" aria-labelledby="alerts-summary-title">
+        <h2 id="alerts-summary-title">Alertas pendientes</h2>
+        <div className="metrics-grid">
+          <Metric label="Próximas" value={dashboard.alerts.upcoming_pending} />
+          <Metric label="Vencidas" value={dashboard.alerts.overdue_pending} />
+          <Metric label="Prioridad alta" value={dashboard.alerts.high_priority_pending} />
         </div>
       </section>
       <section className="charts-grid" aria-label="Gráficos del período">
