@@ -56,7 +56,10 @@ def _clear_alerts(repository):
 
 def _evaluate_at(repository, period_id, now=FIXED_NOW):
     document = repository.load()
-    updated, counts = AlertService.evaluate_document(document, period_id, now=now)
+    # API responses expose UUIDs as strings; the domain service receives UUID objects.
+    updated, counts = AlertService.evaluate_document(
+        document, UUID(str(period_id)), now=now
+    )
     repository.save(updated)
     return counts
 
