@@ -40,7 +40,7 @@ describe("App FE-001 foundation", () => {
     }
     await waitFor(() => expect(screen.getByRole("combobox", { name: "Período activo" }))
       .toHaveValue("period-1"));
-    expect(screen.getByRole("heading", { name: "Dashboard" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Dashboard" })).toBeInTheDocument();
   });
 
   it("navigates between sections and marks the active section", async () => {
