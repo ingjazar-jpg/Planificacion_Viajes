@@ -46,6 +46,7 @@ describe("PeriodManagementDialog", () => {
   });
 
   it("creates a period with only the contractual fields and selects it", async () => {
+    refreshPeriods.mockResolvedValueOnce([...periods, { ...periods[0], id: "period-created", name: "Navidad 2027" }]);
     render(<PeriodManagementDialog open onClose={onClose} />);
     fireEvent.click(screen.getByRole("button", { name: "Crear período" }));
     fireEvent.change(screen.getByLabelText(/Nombre/), { target: { value: " Navidad 2027 " } });
