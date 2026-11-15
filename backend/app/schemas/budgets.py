@@ -5,7 +5,7 @@ from datetime import datetime
 from decimal import Decimal, InvalidOperation
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from app.domain.enums import ActivityCategory
 
@@ -55,76 +55,3 @@ class BudgetInput(BaseModel):
     def validate_total_budget(cls, value: object) -> Decimal:
         return _parse_money_string(value, allow_zero=True)
 
-    @model_validator(mode="after")
-    def validate_allocations(self) -> "BudgetInput":
-        categories = [item.category for item in self.category_budgets]
-        if len(categories) != len(set(categories)):
-            raise ValueError("No se permiten categorías presupuestarias repetidas.")
-        allocated = sum((item.amount for item in self.category_budgets), Decimal("0"))
-        if allocated > self.total_budget:
-            raise ValueError("La suma de asignaciones no puede superar el presupuesto general.")
-        return self
-
-
-class CategoryBudgetResponse(BaseModel):
-    """One normalized category allocation in a budget response."""
-
-    model_config = ConfigDict(from_attributes=True)
-
-    category: ActivityCategory
-    amount: Decimal
-
-
-class CategoryBudgetExecutionResponse(BaseModel):
-    """Category allocation and its calculated execution indicators."""
-
-    model_config = ConfigDict(from_attributes=True)
-
-    category: ActivityCategory
-    allocated_amount: Decimal
-    spent_amount: Decimal
-    balance: Decimal
-    over_budget: bool
-
-
-class BudgetResponse(BaseModel):
-    """Persisted budget representation."""
-
-    model_config = ConfigDict(from_attributes=True)
-
-    id: UUID
-    period_id: UUID
-    total_budget: Decimal
-    category_budgets: list[CategoryBudgetResponse]
-    created_at: datetime
-    updated_at: datetime
-
-
-class BudgetExecutionResponse(BaseModel):
-    """Budget plus calculated financial indicators returned by GET."""
-
-    model_config = ConfigDict(from_attributes=True)
-
-    id: UUID
-    period_id: UUID
-    total_budget: Decimal
-    total_expenses: Decimal
-    general_balance: Decimal
-    execution_percentage: Decimal
-    category_budgets: list[CategoryBudgetExecutionResponse]
-    created_at: datetime
-    updated_at: datetime
-
- 
-class CategoryBudgetAmount(BaseModel):
-    category: ActivityCategory
-    amount: str
-
-
-class BudgetCreateResponse(BaseModel):
-    id: UUID
-    period_id: UUID
-    total_budget: str
-    category_budgets: list[CategoryBudgetAmount]
-    created_at: datetime
-    updated_at: datetime
