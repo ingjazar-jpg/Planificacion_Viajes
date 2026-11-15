@@ -1,5 +1,5 @@
 import {
-  createContext, useCallback, useContext, useEffect, useMemo, useState,
+  createContext, useCallback, useContext, useEffect, useMemo, useRef, useState,
 } from "react";
 import { usePeriod } from "../../context/PeriodContext.jsx";
 import {
@@ -16,11 +16,14 @@ export function AlertsProvider({ children }) {
   const [error, setError] = useState(null);
   const [isReviewing, setIsReviewing] = useState([]);
   const [notice, setNotice] = useState("");
+  const requestSequence = useRef(0);
 
-  const refreshAlerts = useCallback(async ({ retryEvaluation = false } = {}) => {
+  const refreshAlerts = useCallback(async () => {
+    const requestId = ++requestSequence.current;
     if (!selectedPeriodId) {
       setAlerts([]);
       setError(null);
+      setIsLoading(false);
       return;
     }
     setIsLoading(true);
@@ -30,12 +33,14 @@ export function AlertsProvider({ children }) {
     try {
       await ensurePeriodEvaluated(selectedPeriodId, evaluateAlerts);
       const nextAlerts = await getPendingActiveAlerts(selectedPeriodId);
-      setAlerts(nextAlerts);
+      if (requestId === requestSequence.current) setAlerts(nextAlerts);
     } catch (requestError) {
-      setAlerts([]);
-      setError(requestError);
+      if (requestId === requestSequence.current) {
+        setAlerts([]);
+        setError(requestError);
+      }
     } finally {
-      setIsLoading(false);
+      if (requestId === requestSequence.current) setIsLoading(false);
     }
   }, [selectedPeriodId]);
 
