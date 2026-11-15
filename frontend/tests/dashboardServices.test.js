@@ -1,33 +1,33 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { apiRequest } from "../src/services/api/httpClient.js";
+import { request } from "../src/services/api/httpClient.js";
 import {
   evaluateAlerts, getPendingActiveAlerts, reviewAlert,
 } from "../src/services/api/alertsService.js";
 import { getDashboard } from "../src/services/api/dashboardService.js";
 
-vi.mock("../src/services/api/httpClient.js", () => ({ apiRequest: vi.fn() }));
+vi.mock("../src/services/api/httpClient.js", () => ({ request: vi.fn() }));
 
 describe("FE-002 API services", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("requests dashboard for the selected period", async () => {
-    apiRequest.mockResolvedValue({ data: { period: { id: "p1" } } });
+    request.mockResolvedValue({ data: { period: { id: "p1" } } });
     await expect(getDashboard("p1")).resolves.toEqual({ period: { id: "p1" } });
-    expect(apiRequest).toHaveBeenCalledWith("/periods/p1/dashboard");
+    expect(request).toHaveBeenCalledWith("/periods/p1/dashboard");
   });
 
   it("evaluates alerts with the selected period in the request body", async () => {
-    apiRequest.mockResolvedValue({ data: {} });
+    request.mockResolvedValue({ data: {} });
     await evaluateAlerts("p1");
-    expect(apiRequest).toHaveBeenCalledWith("/alerts/evaluate", {
+    expect(request).toHaveBeenCalledWith("/alerts/evaluate", {
       method: "POST", body: { period_id: "p1" },
     });
   });
 
   it("requests the full pending active alert set without pagination", async () => {
-    apiRequest.mockResolvedValue({ data: [] });
+    request.mockResolvedValue({ data: [] });
     await getPendingActiveAlerts("p1");
-    const [path] = apiRequest.mock.calls[0];
+    const [path] = request.mock.calls[0];
     const query = new URLSearchParams(path.split("?")[1]);
     expect(path.startsWith("/alerts?")).toBe(true);
     expect(query.get("period_id")).toBe("p1");
@@ -38,8 +38,8 @@ describe("FE-002 API services", () => {
   });
 
   it("marks an alert as reviewed with PATCH and no body", async () => {
-    apiRequest.mockResolvedValue({ data: { id: "a1", status: "Revisada" } });
+    request.mockResolvedValue({ data: { id: "a1", status: "Revisada" } });
     await reviewAlert("a1");
-    expect(apiRequest).toHaveBeenCalledWith("/alerts/a1/review", { method: "PATCH" });
+    expect(request).toHaveBeenCalledWith("/alerts/a1/review", { method: "PATCH" });
   });
 });
