@@ -697,6 +697,7 @@ select:disabled {
 .calendar-day-events { display: grid; gap: .25rem; margin-top: .2rem; }
 .calendar-event { display: grid; min-width: 0; gap: .1rem; padding: .3rem .35rem; border: 0; border-left: 3px solid var(--color-chart-muted); border-radius: 4px; color: var(--color-text); background: #edf2f6; text-align: left; cursor: pointer; }
 .calendar-event:hover { filter: brightness(.96); }
+.calendar-more-events { padding: .18rem .25rem; border: 0; color: var(--color-secondary); background: transparent; font-size: .65rem; font-weight: 750; text-align: left; cursor: pointer; }
 .calendar-event-name { overflow: hidden; font-size: .68rem; font-weight: 700; line-height: 1.25; text-overflow: ellipsis; }
 .calendar-event-meta { overflow: hidden; color: var(--color-text-secondary); font-size: .61rem; text-overflow: ellipsis; white-space: nowrap; }
 .calendar-status-pendiente { border-left-color: #9b701e; background: #fbf5e8; }
