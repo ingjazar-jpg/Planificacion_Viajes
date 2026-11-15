@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import AsyncIterator
 
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
@@ -54,6 +55,13 @@ def create_app(*, repository: JsonRepository | None = None) -> FastAPI:
         title="Sistema de Planificación y Control de Vacaciones Decembrinas",
         version="1.0.0",
         lifespan=lifespan,
+    )
+    application.add_middleware(
+        CORSMiddleware,
+        allow_origins=["http://localhost:5173"],
+        allow_credentials=False,
+        allow_methods=["*"],
+        allow_headers=["*"],
     )
     # Services are available as soon as the app is constructed. The lifespan
     # is reserved for startup work and must not be required by route handlers.
