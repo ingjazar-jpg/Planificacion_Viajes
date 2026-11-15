@@ -1,11 +1,21 @@
 """Validated domain entities for periods and activities."""
 
 from datetime import date, datetime, time
+from decimal import Decimal
+from typing import Any
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-from app.domain.enums import ActivityCategory, ActivityStatus, Priority
+from app.domain.enums import (
+    ActivityCategory,
+    ActivityStatus,
+    AlertEventType,
+    AlertStatus,
+    AlertType,
+    ExpenseModificationType,
+    Priority,
+)
 
 
 class DomainEntity(BaseModel):
@@ -96,19 +106,6 @@ class Activity(DomainEntity):
         return self
 
 # Additional entities defined by DATA-001.
-
-from decimal import Decimal
-from typing import Any
-
-from pydantic import field_validator
-
-from app.domain.enums import (
-    AlertEventType,
-    AlertStatus,
-    AlertType,
-    ExpenseModificationType,
-)
-
 
 def _validate_money(value: Any, *, allow_zero: bool) -> Decimal:
     """Accept decimal strings or Decimal values; never accept binary floats."""
