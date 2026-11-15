@@ -112,8 +112,6 @@ def create_app(*, repository: JsonRepository | None = None) -> FastAPI:
             },
         )
 
-    application.include_router(backups_router)
-    application.include_router(periods_router)
     @application.exception_handler(AlertServiceError)
     async def alert_service_exception_handler(
         request: Request, exc: AlertServiceError
@@ -132,6 +130,8 @@ def create_app(*, repository: JsonRepository | None = None) -> FastAPI:
             },
         )
 
+    application.include_router(backups_router)
+    application.include_router(periods_router)
     application.include_router(activities_router)
     application.include_router(alerts_router)
     return application
