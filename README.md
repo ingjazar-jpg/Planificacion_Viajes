@@ -82,6 +82,13 @@ Los documentos funcionales, de arquitectura, datos, API e interfaz aprobados se 
 - [Script local de lockfiles](scripts/prepare-local-lockfiles.ps1)
 - [Revisión de preparación para implementación](docs/implementation-readiness-review.md)
 
+## Documentación de implementación frontend
+
+- [Mapa de implementación frontend — seis bloques FE](docs/FE-ROADMAP.md)
+- [FE-001 — Especificación de fundación frontend](docs/FE-001.md)
+
+FE-001 está refinado y aprobado para implementación. La base de navegación existente se conservará y ampliará con el cliente HTTP centralizado, el contexto global del período y el selector conectado a la API. La implementación y validación local de FE-001 están pendientes.
+
 ## Desarrollo local
 
 La configuración de dependencias está incorporada. La guía local describe la instalación inicial, incluida la generación y versionado de `frontend/package-lock.json`. La aplicación funcional y sus comandos de ejecución se completarán en las siguientes tareas.
