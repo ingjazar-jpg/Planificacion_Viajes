@@ -8,9 +8,9 @@
 
 ## 1. Resumen ejecutivo
 
-La implementación del backend está en curso. Se completaron y validaron los bloques BE-001 a BE-006. La validación local más reciente de la suite completa reportada por la usuaria fue **153 passed**. El siguiente bloque autorizado para desarrollo es **BE-007 — API de presupuestos y gastos**.
+La implementación del backend está en curso. Se completaron y validaron los bloques BE-001 a BE-007. La validación local más reciente de la suite completa reportada por la usuaria fue **169 passed**.
 
-El resultado de 153 pruebas corresponde a la ejecución completa más reciente; los resultados históricos por bloque que se muestran abajo son hitos acumulativos, no cantidades que deban sumarse.
+El resultado de 169 pruebas corresponde a la ejecución completa más reciente; los resultados históricos por bloque que se muestran abajo son hitos acumulativos, no cantidades que deban sumarse.
 
 ## 2. Estado por bloque de implementación
 
@@ -22,9 +22,9 @@ El resultado de 153 pruebas corresponde a la ejecución completa más reciente; 
 | BE-004 | API de consulta y restauración de backups | Validado | 127 passed |
 | BE-005 | API de períodos y actividades | Validado | 141 passed |
 | BE-006 | API y ciclo de vida de alertas | Validado | 153 passed |
-| BE-007 | API de presupuestos y gastos | Implementación publicada; pendiente de validación local | 16 pruebas nuevas definidas; resultado pendiente |
+| BE-007 | API de presupuestos y gastos | Validado | 169 passed (suite completa) |
 
-**Nota:** las cifras de cada fila son resultados acumulativos reportados después de cada bloque. El último resultado vigente es 153 pruebas aprobadas.
+**Nota:** las cifras de cada fila son resultados acumulativos reportados después de cada bloque. El último resultado vigente es 169 pruebas aprobadas.
 
 ## 3. Capacidades backend ya implementadas
 
@@ -90,9 +90,9 @@ El resultado de 153 pruebas corresponde a la ejecución completa más reciente; 
 - Una edición sin cambios no genera historial ni altera `updated_at`.
 - La eliminación de un gasto elimina también su historial.
 
-### Criterio de cierre
+### Resultado de validación y cierre
 
-El bloque se considerará validado solo después de sincronizar los cambios al repositorio local, ejecutar la suite completa con `python -m pytest -v` y revisar el resultado real. Las 16 pruebas nuevas de `backend/tests/test_budget_expense_api.py` están definidas, pero todavía no se reportan como aprobadas.
+La usuaria sincronizó los cambios desde GitHub y reportó la ejecución completa de `python -m pytest -v` con **169 passed, 0 failed**. Las 16 pruebas nuevas de `backend/tests/test_budget_expense_api.py` forman parte de la suite aprobada. También quedaron verificadas las regresiones de schemas y la correspondencia de errores HTTP con API-001.
 
 ## 5. Trabajo pendiente del backend
 
@@ -119,7 +119,7 @@ El shell y la navegación inicial del frontend ya habían sido validados localme
 
 ## 7. Calidad y validación
 
-- Última suite backend completa reportada: **153 passed**.
+- Última suite backend completa reportada: **169 passed, 0 failed**.
 - Los resultados anteriores por bloque son históricos y acumulativos.
 - No se declara cobertura mínima del 80 % hasta disponer de un informe de cobertura verificable.
 - La advertencia de Starlette relacionada con `httpx` observada en la última ejecución no produjo fallos en las pruebas; no se modifica la dependencia sin necesidad y revisión.
@@ -127,7 +127,7 @@ El shell y la navegación inicial del frontend ya habían sido validados localme
 ## 8. Entorno y tareas técnicas pendientes
 
 - La línea base Sprint 0 aprobada fija Python 3.14.10. La usuaria reportó un entorno local con Python 3.15.2; la validación reproducible en Python 3.14.10 sigue pendiente.
-- La validación del backend con 153 pruebas acredita el entorno local utilizado, pero no reemplaza la comprobación en la versión fijada.
+- La validación del backend con 169 pruebas acredita el entorno local utilizado, pero no reemplaza la comprobación en la versión fijada.
 - `backend/pylock.toml` y `frontend/package-lock.json` se identificaron como archivos locales no versionados en el último estado conocido. Deben preservarse y revisarse antes de decidir su incorporación.
 - No eliminar, sobrescribir ni limpiar archivos locales no rastreados durante sincronizaciones.
 
@@ -145,11 +145,9 @@ Las especificaciones aprobadas siguen siendo la fuente de verdad funcional y té
 
 ## 10. Próximos pasos inmediatos
 
-1. Sincronizar los cambios de BE-007 publicados en GitHub, después de revisar el estado local de Git.
-2. Ejecutar la suite completa en el entorno local y revisar cualquier fallo.
-3. Corregir en GitHub, volver a sincronizar y repetir pruebas si fuera necesario.
-4. Registrar el resultado real y cerrar BE-007 solo cuando la suite esté aprobada.
-5. Continuar con el siguiente bloque backend pendiente.
+1. Revisar la preparación y dependencias del siguiente bloque backend pendiente, manteniendo API-001 y las SPEC aprobadas como fuente de verdad.
+2. Definir el siguiente bloque de implementación con alcance y criterios de validación verificables antes de modificar código.
+3. Continuar el flujo GitHub → sincronización local → suite completa, protegiendo los archivos locales no rastreados.
 
 ---
 
