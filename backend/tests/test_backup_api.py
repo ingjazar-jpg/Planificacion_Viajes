@@ -47,7 +47,7 @@ def test_get_backups_returns_only_public_weekly_metadata(tmp_path):
 
 
 def test_get_backups_returns_empty_list_when_no_weekly_backups(tmp_path):
-    repository = _repository(tmp_path)
+    repository = JsonRepository(tmp_path / "datos_vacaciones.json")
     client = TestClient(create_app(repository=repository))
 
     response = client.get("/api/v1/backups")
