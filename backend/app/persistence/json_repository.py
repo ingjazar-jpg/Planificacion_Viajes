@@ -38,6 +38,11 @@ class RepositoryConfigurationError(PersistenceError):
     """Raised when a required persistence dependency is not configured."""
 
 
+def _atomic_replace(source: Path, target: Path) -> None:
+    """Atomically replace a repository file without coupling backup writes."""
+    os.replace(source, target)
+
+
 def _lock_for(path: Path) -> RLock:
     """Return one shared in-process lock for each resolved data-file path."""
     key = path.resolve()
@@ -141,7 +146,7 @@ class JsonRepository:
                 with temporary_path.open("r", encoding="utf-8") as candidate:
                     DataDocument.model_validate(json.load(candidate))
 
-                os.replace(temporary_path, self.file_path)
+                _atomic_replace(temporary_path, self.file_path)
                 temporary_path = None
                 self._sync_parent_directory()
             except (OSError, UnicodeDecodeError, json.JSONDecodeError, ValidationError) as exc:
