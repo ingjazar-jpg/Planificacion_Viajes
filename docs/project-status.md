@@ -170,7 +170,7 @@ La implementación de FE-001 está publicada en `feat/backend-domain-foundation`
 
 La advertencia deprecatoria de Starlette relacionada con `httpx` no produjo fallos y queda registrada como observación técnica no bloqueante. La validación reproducible con Python 3.14.10 permanece pendiente como tarea transversal de Sprint 0; no bloquea el cierre funcional de FE-001.
 
-FE-002 — Dashboard y alertas — cuenta con especificación aprobada para implementación en `docs/FE-002.md`. La aprobación cubre 15 decisiones de refinement, 31 requisitos funcionales y 27 criterios de aceptación. La implementación aún no ha comenzado ni se declara validada. FE-003 a FE-006 permanecen pendientes de refinement. La aprobación de FE-002 no modifica ni reabre los contratos de UI-001, API-001 ni las SPEC.
+FE-002 — Dashboard y alertas — tiene especificación aprobada en `docs/FE-002.md` y su implementación está en curso. La aprobación cubre 15 decisiones de refinement, 31 requisitos funcionales y 27 criterios de aceptación. La primera entrega de código está publicada en la rama de trabajo; permanece pendiente la sincronización y validación local de la usuaria. FE-003 a FE-006 permanecen pendientes de refinement. La aprobación de FE-002 no modifica ni reabre los contratos de UI-001, API-001 ni las SPEC.
 
 ## 7. Calidad y validación
 
@@ -203,7 +203,7 @@ Las especificaciones aprobadas siguen siendo la fuente de verdad funcional y té
 
 ## 10. Próximos pasos inmediatos
 
-1. Iniciar la implementación de FE-002 — Dashboard y alertas — conforme a `docs/FE-002.md`, reutilizando la base FE-001 y los contratos BE-006/BE-009.
+1. Sincronizar y validar localmente la primera entrega de FE-002 — Dashboard y alertas — conforme a `docs/FE-002.md`; corregir cualquier fallo antes de ampliar el bloque.
 2. Mantener pendiente la validación reproducible con Python 3.14.10, según la línea base técnica aprobada.
 
 ---
