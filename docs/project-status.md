@@ -153,7 +153,7 @@ El shell y la navegación inicial del frontend ya habían sido validados localme
 
 ### 6.1 Plan de implementación frontend
 
-Se consolidó el mapa de implementación en seis bloques FE. FE-001 y FE-002 cuentan con especificaciones aprobadas para implementación:
+Se consolidó el mapa de implementación en seis bloques FE. FE-001 y FE-002 están validados y cerrados; FE-003 cuenta con especificación aprobada para implementación:
 
 - `docs/FE-ROADMAP.md`: mapa de trazabilidad de seis bloques FE con pantallas, componentes, endpoints y dependencias.
 - `docs/FE-001.md`: especificación aprobada para la fundación frontend.
