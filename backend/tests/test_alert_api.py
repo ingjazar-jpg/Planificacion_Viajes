@@ -46,6 +46,14 @@ def _activity(client, period_id, **overrides):
     return response.json()["data"]
 
 
+def _clear_alerts(repository):
+    from app.persistence.document import DataDocument
+    document = repository.load()
+    repository.save(DataDocument.model_validate({
+        **document.model_dump(mode="python"), "alerts": []
+    }))
+
+
 def _evaluate_at(repository, period_id, now=FIXED_NOW):
     document = repository.load()
     updated, counts = AlertService.evaluate_document(document, period_id, now=now)
@@ -67,6 +75,7 @@ def test_evaluation_creates_upcoming_overdue_and_high_priority_alerts(tmp_path):
         start_time="08:00", end_time="10:00", priority="Alta",
     )
 
+    _clear_alerts(repository)
     counts = _evaluate_at(repository, period["id"])
 
     assert counts["created_count"] == 3
@@ -84,7 +93,11 @@ def test_evaluation_creates_upcoming_overdue_and_high_priority_alerts(tmp_path):
 def test_evaluation_is_idempotent_and_does_not_duplicate_events(tmp_path):
     client, repository = _client(tmp_path)
     period = _period(client)
-    _activity(client, period["id"], priority="Alta")
+    _activity(
+        client, period["id"], priority="Alta",
+        start_date="2026-11-17", end_date="2026-11-17",
+    )
+    _clear_alerts(repository)
 
     first = _evaluate_at(repository, period["id"])
     before = repository.load().alerts
@@ -107,7 +120,7 @@ def test_completed_and_cancelled_activities_do_not_generate_overdue_or_high_aler
     cancelled = _activity(
         client, period["id"], name="Cancelada", priority="Alta",
         start_date="2026-11-14", end_date="2026-11-14",
-        start_time="11:00", end_time="13:00",
+        start_time="13:00", end_time="15:00",
     )
     document = repository.load()
     from app.domain.enums import ActivityStatus
@@ -126,7 +139,7 @@ def test_completed_and_cancelled_activities_do_not_generate_overdue_or_high_aler
     counts = _evaluate_at(repository, period["id"])
 
     assert counts["created_count"] == 0
-    assert repository.load().alerts == []
+    assert all(not alert.condition_active for alert in repository.load().alerts)
 
 
 def test_review_is_idempotent_and_preserves_condition_state(tmp_path):
@@ -233,6 +246,7 @@ def test_evaluate_endpoint_requires_existing_period_and_returns_contract(tmp_pat
     client, repository = _client(tmp_path)
     period = _period(client)
     _activity(client, period["id"], priority="Alta")
+    _clear_alerts(repository)
 
     response = client.post("/api/v1/alerts/evaluate", json={"period_id": period["id"]})
     assert response.status_code == 200
@@ -250,7 +264,10 @@ def test_evaluate_endpoint_requires_existing_period_and_returns_contract(tmp_pat
 def test_activity_creation_and_modification_reevaluate_alerts_automatically(tmp_path):
     client, repository = _client(tmp_path)
     period = _period(client)
-    activity = _activity(client, period["id"], priority="Media")
+    activity = _activity(
+        client, period["id"], priority="Media",
+        start_date="2026-11-17", end_date="2026-11-17",
+    )
     assert repository.load().alerts == []
 
     response = client.patch(f"/api/v1/activities/{activity['id']}", json={"priority": "Alta"})
