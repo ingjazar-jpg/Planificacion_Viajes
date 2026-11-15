@@ -79,6 +79,12 @@ class BackupService:
                 "BACKUP_RESTORE_FAILED",
                 "No fue posible completar la restauración.",
             ) from exc
+        except Exception as exc:
+            raise BackupServiceError(
+                500,
+                "BACKUP_RESTORE_FAILED",
+                "No fue posible completar la restauración.",
+            ) from exc
 
         return {
             "status": "restored",
