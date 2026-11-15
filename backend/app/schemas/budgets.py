@@ -55,3 +55,40 @@ class BudgetInput(BaseModel):
     def validate_total_budget(cls, value: object) -> Decimal:
         return _parse_money_string(value, allow_zero=True)
 
+
+class CategoryBudgetAmount(BaseModel):
+    """One category amount in a budget creation response."""
+
+    category: ActivityCategory
+    amount: str
+
+
+class CategoryBudgetIndicator(BaseModel):
+    """Calculated allocation and execution indicators for one category."""
+
+    category: ActivityCategory
+    allocated_amount: str
+    spent_amount: str
+    balance: str
+    over_budget: bool
+
+
+class BudgetCreateResponse(BaseModel):
+    id: UUID
+    period_id: UUID
+    total_budget: str
+    category_budgets: list[CategoryBudgetAmount]
+    created_at: datetime
+    updated_at: datetime
+
+
+class BudgetResponse(BaseModel):
+    id: UUID
+    period_id: UUID
+    total_budget: str
+    total_expenses: str
+    general_balance: str
+    execution_percentage: str
+    category_budgets: list[CategoryBudgetIndicator]
+    created_at: datetime
+    updated_at: datetime
