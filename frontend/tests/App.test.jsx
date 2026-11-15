@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import App from "../src/App.jsx";
 import { getPeriods } from "../src/services/api/periodsService.js";
@@ -116,10 +116,12 @@ describe("App FE-001 foundation", () => {
     render(<App />);
 
     await screen.findByRole("combobox", { name: "Período activo" });
+    await screen.findByText("Presupuesto general");
     fireEvent.click(screen.getByRole("button", { name: "Administrar períodos" }));
-    expect(screen.getByRole("dialog", { name: "Administrar períodos" })).toBeInTheDocument();
-    expect(screen.getByText("Vacaciones")).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /eliminar/i })).not.toBeInTheDocument();
+    const dialog = screen.getByRole("dialog", { name: "Administrar períodos" });
+    expect(dialog).toBeInTheDocument();
+    expect(within(dialog).getByText("Vacaciones")).toBeInTheDocument();
+    expect(within(dialog).queryByRole("button", { name: /eliminar/i })).not.toBeInTheDocument();
   });
 
 });
