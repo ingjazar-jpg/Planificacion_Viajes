@@ -4,7 +4,7 @@ const STATUS_LABELS = ["Pendiente", "En progreso", "Completada", "Cancelada"];
 const STATUS_COLORS = ["#d9a441", "#477da8", "#2e8b68", "#8a929e"];
 const money = (value) => Number(value || 0);
 const cop = (value) => new Intl.NumberFormat("es-CO", {
-  style: "currency", currency: "COP", maximumFractionDigits: 0,
+  style: "currency", currency: "COP", minimumFractionDigits: 2, maximumFractionDigits: 2,
 }).format(money(value));
 
 function ChartCard({ title, children, description }) {
@@ -17,8 +17,7 @@ function ChartCard({ title, children, description }) {
   );
 }
 
-export function ActivityStatusChart({ data = [] }) {
-  const total = data.reduce((sum, item) => sum + Number(item.count || 0), 0);
+export function ActivityStatusChart({ data = [], total = 0 }) {
   const segments = useMemo(() => {
     let offset = 0;
     return STATUS_LABELS.map((status, index) => {
