@@ -11,7 +11,7 @@ Aplicación web local para planificar períodos de vacaciones decembrinas, admin
 - Interfaz UI-001 v0.1: aprobada.
 - Línea base técnica Sprint 0: aprobada el 14-11-2026.
 - Backend: bloques BE-001 a BE-006 implementados y validados; última suite completa reportada: **153 passed**.
-- Siguiente bloque: BE-007 — API de presupuestos y gastos, pendiente de implementación.
+- BE-007 — API de presupuestos y gastos: implementación publicada; pendiente de validación local (16 pruebas nuevas definidas).
 - Frontend: shell y navegación inicial validados; módulos funcionales e integración con backend pendientes.
 - Validación reproducible del backend con Python 3.14.10 y revisión/incorporación de lockfiles: pendientes.
 
