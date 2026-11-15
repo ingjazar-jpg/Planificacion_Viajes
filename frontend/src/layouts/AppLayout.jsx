@@ -27,10 +27,16 @@ function AppLayout() {
   const [isMobileNavigationOpen, setIsMobileNavigationOpen] = useState(false);
   const [isAlertsOpen, setIsAlertsOpen] = useState(false);
   const [activityDestinationId, setActivityDestinationId] = useState(null);
+  const [dashboardRevision, setDashboardRevision] = useState(0);
   const { alerts, count, isLoading: alertsLoading, error: alertsError, notice, isReviewing, refreshAlerts, markReviewed } = useAlerts();
   const { periods, isLoading, error, refreshPeriods } = usePeriod();
   const CurrentPage = pageComponents[activeSection] ?? DashboardPage;
   const closeAlerts = useCallback(() => setIsAlertsOpen(false), []);
+
+  async function handleReview(alertId) {
+    const reviewed = await markReviewed(alertId);
+    if (reviewed) setDashboardRevision((current) => current + 1);
+  }
 
   function handleNavigate(sectionId, activityId = null) {
     if (sectionId === "dashboard" && activeSection !== "dashboard") refreshAlerts();
@@ -64,13 +70,13 @@ function AppLayout() {
       <div className="main-column">
         <Topbar onMenuClick={() => setIsMobileNavigationOpen(true)} alertCount={count} onAlertsClick={() => setIsAlertsOpen(true)} />
         <main className="main-content" id="main-content" tabIndex="-1">
-          {activeSection === "activities" ? <CurrentPage activityId={activityDestinationId} /> : renderContent()}
+          {activeSection === "activities" ? <CurrentPage activityId={activityDestinationId} /> : activeSection === "dashboard" ? <CurrentPage key={dashboardRevision} /> : renderContent()}
         </main>
       </div>
 
       <AlertsDrawer open={isAlertsOpen} onClose={closeAlerts} alerts={alerts}
         isLoading={alertsLoading} error={alertsError} notice={notice} isReviewing={isReviewing}
-        onRetry={refreshAlerts} onReview={markReviewed}
+        onRetry={refreshAlerts} onReview={handleReview}
         onNavigate={(activityId) => { setIsAlertsOpen(false); handleNavigate("activities", activityId); }} />
 
       <MobileNavigation
