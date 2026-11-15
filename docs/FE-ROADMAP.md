@@ -155,12 +155,12 @@ Cada bloque FE se cerrará cuando:
 |---|---|
 | FE-001 | Validado y cerrado — 15-11-2026 |
 | FE-002 | Validado y cerrado — 15-11-2026 |
-| FE-003 | Especificación aprobada para implementación — 15-11-2026 |
+| FE-003 | En implementación: administración de períodos y calendario mensual validados; CRUD/listado de actividades pendiente |
 | FE-004 | Pendiente de refinement |
 | FE-005 | Pendiente de refinement |
 | FE-006 | Pendiente de refinement |
 
-FE-001 y FE-002 están validados y cerrados. FE-002 fue validado localmente con 37 pruebas frontend aprobadas, build de producción exitoso e integración manual con BE-006 y BE-009. FE-003 cuenta con refinement aprobado y especificación formal lista para implementación; FE-004 a FE-006 permanecen pendientes de refinement. La base frontend restante conserva placeholders hasta la implementación de sus respectivos bloques.
+FE-001 y FE-002 están validados y cerrados. FE-003 tiene refinement aprobado; sus primeras entregas de administración de períodos y calendario mensual están validadas localmente, con 59 pruebas frontend aprobadas y build de producción exitoso para la entrega del calendario. El listado y mantenimiento CRUD de actividades, transiciones, cancelación/eliminación e integración completa con alertas siguen pendientes. FE-004 a FE-006 permanecen pendientes de refinement.
 
 ## 9. Documentos relacionados
 
