@@ -81,6 +81,8 @@ Los seis bloques FE son unidades de planificación e implementación; no implica
 - Filtros, paginación e historial de modificaciones.
 - Presentación monetaria COP sin alterar cadenas decimales de API.
 
+**Avance de implementación:** Bloque 3 iniciado y publicado: listado inicial de gastos, filtros combinables por fechas/categoría/actividad/importe, orden global por fecha descendente y paginación local 10/20/50. Incluye presentación en tabla de escritorio y tarjetas móviles. La validación local de este bloque está pendiente.
+
 ### FE-005 — Informes
 
 - Informes General, Actividades y Presupuesto/Gastos.
@@ -160,7 +162,7 @@ Cada bloque FE se cerrará cuando:
 | FE-001 | Validado y cerrado — 15-11-2026 |
 | FE-002 | Validado y cerrado — 15-11-2026 |
 | FE-003 | Validado y cerrado — 16-11-2026; 84 pruebas frontend aprobadas, build exitoso y regresión integrada FastAPI satisfactoria |
-| FE-004 | Implementación en curso; Bloques 1 y 2 validados (114 pruebas frontend y build exitoso) |
+| FE-004 | Implementación en curso; Bloques 1 y 2 validados; Bloque 3 publicado, pendiente de validación local |
 | FE-005 | Pendiente de refinement |
 | FE-006 | Pendiente de refinement |
 
