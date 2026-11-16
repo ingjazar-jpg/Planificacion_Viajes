@@ -3,13 +3,14 @@ import { EmptyState, ErrorState, LoadingState } from "../../components/common/As
 import { usePeriod } from "../../context/PeriodContext.jsx";
 import { getActivities } from "../../services/api/activitiesService.js";
 import { createBudget, getBudget, updateBudget } from "../../services/api/budgetService.js";
-import { getExpenses } from "../../services/api/expensesService.js";
+import { createExpense, getExpenses } from "../../services/api/expensesService.js";
 import { centsToDecimal, decimalToCents, formatMoneyCOP, getUndistributedCents } from "../../utils/money.js";
 import "./BudgetExpensesPage.css";
 
 const CATEGORIES = ["Viajes", "Transporte", "Alojamiento", "Recreación", "Turismo", "Reuniones familiares", "Otros"];
 const EMPTY_FORM = { total_budget: "0.00", category_budgets: Object.fromEntries(CATEGORIES.map((item) => [item, "0.00"])) };
 const EMPTY_FILTERS = { start_date: "", end_date: "", category: "", activity_id: "", min_amount: "", max_amount: "" };
+const EMPTY_EXPENSE_FORM = { concept: "", amount: "", date: "", category: CATEGORIES[0], activity_id: "", description: "", observations: "" };
 
 function formFromBudget(budget) {
   return {
@@ -50,6 +51,13 @@ function BudgetExpensesPage() {
   const [appliedFilters, setAppliedFilters] = useState(EMPTY_FILTERS);
   const [pageSize, setPageSize] = useState(20);
   const [page, setPage] = useState(1);
+  const [createOpen, setCreateOpen] = useState(false);
+  const [expenseForm, setExpenseForm] = useState(EMPTY_EXPENSE_FORM);
+  const [optionalOpen, setOptionalOpen] = useState(false);
+  const [activitySearch, setActivitySearch] = useState("");
+  const [createError, setCreateError] = useState("");
+  const [creating, setCreating] = useState(false);
+  const [expenseNotice, setExpenseNotice] = useState("");
   const budgetSequence = useRef(0);
   const expenseSequence = useRef(0);
   const snapshot = useRef(EMPTY_FORM);
@@ -122,6 +130,7 @@ function BudgetExpensesPage() {
   const pageCount = Math.max(1, Math.ceil(expenses.length / pageSize));
   const visibleExpenses = expenses.slice((page - 1) * pageSize, page * pageSize);
   const hasFilters = Object.values(appliedFilters).some(Boolean);
+  const filteredActivities = activities.filter((activity) => String(activity.title ?? activity.name ?? "").toLocaleLowerCase().includes(activitySearch.trim().toLocaleLowerCase()));
 
   useEffect(() => {
     if (page > pageCount) setPage(pageCount);
@@ -175,6 +184,49 @@ function BudgetExpensesPage() {
     event.preventDefault();
     setPage(1);
     setAppliedFilters({ ...filters });
+  }
+
+  async function submitExpense(event) {
+    event.preventDefault();
+    if (creating || !selectedPeriodId) return;
+    let amount;
+    try {
+      amount = decimalToCents(expenseForm.amount);
+      if (amount <= 0n) throw new RangeError("El importe debe ser mayor que cero.");
+    } catch (validationError) {
+      setCreateError(validationError.message);
+      return;
+    }
+    const payload = {
+      period_id: selectedPeriodId,
+      concept: expenseForm.concept.trim(),
+      amount: centsToDecimal(amount),
+      date: expenseForm.date,
+      category: expenseForm.category,
+      description: expenseForm.description.trim() || null,
+      activity_id: expenseForm.activity_id || null,
+      observations: expenseForm.observations.trim() || null,
+    };
+    if (!payload.concept || !payload.date || !payload.category) {
+      setCreateError("Completa concepto, fecha, categoría e importe.");
+      return;
+    }
+    setCreating(true);
+    setCreateError("");
+    try {
+      await createExpense(payload);
+      setCreateOpen(false);
+      setExpenseForm(EMPTY_EXPENSE_FORM);
+      setActivitySearch("");
+      setOptionalOpen(false);
+      setPage(1);
+      await Promise.all([loadExpenses(appliedFilters), loadBudget(true)]);
+      setExpenseNotice("Gasto registrado correctamente.");
+    } catch (requestError) {
+      setCreateError(errorMessage(requestError));
+    } finally {
+      setCreating(false);
+    }
   }
 
   function clearFilters() {
@@ -235,7 +287,7 @@ function BudgetExpensesPage() {
               message="Puedes configurar un presupuesto y distribuirlo entre las siete categorías. También puedes registrar gastos desde la pestaña Gastos."
               actionLabel="Configurar presupuesto" onAction={beginEdit} />}
       </section> : <section id="expenses-panel" role="tabpanel" className="budget-tab-panel">
-        <div className="budget-section-heading"><div><h2>Gastos del período</h2><p>Consulta el conjunto completo, filtra y ordena por fecha más reciente.</p></div></div>
+        <div className="budget-section-heading"><div><h2>Gastos del período</h2><p>Consulta el conjunto completo, filtra y ordena por fecha más reciente.</p></div><button type="button" className="state-action" onClick={() => { setCreateError(""); setCreateOpen(true); }}>Registrar gasto</button></div>
         <form className="expense-filters" onSubmit={applyFilters}>
           <label>Desde<input aria-label="Fecha desde" type="date" value={filters.start_date} onChange={(e) => setFilters((v) => ({ ...v, start_date: e.target.value }))} /></label>
           <label>Hasta<input aria-label="Fecha hasta" type="date" value={filters.end_date} onChange={(e) => setFilters((v) => ({ ...v, end_date: e.target.value }))} /></label>
@@ -249,7 +301,7 @@ function BudgetExpensesPage() {
           : expensesError ? <ErrorState message={errorMessage(expensesError)} onRetry={() => loadExpenses()} />
             : expenses.length === 0 ? <EmptyState title={hasFilters ? "No hay gastos que coincidan" : "Aún no hay gastos registrados"}
               message={hasFilters ? "Prueba ajustar o limpiar los filtros." : "Los gastos registrados para este período aparecerán aquí."}
-              actionLabel={hasFilters ? "Limpiar filtros" : undefined} onAction={hasFilters ? clearFilters : undefined} />
+              actionLabel={hasFilters ? "Limpiar filtros" : "Registrar gasto"} onAction={hasFilters ? clearFilters : () => { setCreateError(""); setCreateOpen(true); }} />
               : <>
                 <div className="expense-list-toolbar"><span>{expenses.length} {expenses.length === 1 ? "gasto" : "gastos"}</span>
                   <label>Mostrar<select aria-label="Tamaño de página" value={pageSize} onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }}>
@@ -275,6 +327,30 @@ function BudgetExpensesPage() {
                 </nav>
               </>}
       </section>}
+      {expenseNotice && <p className="expense-success" role="status">{expenseNotice}<button type="button" aria-label="Cerrar notificación" onClick={() => setExpenseNotice("")}>×</button></p>}
+      {createOpen && <div className="expense-drawer-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget && !creating) setCreateOpen(false); }}>
+        <aside className="expense-drawer" role="dialog" aria-modal="true" aria-labelledby="expense-create-title">
+          <div className="expense-drawer-heading"><div><p className="page-eyebrow">NUEVO REGISTRO</p><h2 id="expense-create-title">Registrar gasto</h2><p>Período: {selectedPeriod?.name ?? "Período seleccionado"}</p></div>
+            <button type="button" className="secondary-action" aria-label="Cerrar formulario" disabled={creating} onClick={() => setCreateOpen(false)}>×</button></div>
+          <form className="expense-create-form" onSubmit={submitExpense}>
+            <label>Concepto<input aria-label="Concepto" required maxLength={160} value={expenseForm.concept} onChange={(event) => setExpenseForm((value) => ({ ...value, concept: event.target.value }))} /></label>
+            <label>Importe (COP)<input aria-label="Importe del gasto" required type="text" inputMode="decimal" placeholder="0.00" value={expenseForm.amount} onChange={(event) => setExpenseForm((value) => ({ ...value, amount: event.target.value }))} /></label>
+            <label>Fecha<input aria-label="Fecha del gasto" required type="date" value={expenseForm.date} onChange={(event) => setExpenseForm((value) => ({ ...value, date: event.target.value }))} /></label>
+            <label>Categoría<select aria-label="Categoría del gasto" required value={expenseForm.category} onChange={(event) => setExpenseForm((value) => ({ ...value, category: event.target.value }))}>{CATEGORIES.map((category) => <option key={category} value={category}>{category}</option>)}</select></label>
+            <label>Actividad (opcional)<input aria-label="Buscar actividad" type="search" placeholder="Buscar actividad…" value={activitySearch} onChange={(event) => setActivitySearch(event.target.value)} />
+              <select aria-label="Actividad asociada" value={expenseForm.activity_id} onChange={(event) => setExpenseForm((value) => ({ ...value, activity_id: event.target.value }))}><option value="">Sin actividad</option>{filteredActivities.map((activity) => <option key={activity.id} value={activity.id}>{activity.title ?? activity.name ?? "Actividad"}</option>)}</select>
+            </label>
+            <button type="button" className="expense-optional-toggle" aria-expanded={optionalOpen} onClick={() => setOptionalOpen((value) => !value)}>{optionalOpen ? "Ocultar campos opcionales" : "Añadir descripción y observaciones"}</button>
+            {optionalOpen && <div className="expense-optional-fields">
+              <label>Descripción<textarea aria-label="Descripción" rows="3" value={expenseForm.description} onChange={(event) => setExpenseForm((value) => ({ ...value, description: event.target.value }))} /></label>
+              <label>Observaciones<textarea aria-label="Observaciones" rows="3" value={expenseForm.observations} onChange={(event) => setExpenseForm((value) => ({ ...value, observations: event.target.value }))} /></label>
+            </div>}
+            {createError && <p role="alert" className="budget-form-error">{createError}</p>}
+            <div className="budget-form-actions"><button type="button" className="secondary-action" disabled={creating} onClick={() => setCreateOpen(false)}>Cancelar</button>
+              <button type="submit" className="state-action" disabled={creating}>{creating ? "Registrando…" : "Guardar gasto"}</button></div>
+          </form>
+        </aside>
+      </div>}
     </div>
   );
 }
