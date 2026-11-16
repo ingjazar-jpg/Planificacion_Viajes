@@ -118,7 +118,7 @@ function BudgetExpensesPage() {
   }, [form]);
   const overAllocated = undistributed !== null && undistributed < 0n;
   const dirty = JSON.stringify(form) !== JSON.stringify(snapshot.current);
-  const activityNames = useMemo(() => new Map(activities.map((activity) => [activity.id, activity.name])), [activities]);
+  const activityNames = useMemo(() => new Map(activities.map((activity) => [activity.id, activity.title ?? activity.name ?? "Actividad"])), [activities]);
   const pageCount = Math.max(1, Math.ceil(expenses.length / pageSize));
   const visibleExpenses = expenses.slice((page - 1) * pageSize, page * pageSize);
   const hasFilters = Object.values(appliedFilters).some(Boolean);
@@ -240,7 +240,7 @@ function BudgetExpensesPage() {
           <label>Desde<input aria-label="Fecha desde" type="date" value={filters.start_date} onChange={(e) => setFilters((v) => ({ ...v, start_date: e.target.value }))} /></label>
           <label>Hasta<input aria-label="Fecha hasta" type="date" value={filters.end_date} onChange={(e) => setFilters((v) => ({ ...v, end_date: e.target.value }))} /></label>
           <label>Categoría<select aria-label="Filtrar por categoría" value={filters.category} onChange={(e) => setFilters((v) => ({ ...v, category: e.target.value }))}><option value="">Todas</option>{CATEGORIES.map((item) => <option key={item} value={item}>{item}</option>)}</select></label>
-          <label>Actividad<select aria-label="Filtrar por actividad" value={filters.activity_id} onChange={(e) => setFilters((v) => ({ ...v, activity_id: e.target.value }))}><option value="">Todas</option>{activities.map((activity) => <option key={activity.id} value={activity.id}>{activity.name}</option>)}</select></label>
+          <label>Actividad<select aria-label="Filtrar por actividad" value={filters.activity_id} onChange={(e) => setFilters((v) => ({ ...v, activity_id: e.target.value }))}><option value="">Todas</option>{activities.map((activity) => <option key={activity.id} value={activity.id}>{activity.title ?? activity.name ?? "Actividad"}</option>)}</select></label>
           <label>Importe mínimo<input aria-label="Importe mínimo" type="text" inputMode="decimal" placeholder="0.00" value={filters.min_amount} onChange={(e) => setFilters((v) => ({ ...v, min_amount: e.target.value }))} /></label>
           <label>Importe máximo<input aria-label="Importe máximo" type="text" inputMode="decimal" placeholder="0.00" value={filters.max_amount} onChange={(e) => setFilters((v) => ({ ...v, max_amount: e.target.value }))} /></label>
           <div className="expense-filter-actions"><button className="state-action" type="submit">Aplicar filtros</button><button className="secondary-action" type="button" onClick={clearFilters}>Limpiar</button></div>
