@@ -1,7 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { EmptyState, ErrorState, LoadingState } from "../../components/common/AsyncState.jsx";
 import { usePeriod } from "../../context/PeriodContext.jsx";
-import { getActivities } from "../../services/api/activitiesService.js";
+import {
+  createActivity, getActivities, getActivity, updateActivity,
+} from "../../services/api/activitiesService.js";
+import ActivityDetailDialog from "./ActivityDetailDialog.jsx";
+import ActivityFormDialog from "./ActivityFormDialog.jsx";
 import CalendarPage from "../calendar/CalendarPage.jsx";
 
 const CATEGORIES = [
@@ -21,7 +25,14 @@ function ActivitiesPage({ activityId = null }) {
   const [activities, setActivities] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingActivity, setEditingActivity] = useState(null);
+  const [selectedActivityId, setSelectedActivityId] = useState(null);
+  const [selectedActivity, setSelectedActivity] = useState(null);
+  const [isDetailLoading, setIsDetailLoading] = useState(false);
+  const [detailError, setDetailError] = useState(null);
   const requestSequence = useRef(0);
+  const detailRequestSequence = useRef(0);
 
   const loadActivities = useCallback(async () => {
     const requestId = ++requestSequence.current;
@@ -29,13 +40,13 @@ function ActivitiesPage({ activityId = null }) {
       setActivities([]);
       setIsLoading(false);
       setError(null);
-      return;
+      return false;
     }
     if (filters.start_date && filters.end_date && filters.start_date > filters.end_date) {
       setActivities([]);
       setIsLoading(false);
       setError(null);
-      return;
+      return false;
     }
     setIsLoading(true);
     setError(null);
@@ -43,11 +54,13 @@ function ActivitiesPage({ activityId = null }) {
     try {
       const result = await getActivities({ period_id: selectedPeriodId, ...filters });
       if (requestId === requestSequence.current) setActivities(result);
+      return true;
     } catch (requestError) {
       if (requestId === requestSequence.current) {
         setActivities([]);
         setError(requestError);
       }
+      return false;
     } finally {
       if (requestId === requestSequence.current) setIsLoading(false);
     }
@@ -62,11 +75,71 @@ function ActivitiesPage({ activityId = null }) {
     setFilters(EMPTY_FILTERS);
     setActivities([]);
     setError(null);
+    setSelectedActivityId(null);
+    setSelectedActivity(null);
+    setDetailError(null);
   }, [selectedPeriodId]);
+
+  useEffect(() => {
+    if (activityId) {
+      setView("list");
+      setSelectedActivityId(activityId);
+    }
+  }, [activityId, selectedPeriodId]);
+
+  const loadActivityDetail = useCallback(async (id = selectedActivityId) => {
+    if (!id) return;
+    const requestId = ++detailRequestSequence.current;
+    setIsDetailLoading(true);
+    setDetailError(null);
+    setSelectedActivity(null);
+    try {
+      const result = await getActivity(id);
+      if (requestId !== detailRequestSequence.current) return;
+      if (result.period_id !== selectedPeriodId) {
+        setDetailError(new Error("La actividad no pertenece al período seleccionado."));
+        return;
+      }
+      setSelectedActivity(result);
+    } catch (requestError) {
+      if (requestId === detailRequestSequence.current) setDetailError(requestError);
+    } finally {
+      if (requestId === detailRequestSequence.current) setIsDetailLoading(false);
+    }
+  }, [selectedActivityId, selectedPeriodId]);
+
+  useEffect(() => {
+    if (!selectedActivityId) {
+      setSelectedActivity(null);
+      setDetailError(null);
+      setIsDetailLoading(false);
+      return undefined;
+    }
+    loadActivityDetail(selectedActivityId);
+    return () => { detailRequestSequence.current += 1; };
+  }, [selectedActivityId, loadActivityDetail]);
 
   function updateFilter(event) {
     const { name, value } = event.target;
     setFilters((current) => ({ ...current, [name]: value }));
+  }
+
+  function openCreateForm() {
+    setEditingActivity(null);
+    setIsFormOpen(true);
+  }
+
+  function openEditForm(activity) {
+    setEditingActivity(activity);
+    setSelectedActivityId(null);
+    setIsFormOpen(true);
+  }
+
+  async function handleSaved(savedActivity) {
+    await loadActivities();
+    setIsFormOpen(false);
+    setEditingActivity(null);
+    setSelectedActivityId(savedActivity.id);
   }
 
   const hasFilters = Object.values(filters).some(Boolean);
@@ -93,9 +166,12 @@ function ActivitiesPage({ activityId = null }) {
           <h1>Actividades</h1>
           <p className="page-description">{selectedPeriod?.name ?? "Período activo"} · Consulta y administra tus actividades.</p>
         </div>
-        <div className="activities-view-switch" role="group" aria-label="Vista de actividades">
-          <button type="button" className="secondary-action" onClick={() => setView("calendar")} aria-pressed="false">Calendario</button>
-          <button type="button" className="secondary-action" onClick={() => setView("list")} aria-pressed="true">Listado</button>
+        <div className="activities-heading-actions">
+          <div className="activities-view-switch" role="group" aria-label="Vista de actividades">
+            <button className="secondary-action" type="button" onClick={() => setView("calendar")} aria-pressed="false">Calendario</button>
+            <button className="secondary-action" type="button" onClick={() => setView("list")} aria-pressed="true">Listado</button>
+          </div>
+          <button className="state-action" type="button" onClick={openCreateForm} disabled={!selectedPeriodId}>Crear actividad</button>
         </div>
       </header>
 
@@ -157,7 +233,8 @@ function ActivitiesPage({ activityId = null }) {
             <EmptyState title="Sin coincidencias" message="No hay actividades que coincidan con los filtros seleccionados."
               actionLabel="Limpiar filtros" onAction={() => setFilters(EMPTY_FILTERS)} />
           ) : (
-            <EmptyState title="Aún no hay actividades" message="Este período todavía no tiene actividades planificadas." />
+            <EmptyState title="Aún no hay actividades" message="Este período todavía no tiene actividades planificadas."
+              actionLabel="Crear actividad" onAction={openCreateForm} />
           )
         ) : (
           <>
@@ -167,27 +244,27 @@ function ActivitiesPage({ activityId = null }) {
                   <th scope="col">Actividad</th><th scope="col">Fechas</th><th scope="col">Horario</th>
                   <th scope="col">Categoría</th><th scope="col">Prioridad</th><th scope="col">Estado</th>
                 </tr></thead>
-                <tbody>{activities.map((activity) => (
-                  <tr key={activity.id} data-activity-id={activity.id}>
-                    <td><span className="activity-name">{activity.name}</span></td>
-                    <td>{activity.start_date} – {activity.end_date}</td>
-                    <td>{activity.start_time}–{activity.end_time}</td>
-                    <td>{activity.category}</td><td>{activity.priority}</td>
-                    <td><span className={`activity-status activity-status-${String(activity.status).toLowerCase().replaceAll(" ", "-")}`}>{activity.status}</span></td>
+                <tbody>{activities.map((item) => (
+                  <tr key={item.id} data-activity-id={item.id}>
+                    <td><button className="activity-name-link" type="button" onClick={() => setSelectedActivityId(item.id)}>{item.name}</button></td>
+                    <td>{item.start_date} – {item.end_date}</td>
+                    <td>{item.start_time}–{item.end_time}</td>
+                    <td>{item.category}</td><td>{item.priority}</td>
+                    <td><span className={`activity-status activity-status-${String(item.status).toLowerCase().replaceAll(" ", "-")}`}>{item.status}</span></td>
                   </tr>
                 ))}</tbody>
               </table>
             </div>
             <ul className="activities-cards">
-              {activities.map((activity) => (
-                <li className="activity-card" key={activity.id} data-activity-id={activity.id}>
-                  <strong>{activity.name}</strong>
+              {activities.map((item) => (
+                <li className="activity-card" key={item.id} data-activity-id={item.id}>
+                  <button className="activity-card-title" type="button" onClick={() => setSelectedActivityId(item.id)}>{item.name}</button>
                   <dl>
-                    <div><dt>Fechas</dt><dd>{activity.start_date} – {activity.end_date}</dd></div>
-                    <div><dt>Horario</dt><dd>{activity.start_time}–{activity.end_time}</dd></div>
-                    <div><dt>Categoría</dt><dd>{activity.category}</dd></div>
-                    <div><dt>Prioridad</dt><dd>{activity.priority}</dd></div>
-                    <div><dt>Estado</dt><dd>{activity.status}</dd></div>
+                    <div><dt>Fechas</dt><dd>{item.start_date} – {item.end_date}</dd></div>
+                    <div><dt>Horario</dt><dd>{item.start_time}–{item.end_time}</dd></div>
+                    <div><dt>Categoría</dt><dd>{item.category}</dd></div>
+                    <div><dt>Prioridad</dt><dd>{item.priority}</dd></div>
+                    <div><dt>Estado</dt><dd>{item.status}</dd></div>
                   </dl>
                 </li>
               ))}
@@ -195,7 +272,12 @@ function ActivitiesPage({ activityId = null }) {
           </>
         )}
       </section>
-      {activityId && <p className="activity-navigation-note" role="status">Se recibió una solicitud para abrir la actividad seleccionada. El detalle se habilitará en la siguiente entrega de mantenimiento.</p>}
+
+      <ActivityFormDialog open={isFormOpen} activity={editingActivity} period={selectedPeriod}
+        onClose={() => { setIsFormOpen(false); setEditingActivity(null); }} onSaved={handleSaved} />
+      <ActivityDetailDialog open={Boolean(selectedActivityId)} activity={selectedActivity}
+        isLoading={isDetailLoading} error={detailError} onRetry={() => loadActivityDetail(selectedActivityId)}
+        onClose={() => setSelectedActivityId(null)} onEdit={openEditForm} />
     </div>
   );
 }
