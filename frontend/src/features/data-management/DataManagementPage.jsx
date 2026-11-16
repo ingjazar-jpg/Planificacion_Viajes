@@ -111,7 +111,8 @@ function DataManagementPage() {
   }
 
   async function confirmRestore() {
-    if (!selectedBackup || selectedBackup.validation_status !== "valid" || isRestoring) return;
+    if (!selectedBackup || selectedBackup.validation_status !== "valid"
+      || isRestoring || isRefreshing || (restoreSucceeded && refreshError)) return;
     setIsRestoring(true);
     setNotice("");
     setNoticeIsError(false);
@@ -153,6 +154,10 @@ function DataManagementPage() {
       </header>
 
       {notice && <p className={noticeIsError ? "data-management-notice is-error" : "data-management-notice"} role={noticeIsError ? "alert" : "status"}>{notice}</p>}
+
+      {restoreSucceeded && isRefreshing && (
+        <p className="data-management-notice" role="status">La restauración fue exitosa. Actualizando los datos de la aplicación…</p>
+      )}
 
       {restoreSucceeded && refreshError && (
         <section className="data-recovery-warning" role="alert" aria-labelledby="recovery-warning-title">
@@ -197,8 +202,8 @@ function DataManagementPage() {
                   </div>
                   <button
                     type="button"
-                    className={restorable ? "data-restore-button" : "data-restore-button"}
-                    disabled={!restorable || isRefreshing}
+                    className="data-restore-button"
+                    disabled={!restorable || isRefreshing || (restoreSucceeded && Boolean(refreshError))}
                     onClick={(event) => openConfirmation(backup, event)}
                   >
                     Restaurar
