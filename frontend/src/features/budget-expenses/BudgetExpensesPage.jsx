@@ -101,8 +101,8 @@ function BudgetExpensesPage() {
   useEffect(() => {
     setExpenses([]); setFilters(EMPTY_FILTERS); setAppliedFilters(EMPTY_FILTERS);
     setPage(1);
-    loadExpenses(EMPTY_FILTERS);
-    getActivities({ period_id: selectedPeriodId })
+    if (!selectedPeriodId) setActivities([]);
+    else getActivities({ period_id: selectedPeriodId })
       .then(setActivities)
       .catch(() => setActivities([]));
     return () => { expenseSequence.current += 1; };
