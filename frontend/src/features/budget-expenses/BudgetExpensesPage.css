@@ -65,3 +65,9 @@
 .expense-history-event dl{gap:.55rem}
 .expense-history-event del{color:var(--color-text-secondary)}
 @media(max-width:420px){.expense-detail-fields>div,.expense-history-event dl>div{grid-template-columns:minmax(0,1fr);gap:.25rem}}
+
+/* Acciones del detalle y eliminación destructiva. */
+.expense-detail-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:.7rem;margin:1.2rem 0}
+.danger-action{min-height:42px;padding:.6rem .9rem;border:1px solid var(--color-danger);border-radius:var(--radius-control);background:var(--color-danger);color:#fff;font:inherit;font-weight:650;cursor:pointer}
+.danger-action:disabled,.secondary-action:disabled,.state-action:disabled{opacity:.6;cursor:not-allowed}
+.expense-detail-drawer .expense-create-form{padding-top:.4rem}
