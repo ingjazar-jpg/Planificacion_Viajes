@@ -8,7 +8,7 @@
 
 ## 1. Resumen ejecutivo
 
-La implementación del backend BE-001 a BE-010 está validada. Tras incorporar CORS y sus dos pruebas de regresión, la usuaria confirmó la suite backend completa con **197 passed, 0 failed**. FE-001 y FE-002 están validados y cerrados. FE-001 cuenta con **12 pruebas frontend aprobadas**; FE-002, con **37 pruebas frontend aprobadas** y build de producción exitoso. FE-003 tiene refinement aprobado (D1–D27) y sus entregas funcionales están validadas individualmente: administración de períodos, calendario, listado/filtros, CRUD/detalle/navegación y ciclo de vida de actividades. La última suite frontend reportó **84 passed, 0 failed** y build Vite 8.3.8 exitoso con 44 módulos transformados. FE-003 está validado y cerrado, incluida la regresión integrada contra FastAPI. FE-004 inició implementación: el Bloque 1 (servicios y utilidades monetarias) quedó validado con **107 pruebas frontend aprobadas**; tras publicar el Bloque 2 (vista inicial de presupuesto), la usuaria confirmó **114 pruebas frontend aprobadas** en la suite completa y build de producción exitoso con Vite 8.3.8 (47 módulos transformados). El Bloque 2 queda validado.
+La implementación del backend BE-001 a BE-010 está validada. Tras incorporar CORS y sus dos pruebas de regresión, la usuaria confirmó la suite backend completa con **197 passed, 0 failed**. FE-001 y FE-002 están validados y cerrados. FE-001 cuenta con **12 pruebas frontend aprobadas**; FE-002, con **37 pruebas frontend aprobadas** y build de producción exitoso. FE-003 tiene refinement aprobado (D1–D27) y sus entregas funcionales están validadas individualmente: administración de períodos, calendario, listado/filtros, CRUD/detalle/navegación y ciclo de vida de actividades. La última suite frontend reportó **84 passed, 0 failed** y build Vite 8.3.8 exitoso con 44 módulos transformados. FE-003 está validado y cerrado, incluida la regresión integrada contra FastAPI. FE-004 inició implementación: el Bloque 1 (servicios y utilidades monetarias) quedó validado con **107 pruebas frontend aprobadas**; tras publicar el Bloque 2 (vista inicial de presupuesto), la usuaria confirmó **114 pruebas frontend aprobadas** en la suite completa y build de producción exitoso con Vite 8.3.8 (47 módulos transformados). El Bloque 2 queda validado. Posteriormente, el Bloque 3 (listado, filtros, ordenamiento global y paginación local) quedó validado con **116 pruebas frontend aprobadas** en 18 archivos y build Vite 8.3.8 exitoso con 48 módulos transformados. El Bloque 4 (formulario lateral de registro de gastos) quedó validado tras corregir dos consultas ambiguas en las pruebas; la usuaria confirmó **118 pruebas frontend aprobadas**. El build de producción Vite 8.3.8 había sido exitoso con 48 módulos transformados antes de ese ajuste, que solo modificó el archivo de pruebas.
 
 El resultado de 195 pruebas corresponde a la ejecución completa validada después de BE-010. Los resultados históricos por bloque son hitos acumulativos, no cantidades que deban sumarse.
 
@@ -184,19 +184,21 @@ La advertencia deprecatoria de Starlette relacionada con `httpx` no produjo fall
 
 ### 6.2 FE-004 — Presupuesto y gastos
 
-**Estado:** refinement aprobado; Bloques 1 y 2 implementados, publicados y validados localmente. Suite frontend: **114 passed**; build de producción Vite 8.3.8 exitoso (47 módulos transformados).
+**Estado:** refinement aprobado; Bloques 1–4 implementados, publicados y validados localmente. Última suite frontend confirmada por la usuaria: **118 passed**. Build de producción Vite 8.3.8 exitoso con 48 módulos transformados; el ajuste posterior para resolver dos consultas ambiguas afectó únicamente las pruebas.
 
 - Documento: `docs/FE-004.md` v0.1.
 - Decisiones aprobadas: D1–D43. D43 opción A resuelve la ausencia de ordenamiento contractual: GET /expenses consulta el conjunto filtrado completo sin page/page_size; el frontend ordena globalmente por fecha descendente y pagina localmente con 10/20/50.
 - Requisitos: 68 requisitos funcionales para presupuesto, gastos, filtros, paginación, detalle, historial, estados, calidad y accesibilidad.
 - Contratos: GET/POST/PUT de presupuesto; GET/POST/GET/PUT/PATCH/DELETE de gastos; GET de historial; consulta de actividades para asociación. Todos conforme a API-001 v0.8.
 - Restricción: no se modifica API-001 ni se reabre BE-007.
-- Próximo paso: validar localmente el Bloque 3 de FE-004 (listado, filtros, ordenamiento global y paginación local), publicado en GitHub en la rama autorizada.
+- Bloque 3 validado: listado completo de gastos, filtros combinables, ordenamiento global por fecha descendente y paginación local 10/20/50. Evidencia: 116 pruebas frontend aprobadas en 18 archivos y build exitoso con 48 módulos transformados.
+- Bloque 4 validado: formulario lateral de registro, actividad opcional del período, campos opcionales colapsados, validación monetaria exacta y actualización del listado e indicadores tras crear. Evidencia: 118 pruebas frontend aprobadas. El ajuste que resolvió dos consultas ambiguas se limitó al archivo de pruebas; no modificó código de producción ni contratos.
 
 ## 7. Calidad y validación
 
 - Última suite backend completa confirmada por la usuaria, posterior al ajuste CORS: **197 passed, 0 failed**.
 - Suite frontend FE-001: **12 passed, 0 failed**.
+- Suite frontend completa tras FE-004 Bloque 4: **118 passed, 0 failed**; build Vite 8.3.8 exitoso con 48 módulos transformados (el ajuste posterior modificó solo pruebas).
 - Suite frontend FE-002: **37 passed, 0 failed** en 8 archivos; build de producción exitoso.
 - FE-003 administración de períodos: **48 passed, 0 failed** en 10 archivos; build exitoso.
 - FE-003 calendario mensual primera entrega: **59 passed, 0 failed** en 12 archivos; build Vite 8.3.8 exitoso; validación visual/funcional confirmada por la usuaria.
@@ -231,7 +233,7 @@ Las especificaciones aprobadas siguen siendo la fuente de verdad funcional y té
 
 ## 10. Próximos pasos inmediatos
 
-1. Sincronizar y validar localmente el Bloque 4 de FE-004 (registro de gastos); después continuar con detalle e historial.
+1. Continuar FE-004 con el detalle e historial de gastos, seguido de edición y eliminación conforme a la especificación aprobada.
 2. Mantener pendiente la validación reproducible con Python 3.14.10, según la línea base técnica aprobada.
 3. Refinar FE-005 y FE-006 después de completar el trabajo priorizado.
 
