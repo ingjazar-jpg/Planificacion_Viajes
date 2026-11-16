@@ -119,6 +119,7 @@ function CalendarPage() {
   const [detailError, setDetailError] = useState(null);
   const [isMutatingActivity, setIsMutatingActivity] = useState(false);
   const [activityActionError, setActivityActionError] = useState("");
+  const [detailRetryKey, setDetailRetryKey] = useState(0);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingActivity, setEditingActivity] = useState(null);
   const detailRequestSequence = useRef(0);
@@ -207,6 +208,7 @@ function CalendarPage() {
     const requestId = ++detailRequestSequence.current;
     setIsDetailLoading(true);
     setDetailError(null);
+    setSelectedActivity(null);
     getActivity(selectedActivityId).then((result) => {
       if (requestId === detailRequestSequence.current) {
         if (result.period_id !== selectedPeriodId) {
@@ -221,7 +223,7 @@ function CalendarPage() {
       if (requestId === detailRequestSequence.current) setIsDetailLoading(false);
     });
     return () => { detailRequestSequence.current += 1; };
-  }, [selectedActivityId, selectedPeriodId]);
+  }, [selectedActivityId, selectedPeriodId, detailRetryKey]);
 
   async function handleStatusChange(nextStatus) {
     if (!selectedActivity) return;
@@ -426,14 +428,7 @@ function CalendarPage() {
               activity={selectedActivity}
               isLoading={isDetailLoading}
               error={detailError}
-              onRetry={() => {
-                if (selectedActivityId) {
-                  setDetailError(null);
-                  setSelectedActivity(null);
-                  setSelectedActivityId(null);
-                  Promise.resolve().then(() => setSelectedActivityId(selectedActivityId));
-                }
-              }}
+              onRetry={() => setDetailRetryKey((current) => current + 1)}
               onClose={() => { if (!isMutatingActivity) setSelectedActivityId(null); }}
               onEdit={openEditActivity}
               onChangeStatus={handleStatusChange}
