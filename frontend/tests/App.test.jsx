@@ -11,7 +11,8 @@ vi.mock("../src/services/api/periodsService.js", () => ({ getPeriods: vi.fn(), c
 vi.mock("../src/services/api/dashboardService.js", () => ({ getDashboard: vi.fn() }));
 vi.mock("../src/services/api/calendarService.js", () => ({ getCalendar: vi.fn() }));
 vi.mock("../src/services/api/activitiesService.js", () => ({
-  createActivity: vi.fn(), getActivities: vi.fn(), getActivity: vi.fn(), updateActivity: vi.fn(),
+  createActivity: vi.fn(), deleteActivity: vi.fn(), getActivities: vi.fn(), getActivity: vi.fn(),
+  updateActivity: vi.fn(), updateActivityStatus: vi.fn(),
 }));
 vi.mock("../src/services/api/alertsService.js", () => ({
   evaluateAlerts: vi.fn(), getPendingActiveAlerts: vi.fn(), reviewAlert: vi.fn(),
