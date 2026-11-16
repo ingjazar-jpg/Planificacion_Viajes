@@ -146,6 +146,15 @@ describe("reportsService", () => {
     )).toBe("informe general 2026.pdf");
   });
 
+  it("preserves AbortError when an export request is cancelled", async () => {
+    fetch.mockRejectedValue(Object.assign(new Error("aborted"), { name: "AbortError" }));
+    await expect(exportReport("general", "period-1", {
+      format: "pdf",
+      scope: "period",
+      signal: new AbortController().signal,
+    })).rejects.toMatchObject({ name: "AbortError" });
+  });
+
   it("fails clearly when the server omits Content-Disposition filename", async () => {
     fetch.mockResolvedValue({
       ok: true,
