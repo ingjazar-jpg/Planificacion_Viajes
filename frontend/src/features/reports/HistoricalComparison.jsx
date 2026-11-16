@@ -190,12 +190,14 @@ export default function HistoricalComparison({ isActive }) {
         <label>Primer período
           <select value={firstPeriodId} disabled={periodsLoading || Boolean(periodsError) || periods.length < 2}
             onChange={(event) => { setFirstPeriodId(event.target.value); setComparison(null); }}>
+            <option value="" disabled>Selecciona un período</option>
             {firstOptions.map((period) => <option key={period.id} value={period.id}>{period.name} ({period.year})</option>)}
           </select>
         </label>
         <label>Segundo período
           <select value={secondPeriodId} disabled={periodsLoading || Boolean(periodsError) || periods.length < 2}
             onChange={(event) => { setSecondPeriodId(event.target.value); setComparison(null); }}>
+            <option value="" disabled>Selecciona un período</option>
             {secondOptions.map((period) => <option key={period.id} value={period.id}>{period.name} ({period.year})</option>)}
           </select>
         </label>
