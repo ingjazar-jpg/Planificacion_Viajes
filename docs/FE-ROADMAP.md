@@ -68,7 +68,7 @@ Los seis bloques FE son unidades de planificación e implementación; no implica
 - Confirmaciones para cancelar/eliminar y comunicación explícita de eliminación en cascada.
 - Decisiones FE003-DEC-001 a FE003-DEC-027 aprobadas; especificación formal en docs/FE-003.md.
 
-**Estado FE-003 al 16-11-2026:** están validadas y cerradas individualmente la administración de períodos, el calendario mensual, el listado/filtros, el CRUD/detalle/navegación desde alertas y las transiciones/cancelación/eliminación. La última entrega confirmó **84 pruebas frontend aprobadas, 0 fallidas** y build Vite 8.3.8 exitoso (44 módulos transformados), además de las comprobaciones manuales funcionales. FE-003 permanece en validación de integración final contra FastAPI, incluida la comprobación de persistencia y eliminación en cascada.
+**Estado FE-003 al 16-11-2026:** están validadas y cerradas individualmente la administración de períodos, el calendario mensual, el listado/filtros, el CRUD/detalle/navegación desde alertas y las transiciones/cancelación/eliminación. La última entrega confirmó **84 pruebas frontend aprobadas, 0 fallidas** y build Vite 8.3.8 exitoso (44 módulos transformados), además de la validación visual y funcional confirmada por la usuaria. FE-003 permanece en validación de integración final contra FastAPI, incluida la comprobación de persistencia y eliminación en cascada.
 
 ### FE-004 — Presupuesto y gastos
 
