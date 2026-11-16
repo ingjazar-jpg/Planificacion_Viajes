@@ -12,6 +12,7 @@ import MobileNavigation from "../components/layout/MobileNavigation.jsx";
 import Sidebar from "../components/layout/Sidebar.jsx";
 import Topbar from "../components/layout/Topbar.jsx";
 import { usePeriod } from "../context/PeriodContext.jsx";
+import { useDataRecovery } from "../context/DataRecoveryContext.jsx";
 
 const pageComponents = {
   dashboard: DashboardPage,
@@ -30,6 +31,7 @@ function AppLayout() {
   const [dashboardRevision, setDashboardRevision] = useState(0);
   const { alerts, count, isLoading: alertsLoading, error: alertsError, notice, noticeIsError, isReviewing, refreshAlerts, markReviewed } = useAlerts();
   const { periods, isLoading, error, refreshPeriods } = usePeriod();
+  const { isRefreshing: isRecovering, refreshError, restoreSucceeded, retryRefresh, revision } = useDataRecovery();
   const CurrentPage = pageComponents[activeSection] ?? DashboardPage;
   const closeAlerts = useCallback(() => setIsAlertsOpen(false), []);
 
@@ -47,6 +49,22 @@ function AppLayout() {
   }
 
   function renderContent() {
+    if (restoreSucceeded && (isRecovering || refreshError) && activeSection !== "data-management") {
+      return (
+        <section className="async-state async-state-error" role="alert">
+          <h2>Actualización de datos pendiente</h2>
+          <p>{isRecovering
+            ? "La restauración fue exitosa. Se están actualizando los datos de la aplicación."
+            : "La restauración fue exitosa, pero algunos datos no pudieron actualizarse. El acceso a información anterior permanece bloqueado."}</p>
+          <div className="data-recovery-actions">
+            <button type="button" className="state-action" onClick={() => handleNavigate("data-management")}>Ir a Gestión de datos</button>
+            <button type="button" className="state-action" onClick={retryRefresh} disabled={isRecovering}>
+              {isRecovering ? "Actualizando…" : "Reintentar actualización"}
+            </button>
+          </div>
+        </section>
+      );
+    }
     if (isLoading) return <LoadingState message="Consultando períodos…" />;
     if (error) {
       return <ErrorState message={error.message} onRetry={refreshPeriods} />;
@@ -62,7 +80,7 @@ function AppLayout() {
       );
     }
     if (activeSection === "activities") return <CurrentPage activityId={activityDestinationId} />;
-    return <CurrentPage key={activeSection === "dashboard" ? dashboardRevision : undefined} />;
+    return <CurrentPage key={activeSection === "data-management" ? undefined : `${activeSection}-${dashboardRevision}-${revision}`} />;
   }
 
   return (
