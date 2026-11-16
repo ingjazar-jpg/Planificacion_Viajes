@@ -425,7 +425,7 @@ function ReportsPage() {
   }, [selectedPeriodId, activityOptionsLoaded, activityOptionsLoading]);
 
   const activeReport = reports[activeTab];
-  const retry = () => loadReport(activeTab, activeReport.page, activeReport.pageSize, true);
+  const retry = () => loadReport(activeTab, activeReport.page, activeReport.pageSize, true, activeReport.appliedFilters);
 
   return (
     <div className="reports-page">
@@ -461,8 +461,6 @@ function ReportsPage() {
           <LoadingState message="Generando informe…" />
         ) : activeReport?.error ? (
           <ErrorState message={activeReport.error.message} onRetry={retry} />
-            ) : activeReport?.error ? (
-              <ErrorState message={activeReport.error.message} onRetry={retry} />
             ) : !activeReport?.data ? (
               <EmptyState title="Informe no disponible" message="No se recibieron datos para mostrar." actionLabel="Reintentar" onAction={retry} />
             ) : (
