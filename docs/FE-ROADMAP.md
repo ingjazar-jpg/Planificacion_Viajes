@@ -91,19 +91,19 @@ Los seis bloques FE son unidades de planificación e implementación; no implica
 
 ### FE-005 — Informes
 
-- Informes General, Actividades y Presupuesto/Gastos.
-- Filtros aplicables y rangos inclusivos.
-- Resultados, totales y porcentajes.
-- Comparación histórica de dos períodos distintos.
-- Exportaciones PDF y XLSX con alcance filtered o period.
-- Refinement consolidado y aprobado para implementación en `docs/FE-005.md` v0.1 (D01–D61).
-- 78 requisitos funcionales y 22 criterios de aceptación.
+**Estado FE-005 al 16-11-2026: IMPLEMENTADO, VALIDADO Y CERRADO.** Especificación `docs/FE-005.md` v0.2, con FE005-D01 a D62, RF-001 a RF-090 y CA-001 a CA-022 + B5-CA01 a B5-CA12.
+
 - Cuatro pestañas: General, Actividades, Presupuesto y gastos, Comparación histórica.
 - Filtros contractuales, paginación, estados vacíos/carga/error y protección frente a respuestas obsoletas.
 - Exportaciones PDF/XLSX de los tres informes individuales con alcance `filtered` o `period`; comparación sin exportación.
-- Implementación pendiente; no se declara validado hasta recibir evidencia local.
+- Cinco bloques implementados y publicados; contratos API-001 §5.8 sin modificaciones.
+- Evidencia local confirmada por la usuaria: **150 pruebas frontend aprobadas, 0 fallidas** en 20 archivos; `npm run build` exitoso con Vite 8.3.8; revisión visual y funcional satisfactoria.
+- Corrección del test de notificación de exportación publicada en commit `0789bac9920bdab27df3c9244d627ac54e477520`.
+- Los warnings informativos de React/jsdom no afectaron la suite ni el build.
 
 ### FE-006 — Gestión de datos e integración
+
+**Estado al 16-11-2026: REFINEMENT INICIADO; especificación pendiente de elaboración y aprobación.** No iniciar implementación hasta cerrar decisiones, criterios de aceptación y Definition of Done.
 
 - Catálogo de copias semanales y estados de validación.
 - Restauración con advertencia y confirmación explícita.
@@ -174,10 +174,10 @@ Cada bloque FE se cerrará cuando:
 | FE-002 | Validado y cerrado — 15-11-2026 |
 | FE-003 | Validado y cerrado — 16-11-2026; 84 pruebas frontend aprobadas, build exitoso y regresión integrada FastAPI satisfactoria |
 | FE-004 | Validado y cerrado — Bloques 1–6; Bloque 6 con 126 pruebas aprobadas y build exitoso |
-| FE-005 | Refinement aprobado; especificación v0.1 publicada para implementación — 16-11-2026 |
-| FE-006 | Pendiente de refinement |
+| FE-005 | Validado y cerrado — 16-11-2026; 150 pruebas aprobadas, build exitoso y revisión visual/funcional satisfactoria |
+| FE-006 | Refinement iniciado — 16-11-2026; especificación en elaboración |
 
-FE-001, FE-002 y FE-003 están validados y cerrados. FE-003 cerró el 16-11-2026 con 84 pruebas frontend aprobadas, build de producción exitoso y regresión integrada contra FastAPI satisfactoria, confirmada por la usuaria. FE-004 tiene refinement aprobado y especificación v0.1 publicada; Bloques 1–6 están implementados, publicados y validados. El Bloque 6 cerró con 126 pruebas frontend aprobadas y build de producción exitoso. FE-005 tiene refinement aprobado y especificación v0.1 publicada para implementación; FE-006 permanece pendiente de refinement.
+FE-001, FE-002 y FE-003 están validados y cerrados. FE-003 cerró el 16-11-2026 con 84 pruebas frontend aprobadas, build de producción exitoso y regresión integrada contra FastAPI satisfactoria, confirmada por la usuaria. FE-004 tiene refinement aprobado y especificación v0.1 publicada; Bloques 1–6 están implementados, publicados y validados. El Bloque 6 cerró con 126 pruebas frontend aprobadas y build de producción exitoso. FE-005 está implementado, validado y cerrado con 150 pruebas frontend aprobadas y build exitoso. FE-006 inició refinement el 16-11-2026; su especificación aún debe elaborarse y aprobarse antes de implementar.
 
 ## 9. Documentos relacionados
 
