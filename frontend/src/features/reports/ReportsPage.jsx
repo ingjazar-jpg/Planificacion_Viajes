@@ -236,10 +236,12 @@ function ReportsPage() {
   const [activeTab, setActiveTab] = useState("general");
   const [reports, setReports] = useState(INITIAL_REPORT_STATE);
   const requestSequences = useRef({ general: 0, activities: 0, budget: 0 });
+  const reportsRef = useRef(reports);
+  reportsRef.current = reports;
 
   const loadReport = useCallback(async (reportType, page = 1, pageSize = 20, force = false) => {
     if (!selectedPeriodId || !REPORT_LOADERS[reportType]) return;
-    const current = reports[reportType];
+    const current = reportsRef.current[reportType];
     if (!force && current.data && current.page === page && current.pageSize === pageSize) return;
 
     const requestId = ++requestSequences.current[reportType];
@@ -261,9 +263,10 @@ function ReportsPage() {
         [reportType]: { ...state[reportType], data: null, meta: null, isLoading: false, error, page, pageSize },
       }));
     }
-  }, [reports, selectedPeriodId]);
+  }, [selectedPeriodId]);
 
   useEffect(() => {
+    reportsRef.current = INITIAL_REPORT_STATE;
     setReports(INITIAL_REPORT_STATE);
     Object.keys(requestSequences.current).forEach((key) => { requestSequences.current[key] += 1; });
   }, [selectedPeriodId]);
