@@ -53,3 +53,17 @@ export async function updateActivity(activityId, payload) {
   });
   return assertActivityResponse(response, "actualizar");
 }
+
+export async function updateActivityStatus(activityId, status) {
+  const response = await request(`/activities/${encodeURIComponent(activityId)}`, {
+    method: "PATCH",
+    body: JSON.stringify({ status }),
+  });
+  return assertActivityResponse(response, "actualizar el estado de");
+}
+
+export async function deleteActivity(activityId) {
+  return request(`/activities/${encodeURIComponent(activityId)}`, {
+    method: "DELETE",
+  });
+}
