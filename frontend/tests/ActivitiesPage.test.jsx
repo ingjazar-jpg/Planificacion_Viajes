@@ -55,6 +55,7 @@ describe("ActivitiesPage list", () => {
     await waitFor(() => expect(getActivities).toHaveBeenLastCalledWith(expect.objectContaining({
       period_id: period.id, category: "Viajes", priority: "Alta", destination: "Santa Marta",
     })));
+    expect(updateActivity.mock.calls[0][1]).not.toHaveProperty("status");
     fireEvent.click(screen.getByRole("button", { name: "Limpiar filtros" }));
     await waitFor(() => expect(getActivities).toHaveBeenLastCalledWith(expect.objectContaining({
       period_id: period.id, category: "", priority: "", destination: "",
@@ -119,7 +120,7 @@ describe("ActivitiesPage list", () => {
     expect(await screen.findByRole("dialog", { name: "Nuevo viaje" })).toBeInTheDocument();
   });
 
-  it("edits the selected activity while preserving its status in the PUT contract", async () => {
+  it("edits activity fields without changing its lifecycle status", async () => {
     getActivity.mockResolvedValueOnce(rows[0]).mockResolvedValueOnce({ ...rows[0], name: "Viaje actualizado" });
     render(<ActivitiesPage />);
     const table = await screen.findByRole("table", { name: "Listado de actividades" });
@@ -130,7 +131,7 @@ describe("ActivitiesPage list", () => {
     fireEvent.change(within(form).getByLabelText(/Nombre/), { target: { value: "Viaje actualizado" } });
     fireEvent.click(within(form).getByRole("button", { name: "Guardar actividad" }));
     await waitFor(() => expect(updateActivity).toHaveBeenCalledWith("activity-1", expect.objectContaining({
-      name: "Viaje actualizado", status: "Pendiente",
+      name: "Viaje actualizado",
     })));
     expect(await screen.findByRole("dialog", { name: "Viaje actualizado" })).toBeInTheDocument();
   });
