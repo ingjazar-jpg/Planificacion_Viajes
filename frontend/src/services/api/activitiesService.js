@@ -1,5 +1,13 @@
 import { request } from "./httpClient.js";
 
+function assertActivityResponse(response, operation) {
+  if (!response?.data || typeof response.data !== "object" || Array.isArray(response.data)
+    || typeof response.data.id !== "string") {
+    throw new Error(`La API devolvió una respuesta inválida al ${operation} la actividad.`);
+  }
+  return response.data;
+}
+
 export async function getActivities({
   period_id,
   category,
@@ -23,4 +31,25 @@ export async function getActivities({
     throw new Error("La API devolvió un listado de actividades con formato inválido.");
   }
   return response.data;
+}
+
+export async function getActivity(activityId) {
+  const response = await request(`/activities/${encodeURIComponent(activityId)}`);
+  return assertActivityResponse(response, "consultar");
+}
+
+export async function createActivity(payload) {
+  const response = await request("/activities", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+  return assertActivityResponse(response, "crear");
+}
+
+export async function updateActivity(activityId, payload) {
+  const response = await request(`/activities/${encodeURIComponent(activityId)}`, {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
+  return assertActivityResponse(response, "actualizar");
 }
