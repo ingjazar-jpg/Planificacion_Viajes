@@ -180,8 +180,8 @@ El mapa de implementación de seis bloques se mantiene en `docs/FE-ROADMAP.md`. 
 
 ## 8. Entorno y tareas técnicas pendientes
 
-- La línea base Sprint 0 aprobada fija Python 3.14.10. La usuaria reportó un entorno local con Python 3.15.2; la validación reproducible en Python 3.14.10 sigue pendiente.
-- La validación de 195 pruebas incluye BE-010 y se ejecutó localmente con Python 3.15.2. No reemplaza la comprobación reproducible en la versión Python fijada (3.14.10), que sigue pendiente.
+- La línea base Sprint 0 aprobada fija Python 3.14.10. La validación reproducible se completó satisfactoriamente el 14-11-2026 en un entorno virtual temporal aislado creado con `C:\\Python314\\python.exe` (Python 3.14.10): instalación desde `backend/pylock.toml`, `pip check` sin dependencias rotas e imports principales correctos. El entorno temporal se eliminó al finalizar.
+- La suite backend más reciente confirmada para el cierre FE-006 fue ejecutada localmente con el `.venv` del repositorio (Python 3.15.2) y finalizó con **197 passed, 0 failed**. Esta evidencia de regresión y la validación transversal independiente de Python 3.14.10 son controles distintos; ambos están completados.
 - `backend/pylock.toml` y `frontend/package-lock.json` se identificaron como archivos locales no versionados en el último estado conocido. Deben preservarse y revisarse antes de decidir su incorporación.
 - No eliminar, sobrescribir ni limpiar archivos locales no rastreados durante sincronizaciones.
 
@@ -200,7 +200,7 @@ Las especificaciones aprobadas siguen siendo la fuente de verdad funcional y té
 ## 10. Próximos pasos inmediatos
 
 1. Mantener FE-006 cerrado; cualquier cambio posterior deberá gestionarse como nueva incidencia o cambio controlado, sin reabrir decisiones aprobadas de forma implícita.
-2. Mantener como tarea transversal independiente la validación reproducible con Python 3.14.10, según la línea base técnica aprobada.
+2. Mantener registrada como completada la validación reproducible con Python 3.14.10; no queda pendiente como bloqueo de FE-006.
 3. Continuar con mantenimiento y evolución únicamente mediante nuevas especificaciones o cambios aprobados.
 
 ---
