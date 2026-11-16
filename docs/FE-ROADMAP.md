@@ -68,6 +68,8 @@ Los seis bloques FE son unidades de planificación e implementación; no implica
 - Confirmaciones para cancelar/eliminar y comunicación explícita de eliminación en cascada.
 - Decisiones FE003-DEC-001 a FE003-DEC-027 aprobadas; especificación formal en docs/FE-003.md.
 
+**Estado FE-003 al 16-11-2026:** administración de períodos, calendario mensual y primera entrega de listado/filtros están validados y cerrados individualmente. El listado/filtros quedó validado con 68 pruebas aprobadas en 14 archivos, build Vite 8.3.8 exitoso (42 módulos) y comprobaciones visuales de escritorio, móvil, filtros, estados y alternancia. FE-003 continúa en curso: quedan creación, detalle, edición, transiciones de estado, cancelación/eliminación e integración completa desde alertas.
+
 ### FE-004 — Presupuesto y gastos
 
 - Sección conjunta con pestañas internas Presupuesto y Gastos.
