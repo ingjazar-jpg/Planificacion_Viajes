@@ -64,7 +64,7 @@ describe("activitiesService", () => {
     const payload = {
       name: "Viaje actualizado", description: "", category: "Viajes",
       destination: "Santa Marta", start_date: "2026-12-20", end_date: "2026-12-22",
-      start_time: "08:00", end_time: "18:00", priority: "Media", status: "Pendiente",
+      start_time: "08:00", end_time: "18:00", priority: "Media",
     };
     request.mockResolvedValue({ data: activity });
     await expect(updateActivity("activity-1", payload)).resolves.toEqual(activity);
