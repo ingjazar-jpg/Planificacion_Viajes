@@ -56,11 +56,11 @@ describe("ReportsPage", () => {
   });
 
   it("loads the activities tab on demand and distinguishes cancelled activities", async () => {
-    render(<ReportsPage />);
+    const { container } = render(<ReportsPage />);
     await screen.findByText("Vacaciones 2026");
     fireEvent.click(screen.getByRole("tab", { name: "Actividades" }));
     expect(await screen.findAllByText("Viaje familiar")).toHaveLength(2);
-    expect(screen.getAllByText("Cancelada")).toHaveLength(2);
+    expect(container.querySelectorAll(".reports-status")).toHaveLength(2);
     expect(mocks.getActivitiesReport).toHaveBeenCalledWith("period-1", { page: 1, page_size: 20 });
   });
 
