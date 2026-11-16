@@ -30,7 +30,11 @@ export function PeriodProvider({ children }) {
         if (currentId && nextPeriods.some((period) => period.id === currentId)) {
           return currentId;
         }
-        return nextPeriods[0]?.id ?? null;
+        return [...nextPeriods].sort((left, right) => {
+          const dateOrder = String(right.created_at ?? "").localeCompare(String(left.created_at ?? ""));
+          if (dateOrder !== 0) return dateOrder;
+          return Number(right.year ?? 0) - Number(left.year ?? 0);
+        })[0]?.id ?? null;
       });
       return nextPeriods;
     } catch (requestError) {
