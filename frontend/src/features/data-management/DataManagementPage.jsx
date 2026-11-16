@@ -87,7 +87,7 @@ function DataManagementPage() {
     document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
-      if (!isRestoring) restoreButtonRef.current?.focus();
+
     };
   }, [selectedBackup, isRestoring]);
 
@@ -110,6 +110,7 @@ function DataManagementPage() {
     setNotice("");
     setNoticeIsError(false);
     let restored = false;
+    let shouldReturnFocus = false;
     try {
       const result = await restoreBackup(selectedBackup.backup_id);
       restored = true;
@@ -122,6 +123,8 @@ function DataManagementPage() {
         setNoticeIsError(true);
       }
     } catch (error) {
+      shouldReturnFocus = true;
+      setSelectedBackup(null);
       setNotice(restoreErrorMessage(error));
       setNoticeIsError(true);
       if (error?.code === "BACKUP_NOT_FOUND" || error?.code === "BACKUP_NOT_RESTORABLE") {
@@ -129,7 +132,7 @@ function DataManagementPage() {
       }
     } finally {
       setIsRestoring(false);
-      if (restored) restoreButtonRef.current?.focus();
+      if (restored || shouldReturnFocus) restoreButtonRef.current?.focus();
     }
   }
 
