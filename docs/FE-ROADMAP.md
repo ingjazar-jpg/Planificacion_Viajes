@@ -4,8 +4,8 @@
 |---|---|
 | Proyecto | Sistema de Planificación y Control de Vacaciones Decembrinas |
 | Identificador | FE-ROADMAP |
-| Versión | 0.2 |
-| Estado | APROBADO PARA PLANIFICACIÓN |
+| Versión | 0.3 |
+| Estado | IMPLEMENTACIÓN COMPLETADA — FE-001 A FE-006 CERRADOS |
 | Fecha | 16-11-2026 |
 | Rama de trabajo | `feat/backend-domain-foundation` |
 | Documentos normativos | UI-001 v0.1, API-001 v0.8, ARCH-001 v0.1, DATA-001 v0.2 y SPEC-001 a SPEC-006 |
@@ -103,14 +103,18 @@ Los seis bloques FE son unidades de planificación e implementación; no implica
 
 ### FE-006 — Gestión de datos e integración
 
-**Estado al 16-11-2026: ESPECIFICACIÓN APROBADA PARA IMPLEMENTACIÓN.** `docs/FE-006.md` v0.2 consolida FE006-DEC-001 a DEC-011, RF-001 a RF-045 y CA-001 a CA-025. No quedan decisiones de Product Owner pendientes.
+**Estado al 16-11-2026: VALIDADO Y CERRADO.** `docs/FE-006.md` v0.2 se implementó conforme a FE006-DEC-001 a DEC-011, RF-001 a RF-045 y CA-001 a CA-025, sin modificar los contratos normativos de API-001 §5.9.
 
-- Catálogo de copias semanales y estados de validación.
-- Restauración con advertencia y confirmación explícita.
-- Recarga del contexto después de restaurar, según API-DEC-038.
-- Pruebas integrales de los flujos principales.
-- Revisión transversal responsive, accesibilidad, errores y regresiones.
-- Cierre documental del frontend.
+- Catálogo de copias semanales, estados de validación y restauración confirmada implementados.
+- Recuperación global después de HTTP 200, con reintento GET-only si la recarga queda incompleta.
+- Bloque 1 (servicio de respaldos): pruebas específicas aprobadas.
+- Bloque 2 (Gestión de datos y recuperación): **26 pruebas específicas aprobadas** y build de producción exitoso.
+- Suite frontend completa: **170 passed, 0 failed**.
+- Suite backend completa: **197 passed, 0 failed**.
+- Integración real con FastAPI: satisfactoria, incluyendo catálogo, restauración y recuperación global.
+- Revisión responsive desde 360 px: correcta, confirmada por la usuaria.
+- Revisión de accesibilidad WCAG 2.2 AA: correcta, confirmada por la usuaria.
+- **FE-006 validado y cerrado el 16-11-2026.**
 
 ## 4. Trazabilidad FE → API → BE
 
@@ -175,9 +179,9 @@ Cada bloque FE se cerrará cuando:
 | FE-003 | Validado y cerrado — 16-11-2026; 84 pruebas frontend aprobadas, build exitoso y regresión integrada FastAPI satisfactoria |
 | FE-004 | Validado y cerrado — Bloques 1–6; Bloque 6 con 126 pruebas aprobadas y build exitoso |
 | FE-005 | Validado y cerrado — 16-11-2026; 150 pruebas aprobadas, build exitoso y revisión visual/funcional satisfactoria |
-| FE-006 | Especificación v0.2 aprobada para implementación — 16-11-2026; implementación pendiente |
+| FE-006 | Validado y cerrado — 16-11-2026; 170 pruebas frontend, 197 backend, build, integración FastAPI, responsive y WCAG 2.2 AA aprobados |
 
-FE-001, FE-002 y FE-003 están validados y cerrados. FE-003 cerró el 16-11-2026 con 84 pruebas frontend aprobadas, build de producción exitoso y regresión integrada contra FastAPI satisfactoria, confirmada por la usuaria. FE-004 tiene refinement aprobado y especificación v0.1 publicada; Bloques 1–6 están implementados, publicados y validados. El Bloque 6 cerró con 126 pruebas frontend aprobadas y build de producción exitoso. FE-005 está implementado, validado y cerrado con 150 pruebas frontend aprobadas y build exitoso. FE-006 cuenta con especificación v0.2 aprobada el 16-11-2026; su implementación está pendiente.
+FE-001, FE-002 y FE-003 están validados y cerrados. FE-003 cerró el 16-11-2026 con 84 pruebas frontend aprobadas, build de producción exitoso y regresión integrada contra FastAPI satisfactoria, confirmada por la usuaria. FE-004 tiene refinement aprobado y especificación v0.1 publicada; Bloques 1–6 están implementados, publicados y validados. El Bloque 6 cerró con 126 pruebas frontend aprobadas y build de producción exitoso. FE-005 está implementado, validado y cerrado con 150 pruebas frontend aprobadas y build exitoso. FE-006 está implementado, validado y cerrado el 16-11-2026, con suites completas aprobadas, build exitoso, integración real con FastAPI y revisiones responsive y WCAG 2.2 AA confirmadas por la usuaria.
 
 ## 9. Documentos relacionados
 
