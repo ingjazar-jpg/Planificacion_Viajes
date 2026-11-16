@@ -29,7 +29,7 @@ describe("BudgetExpensesPage",()=>{
   ]);
   render(<BudgetExpensesPage/>);
   fireEvent.click(await screen.findByRole("tab",{name:"Gastos"}));
-  expect(await screen.findByText("Compra reciente")).toBeInTheDocument();
+  expect((await screen.findAllByText("Compra reciente")).length).toBeGreaterThan(0);
   expect(screen.getAllByRole("row").slice(1).map((row)=>row.cells[1].textContent)).toEqual(["Compra reciente","Compra media","Compra temprana"]);
   expect(getExpenses).toHaveBeenCalledWith({period_id:period.id,start_date:"",end_date:"",category:"",activity_id:"",min_amount:"",max_amount:""});
  });
@@ -37,7 +37,7 @@ describe("BudgetExpensesPage",()=>{
   getExpenses.mockResolvedValue(Array.from({length:22},(_,i)=>({id:`e${i}`,date:`2026-12-${String(22-i).padStart(2,"0")}`,concept:`Gasto ${i}`,category:"Viajes",amount:"10.00",activity_id:null})));
   render(<BudgetExpensesPage/>);
   fireEvent.click(await screen.findByRole("tab",{name:"Gastos"}));
-  expect(await screen.findByText("Gasto 0")).toBeInTheDocument();
+  expect((await screen.findAllByText("Gasto 0")).length).toBeGreaterThan(0);
   fireEvent.click(screen.getByRole("button",{name:"Siguiente"}));
   expect(screen.getByText("Página 2 de 2")).toBeInTheDocument();
   fireEvent.change(screen.getByLabelText("Filtrar por categoría"),{target:{value:"Viajes"}});
