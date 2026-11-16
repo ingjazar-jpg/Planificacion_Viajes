@@ -137,16 +137,13 @@ Se añadieron 10 pruebas de BE-010. La usuaria sincronizó los cambios, instaló
 
 Cualquier endpoint transversal adicional que la revisión identifique como faltante se evaluará sin alterar contratos aprobados.
 
-## 6. Trabajo pendiente del frontend e integración
+## 6. Estado del frontend e integración
 
 FE-001 a FE-006 están implementados y validados. La regresión transversal de frontend, backend e integración quedó aprobada; no hay bloques funcionales frontend pendientes dentro del alcance FE-ROADMAP.
 
-- Implementar el catálogo de copias semanales y la restauración confirmada conforme a `docs/FE-006.md` v0.2 aprobada.
-- Conectar la restauración con el contexto global de períodos y garantizar la recarga de datos, incluso si el identificador del período activo no cambia.
-- Ejecutar pruebas integrales frontend-backend y regresión de FE-001 a FE-006.
-- Verificar accesibilidad, responsive y compatibilidad indicadas en SPEC-006.
+La implementación de FE-006 y la regresión transversal están completadas. La restauración, la recuperación global y los estados de error se validaron mediante pruebas automatizadas e integración real con FastAPI. La usuaria confirmó que las revisiones responsive desde 360 px y de accesibilidad WCAG 2.2 AA son correctas.
 
-El shell, la navegación y los módulos FE-001 a FE-005 ya cuentan con evidencia de validación registrada en este documento. La validación reproducible del backend con Python 3.14.10 continúa como tarea transversal de Sprint 0 y no se confunde con el cierre funcional de FE-006.
+El shell, la navegación y los seis módulos FE-001 a FE-006 cuentan con evidencia de validación registrada en este documento. La validación reproducible del backend con Python 3.14.10 continúa como tarea transversal de Sprint 0 y no se confunde con el cierre funcional de FE-006.
 
 ### 6.1 Plan de implementación frontend
 
@@ -157,7 +154,7 @@ El mapa de implementación de seis bloques se mantiene en `docs/FE-ROADMAP.md`. 
 - `docs/FE-003.md`: calendario y actividades.
 - `docs/FE-004.md`: presupuesto y gastos.
 - `docs/FE-005.md`: informes, versión 0.2.
-- `docs/FE-006.md`: gestión de datos e integración, versión 0.2 aprobada para implementación.
+- `docs/FE-006.md`: gestión de datos e integración, versión 0.2 implementada, validada y cerrada.
 
 **FE-005 — VALIDADO Y CERRADO el 16-11-2026.** La usuaria confirmó cinco bloques implementados, suite frontend completa con **150 passed, 0 failed** en 20 archivos, `npm run build` exitoso con Vite 8.3.8 y revisión visual/funcional satisfactoria. La especificación v0.2 incluye FE005-D01 a D62, RF-001 a RF-090 y CA-001 a CA-022 + B5-CA01 a B5-CA12. El commit `0789bac9920bdab27df3c9244d627ac54e477520` corrigió una consulta ambigua en una prueba de exportación. No se modificaron contratos normativos.
 
@@ -251,9 +248,11 @@ API-001 v0.8 devuelve por categoría `allocated_amount`, `spent_amount`, `balanc
 
 **Estado: VALIDADO Y CERRADO el 16-11-2026.**
 
-- Documento: `docs/FE-006.md` v0.2, aprobado para implementación.
-- Alcance heredado: catálogo de copias semanales, restauración confirmada y recarga del contexto; regresión integral y revisión transversal de calidad.
-- Contratos: `GET /backups` y `POST /backups/restore`, definidos en API-001 §5.9. No se crean endpoints ni se exponen respaldos `pre_write`.
-- Restricciones: máximo 15 copias semanales; restaurables únicamente las copias cuyo estado listado sea `valid`; confirmación explícita; backend vuelve a validar antes de reemplazar datos; aplicación de API-DEC-038 después del éxito.
-- La especificación contiene 45 requisitos funcionales, 25 criterios de aceptación y 11 decisiones aprobadas. No quedan preguntas de Product Owner pendientes.
+- Documento: `docs/FE-006.md` v0.2, implementado, validado y cerrado.
+- Alcance entregado: catálogo de copias semanales, restauración confirmada, recuperación global del estado frontend, manejo de errores y reintento exclusivo de consultas GET cuando la actualización queda incompleta.
+- Contratos preservados: `GET /backups` y `POST /backups/restore`, definidos en API-001 §5.9. No se añadieron endpoints ni se expusieron respaldos `pre_write`.
+- Restricciones preservadas: máximo 15 copias semanales; restaurables únicamente las copias cuyo estado listado sea `valid`; confirmación explícita; backend vuelve a validar antes de reemplazar datos; aplicación de API-DEC-038 después del éxito.
+- La especificación contiene 45 requisitos funcionales, 25 criterios de aceptación y 11 decisiones aprobadas.
+- Evidencia: Bloque 1 aprobado; Bloque 2 con 26 pruebas específicas aprobadas y build exitoso; suite frontend completa **170 passed, 0 failed**; suite backend completa **197 passed, 0 failed**; integración real FastAPI satisfactoria; revisiones responsive desde 360 px y WCAG 2.2 AA confirmadas como correctas por la usuaria.
+- **Cierre FE-006 confirmado el 16-11-2026.**
 
