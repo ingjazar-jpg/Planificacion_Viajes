@@ -136,7 +136,7 @@ function ActivityFormDialog({ open, activity = null, period, onClose, onSaved })
     setIsSaving(true);
     try {
       const saved = activity
-        ? await updateActivity(activity.id, { ...payload, status: activity.status })
+        ? await updateActivity(activity.id, payload)
         : await createActivity({ period_id: period.id, ...payload });
       await onSaved(saved);
       onClose();
