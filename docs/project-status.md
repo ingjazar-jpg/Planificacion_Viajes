@@ -8,7 +8,7 @@
 
 ## 1. Resumen ejecutivo
 
-La implementación del backend BE-001 a BE-010 está validada. Tras incorporar CORS y sus dos pruebas de regresión, la usuaria confirmó la suite backend completa con **197 passed, 0 failed**. FE-001 y FE-002 están validados y cerrados. FE-001 cuenta con **12 pruebas frontend aprobadas**; FE-002, con **37 pruebas frontend aprobadas** y build de producción exitoso. FE-003 tiene refinement aprobado (D1–D27) y sus entregas funcionales están validadas individualmente: administración de períodos, calendario, listado/filtros, CRUD/detalle/navegación y ciclo de vida de actividades. La última suite frontend reportó **84 passed, 0 failed** y build Vite 8.3.8 exitoso con 44 módulos transformados. FE-003 está validado y cerrado, incluida la regresión integrada contra FastAPI. FE-004 inició implementación: la usuaria confirmó **107 pruebas frontend aprobadas** tras publicar los servicios y utilidades del primer bloque; la primera vista de presupuesto y su editor están publicados y pendientes de validación local.
+La implementación del backend BE-001 a BE-010 está validada. Tras incorporar CORS y sus dos pruebas de regresión, la usuaria confirmó la suite backend completa con **197 passed, 0 failed**. FE-001 y FE-002 están validados y cerrados. FE-001 cuenta con **12 pruebas frontend aprobadas**; FE-002, con **37 pruebas frontend aprobadas** y build de producción exitoso. FE-003 tiene refinement aprobado (D1–D27) y sus entregas funcionales están validadas individualmente: administración de períodos, calendario, listado/filtros, CRUD/detalle/navegación y ciclo de vida de actividades. La última suite frontend reportó **84 passed, 0 failed** y build Vite 8.3.8 exitoso con 44 módulos transformados. FE-003 está validado y cerrado, incluida la regresión integrada contra FastAPI. FE-004 inició implementación: el Bloque 1 (servicios y utilidades monetarias) quedó validado con **107 pruebas frontend aprobadas**; tras publicar el Bloque 2 (vista inicial de presupuesto), la usuaria confirmó **114 pruebas frontend aprobadas** en la suite completa. El build de producción de este último bloque queda pendiente de confirmación.
 
 El resultado de 195 pruebas corresponde a la ejecución completa validada después de BE-010. Los resultados históricos por bloque son hitos acumulativos, no cantidades que deban sumarse.
 
@@ -184,7 +184,7 @@ La advertencia deprecatoria de Starlette relacionada con `httpx` no produjo fall
 
 ### 6.2 FE-004 — Presupuesto y gastos
 
-**Estado:** refinement aprobado y especificación publicada para implementación; implementación no iniciada/validada en este registro.
+**Estado:** refinement aprobado; Bloques 1 y 2 implementados y publicados. Suite frontend local confirmada con **114 passed** tras el Bloque 2. Build de producción pendiente de confirmación.
 
 - Documento: `docs/FE-004.md` v0.1.
 - Decisiones aprobadas: D1–D43. D43 opción A resuelve la ausencia de ordenamiento contractual: GET /expenses consulta el conjunto filtrado completo sin page/page_size; el frontend ordena globalmente por fecha descendente y pagina localmente con 10/20/50.
@@ -252,11 +252,11 @@ Publicado en `feat/backend-domain-foundation`:
 - `frontend/src/utils/money.js`: conversión exacta entre cadenas decimales y centavos `BigInt`, formato COP y diferencia no distribuida.
 - Pruebas unitarias para servicios y utilidades.
 
-**Validación local reportada por la usuaria:** **107 passed** en la suite frontend tras sincronizar el Bloque 1. No se ha reportado todavía el resultado de `npm run build`; por tanto, no se registra como validado.
+**Validación local reportada por la usuaria:** **107 passed** en la suite frontend tras sincronizar el Bloque 1. El build de producción de ese bloque no quedó registrado.
 
 ### Bloque 2 — Vista inicial de presupuesto
 
-Publicado en GitHub y pendiente de validación local:
+Publicado en GitHub y validado localmente en pruebas:
 - Pestañas Presupuesto/Gastos, con Presupuesto como vista inicial.
 - Consulta del presupuesto del período activo y tratamiento de `BUDGET_NOT_FOUND` como estado vacío esperado.
 - Cuatro indicadores financieros y distribución visual de las siete categorías.
@@ -264,7 +264,7 @@ Publicado en GitHub y pendiente de validación local:
 - Confirmación al descartar cambios antes de cambiar de pestaña.
 - Pruebas de componente para carga, estado vacío, reintento, creación, actualización y validación de distribución.
 
-La pestaña Gastos conserva un estado informativo temporal; su listado, filtros, registro, detalle e historial siguen pendientes de implementación.
+La suite frontend completa reportada tras sincronizar el Bloque 2: **114 passed**. El resultado de `npm run build` sigue pendiente de confirmación. La pestaña Gastos conserva un estado informativo temporal; su listado, filtros, registro, detalle e historial siguen pendientes de implementación.
 
 ### Observación contractual pendiente
 
