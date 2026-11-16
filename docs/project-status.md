@@ -184,7 +184,7 @@ La advertencia deprecatoria de Starlette relacionada con `httpx` no produjo fall
 
 ### 6.2 FE-004 — Presupuesto y gastos
 
-**Estado:** refinement aprobado; Bloques 1–4 implementados, publicados y validados localmente. Última suite frontend confirmada por la usuaria: **118 passed**. Build de producción Vite 8.3.8 exitoso con 48 módulos transformados; el ajuste posterior para resolver dos consultas ambiguas afectó únicamente las pruebas.
+**Estado:** refinement aprobado; Bloques 1–4 implementados, publicados y validados localmente. El Bloque 5 (detalle e historial) está implementado y publicado en GitHub, pendiente de sincronización y validación local. Última suite frontend confirmada por la usuaria antes del Bloque 5: **118 passed**. Build de producción Vite 8.3.8 exitoso con 48 módulos transformados; el ajuste posterior para resolver dos consultas ambiguas afectó únicamente las pruebas.
 
 - Documento: `docs/FE-004.md` v0.1.
 - Decisiones aprobadas: D1–D43. D43 opción A resuelve la ausencia de ordenamiento contractual: GET /expenses consulta el conjunto filtrado completo sin page/page_size; el frontend ordena globalmente por fecha descendente y pagina localmente con 10/20/50.
@@ -193,6 +193,7 @@ La advertencia deprecatoria de Starlette relacionada con `httpx` no produjo fall
 - Restricción: no se modifica API-001 ni se reabre BE-007.
 - Bloque 3 validado: listado completo de gastos, filtros combinables, ordenamiento global por fecha descendente y paginación local 10/20/50. Evidencia: 116 pruebas frontend aprobadas en 18 archivos y build exitoso con 48 módulos transformados.
 - Bloque 4 validado: formulario lateral de registro, actividad opcional del período, campos opcionales colapsados, validación monetaria exacta y actualización del listado e indicadores tras crear. Evidencia: 118 pruebas frontend aprobadas. El ajuste que resolvió dos consultas ambiguas se limitó al archivo de pruebas; no modificó código de producción ni contratos.
+- Bloque 5 implementado y publicado, pendiente de validación local: panel lateral de detalle con consulta contractual `GET /expenses/{expense_id}`, pestañas Información/Historial, consulta `GET /expenses/{expense_id}/history`, línea de tiempo cronológica ascendente, fecha/hora en zona `America/Bogota`, valores anteriores/nuevos y estado vacío cuando no hay eventos. Se añadieron pruebas de componente para detalle, orden cronológico e historial vacío. No se implementan aún edición ni eliminación; quedan para el siguiente bloque.
 
 ## 7. Calidad y validación
 
