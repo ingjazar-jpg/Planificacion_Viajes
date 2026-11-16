@@ -48,7 +48,7 @@ export async function createActivity(payload) {
 
 export async function updateActivity(activityId, payload) {
   const response = await request(`/activities/${encodeURIComponent(activityId)}`, {
-    method: "PUT",
+    method: "PATCH",
     body: JSON.stringify(payload),
   });
   return assertActivityResponse(response, "actualizar");
