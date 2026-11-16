@@ -3,12 +3,16 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import BudgetExpensesPage from "../src/features/budget-expenses/BudgetExpensesPage.jsx";
 import { usePeriod } from "../src/context/PeriodContext.jsx";
 import { createBudget, getBudget, updateBudget } from "../src/services/api/budgetService.js";
+import { getExpenses } from "../src/services/api/expensesService.js";
+import { getActivities } from "../src/services/api/activitiesService.js";
 vi.mock("../src/context/PeriodContext.jsx", () => ({ usePeriod: vi.fn() }));
 vi.mock("../src/services/api/budgetService.js", () => ({ createBudget: vi.fn(), getBudget: vi.fn(), updateBudget: vi.fn() }));
+vi.mock("../src/services/api/expensesService.js", () => ({ getExpenses: vi.fn() }));
+vi.mock("../src/services/api/activitiesService.js", () => ({ getActivities: vi.fn() }));
 const period = { id: "period-1", name: "Vacaciones 2026" };
 const budget = { id:"budget-1",period_id:period.id,total_budget:"5000000.00",total_expenses:"850000.00",general_balance:"4150000.00",execution_percentage:"17.00",category_budgets:["Viajes","Transporte","Alojamiento","Recreación","Turismo","Reuniones familiares","Otros"].map((category)=>({category,allocated_amount:category==="Viajes"?"2500000.00":category==="Alojamiento"?"1500000.00":"0.00",spent_amount:category==="Alojamiento"?"850000.00":"0.00",balance:category==="Alojamiento"?"650000.00":category==="Viajes"?"2500000.00":"0.00",over_budget:false})) };
 describe("BudgetExpensesPage",()=>{
- beforeEach(()=>{vi.clearAllMocks();usePeriod.mockReturnValue({selectedPeriodId:period.id,selectedPeriod:period});getBudget.mockResolvedValue(budget);createBudget.mockResolvedValue({id:"budget-new"});updateBudget.mockResolvedValue(budget);});
+ beforeEach(()=>{vi.clearAllMocks();usePeriod.mockReturnValue({selectedPeriodId:period.id,selectedPeriod:period});getBudget.mockResolvedValue(budget);getExpenses.mockResolvedValue([]);getActivities.mockResolvedValue([]);createBudget.mockResolvedValue({id:"budget-new"});updateBudget.mockResolvedValue(budget);});
  it("renders backend indicators and all seven categories",async()=>{render(<BudgetExpensesPage/>);expect(await screen.findByText("Resumen del presupuesto")).toBeInTheDocument();expect(screen.getByText("$ 5.000.000,00")).toBeInTheDocument();for(const c of ["Viajes","Transporte","Alojamiento","Recreación","Turismo","Reuniones familiares","Otros"])expect(screen.getByRole("heading",{name:c})).toBeInTheDocument();});
  it("treats BUDGET_NOT_FOUND as the expected empty state",async()=>{getBudget.mockRejectedValueOnce(Object.assign(new Error("Sin presupuesto"),{status:404,code:"BUDGET_NOT_FOUND"}));render(<BudgetExpensesPage/>);expect(await screen.findByText("Este período aún no tiene presupuesto")).toBeInTheDocument();});
  it("retries failed requests",async()=>{getBudget.mockRejectedValueOnce(new Error("API no disponible"));render(<BudgetExpensesPage/>);expect(await screen.findByRole("alert")).toHaveTextContent("API no disponible");fireEvent.click(screen.getByRole("button",{name:"Reintentar"}));await waitFor(()=>expect(getBudget).toHaveBeenCalledTimes(2));});
