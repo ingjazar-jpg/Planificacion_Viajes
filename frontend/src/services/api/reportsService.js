@@ -131,7 +131,8 @@ export async function exportReport(reportType, periodId, {
       `${API_BASE_URL}/periods/${encodeURIComponent(periodId)}/reports/${endpoint}?${params.toString()}`,
       { method: "GET", headers: { Accept: "application/pdf, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }, signal },
     );
-  } catch {
+  } catch (error) {
+    if (error?.name === "AbortError") throw error;
     throw new ApiError({
       code: "NETWORK_ERROR",
       message: "No se pudo conectar con el servidor para generar el informe.",
