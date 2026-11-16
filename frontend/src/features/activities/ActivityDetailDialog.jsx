@@ -92,11 +92,9 @@ function ActivityDetailDialog({
                   Cancelar actividad
                 </button>
               )}
-              {activity.status !== "Completada" && activity.status !== "Cancelada" && (
-                <button className="secondary-action" type="button" onClick={() => onEdit(activity)} disabled={isMutating}>
-                  Editar actividad
-                </button>
-              )}
+              <button className="secondary-action" type="button" onClick={() => onEdit(activity)} disabled={isMutating}>
+                Editar actividad
+              </button>
               <button className="danger-action" type="button" onClick={requestDelete} disabled={isMutating}>
                 Eliminar actividad
               </button>
