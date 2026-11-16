@@ -50,7 +50,7 @@ export function PeriodProvider({ children }) {
   }, [refreshPeriods]);
 
   const selectPeriod = useCallback((periodId) => {
-    if (periods.some((period) => period.id === periodId)) {
+    if (periodId === null || periods.some((period) => period.id === periodId)) {
       setSelectedPeriodId(periodId);
     }
   }, [periods]);
