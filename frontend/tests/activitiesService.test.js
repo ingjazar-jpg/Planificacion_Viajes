@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { request } from "../src/services/api/httpClient.js";
 import {
-  createActivity, getActivities, getActivity, updateActivity,
+  createActivity, deleteActivity, getActivities, getActivity, updateActivity, updateActivityStatus,
 } from "../src/services/api/activitiesService.js";
 
 vi.mock("../src/services/api/httpClient.js", () => ({ request: vi.fn() }));
@@ -78,5 +78,24 @@ describe("activitiesService", () => {
   it("rejects a mutation response without a resource identifier", async () => {
     request.mockResolvedValue({ data: { name: "Incomplete" } });
     await expect(createActivity({})).rejects.toThrow("respuesta inválida");
+  });
+});
+
+describe("activity lifecycle service", () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it("sends a PATCH containing only the requested status", async () => {
+    const updated = { ...activity, status: "En progreso" };
+    request.mockResolvedValue({ data: updated });
+    await expect(updateActivityStatus("activity-1", "En progreso")).resolves.toEqual(updated);
+    expect(request).toHaveBeenCalledWith("/activities/activity-1", {
+      method: "PATCH", body: JSON.stringify({ status: "En progreso" }),
+    });
+  });
+
+  it("deletes an activity and accepts the empty 204 response", async () => {
+    request.mockResolvedValue(null);
+    await expect(deleteActivity("activity-1")).resolves.toBeNull();
+    expect(request).toHaveBeenCalledWith("/activities/activity-1", { method: "DELETE" });
   });
 });
