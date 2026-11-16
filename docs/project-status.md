@@ -8,7 +8,7 @@
 
 ## 1. Resumen ejecutivo
 
-La implementación del backend BE-001 a BE-010 está validada. Tras incorporar CORS y sus dos pruebas de regresión, la usuaria confirmó la suite backend completa con **197 passed, 0 failed**. FE-001 y FE-002 están validados y cerrados. FE-001 cuenta con **12 pruebas frontend aprobadas**; FE-002, con **37 pruebas frontend aprobadas** y build de producción exitoso. FE-003 tiene refinement aprobado (D1–D27) y sus entregas funcionales están validadas individualmente: administración de períodos, calendario, listado/filtros, CRUD/detalle/navegación y ciclo de vida de actividades. La última suite frontend reportó **84 passed, 0 failed** y build Vite 8.3.8 exitoso con 44 módulos transformados. FE-003 queda en validación de integración final contra FastAPI.
+La implementación del backend BE-001 a BE-010 está validada. Tras incorporar CORS y sus dos pruebas de regresión, la usuaria confirmó la suite backend completa con **197 passed, 0 failed**. FE-001 y FE-002 están validados y cerrados. FE-001 cuenta con **12 pruebas frontend aprobadas**; FE-002, con **37 pruebas frontend aprobadas** y build de producción exitoso. FE-003 tiene refinement aprobado (D1–D27) y sus entregas funcionales están validadas individualmente: administración de períodos, calendario, listado/filtros, CRUD/detalle/navegación y ciclo de vida de actividades. La última suite frontend reportó **84 passed, 0 failed** y build Vite 8.3.8 exitoso con 44 módulos transformados. FE-003 está validado y cerrado, incluida la regresión integrada contra FastAPI. FE-004 inició implementación: la usuaria confirmó **107 pruebas frontend aprobadas** tras publicar los servicios y utilidades del primer bloque; la primera vista de presupuesto y su editor están publicados y pendientes de validación local.
 
 El resultado de 195 pruebas corresponde a la ejecución completa validada después de BE-010. Los resultados históricos por bloque son hitos acumulativos, no cantidades que deban sumarse.
 
@@ -238,3 +238,35 @@ Las especificaciones aprobadas siguen siendo la fuente de verdad funcional y té
 ---
 
 **Fin del estado del proyecto.**
+
+
+## 7. FE-004 — Implementación en curso
+
+**Especificación:** `docs/FE-004.md` v0.1, APROBADA PARA IMPLEMENTACIÓN (D1–D43).
+
+### Bloque 1 — Servicios y utilidades monetarias
+
+Publicado en `feat/backend-domain-foundation`:
+- `frontend/src/services/api/budgetService.js`: consulta, creación y reemplazo del presupuesto.
+- `frontend/src/services/api/expensesService.js`: listado, creación, consulta, PUT, PATCH, eliminación e historial de gastos.
+- `frontend/src/utils/money.js`: conversión exacta entre cadenas decimales y centavos `BigInt`, formato COP y diferencia no distribuida.
+- Pruebas unitarias para servicios y utilidades.
+
+**Validación local reportada por la usuaria:** **107 passed** en la suite frontend tras sincronizar el Bloque 1. No se ha reportado todavía el resultado de `npm run build`; por tanto, no se registra como validado.
+
+### Bloque 2 — Vista inicial de presupuesto
+
+Publicado en GitHub y pendiente de validación local:
+- Pestañas Presupuesto/Gastos, con Presupuesto como vista inicial.
+- Consulta del presupuesto del período activo y tratamiento de `BUDGET_NOT_FOUND` como estado vacío esperado.
+- Cuatro indicadores financieros y distribución visual de las siete categorías.
+- Formulario para crear o reemplazar presupuesto, con importes decimales exactos y validación de asignaciones frente al total.
+- Confirmación al descartar cambios antes de cambiar de pestaña.
+- Pruebas de componente para carga, estado vacío, reintento, creación, actualización y validación de distribución.
+
+La pestaña Gastos conserva un estado informativo temporal; su listado, filtros, registro, detalle e historial siguen pendientes de implementación.
+
+### Observación contractual pendiente
+
+API-001 v0.8 devuelve por categoría `allocated_amount`, `spent_amount`, `balance` y `over_budget`, pero no define un porcentaje de ejecución por categoría. FE-004 F08/D6 solicita mostrar dicho porcentaje. La interfaz no inventa ni recalcula ese indicador: debe resolverse mediante una decisión explícita de producto o una modificación contractual independiente, sin alterar silenciosamente API-001.
+
