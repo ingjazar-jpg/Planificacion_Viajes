@@ -103,7 +103,7 @@ Los seis bloques FE son unidades de planificación e implementación; no implica
 
 ### FE-006 — Gestión de datos e integración
 
-**Estado al 16-11-2026: REFINEMENT INICIADO; especificación pendiente de elaboración y aprobación.** No iniciar implementación hasta cerrar decisiones, criterios de aceptación y Definition of Done.
+**Estado al 16-11-2026: ESPECIFICACIÓN APROBADA PARA IMPLEMENTACIÓN.** `docs/FE-006.md` v0.2 consolida FE006-DEC-001 a DEC-010, RF-001 a RF-045 y CA-001 a CA-025. No quedan decisiones de Product Owner pendientes.
 
 - Catálogo de copias semanales y estados de validación.
 - Restauración con advertencia y confirmación explícita.
@@ -175,9 +175,9 @@ Cada bloque FE se cerrará cuando:
 | FE-003 | Validado y cerrado — 16-11-2026; 84 pruebas frontend aprobadas, build exitoso y regresión integrada FastAPI satisfactoria |
 | FE-004 | Validado y cerrado — Bloques 1–6; Bloque 6 con 126 pruebas aprobadas y build exitoso |
 | FE-005 | Validado y cerrado — 16-11-2026; 150 pruebas aprobadas, build exitoso y revisión visual/funcional satisfactoria |
-| FE-006 | Refinement iniciado — 16-11-2026; especificación en elaboración |
+| FE-006 | Especificación v0.2 aprobada para implementación — 16-11-2026; implementación pendiente |
 
-FE-001, FE-002 y FE-003 están validados y cerrados. FE-003 cerró el 16-11-2026 con 84 pruebas frontend aprobadas, build de producción exitoso y regresión integrada contra FastAPI satisfactoria, confirmada por la usuaria. FE-004 tiene refinement aprobado y especificación v0.1 publicada; Bloques 1–6 están implementados, publicados y validados. El Bloque 6 cerró con 126 pruebas frontend aprobadas y build de producción exitoso. FE-005 está implementado, validado y cerrado con 150 pruebas frontend aprobadas y build exitoso. FE-006 inició refinement el 16-11-2026; su especificación aún debe elaborarse y aprobarse antes de implementar.
+FE-001, FE-002 y FE-003 están validados y cerrados. FE-003 cerró el 16-11-2026 con 84 pruebas frontend aprobadas, build de producción exitoso y regresión integrada contra FastAPI satisfactoria, confirmada por la usuaria. FE-004 tiene refinement aprobado y especificación v0.1 publicada; Bloques 1–6 están implementados, publicados y validados. El Bloque 6 cerró con 126 pruebas frontend aprobadas y build de producción exitoso. FE-005 está implementado, validado y cerrado con 150 pruebas frontend aprobadas y build exitoso. FE-006 cuenta con especificación v0.2 aprobada el 16-11-2026; su implementación está pendiente.
 
 ## 9. Documentos relacionados
 
