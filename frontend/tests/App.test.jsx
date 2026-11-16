@@ -5,7 +5,7 @@ import { getPeriods } from "../src/services/api/periodsService.js";
 import { getDashboard } from "../src/services/api/dashboardService.js";
 import { evaluateAlerts, getPendingActiveAlerts } from "../src/services/api/alertsService.js";
 import { getCalendar } from "../src/services/api/calendarService.js";
-import { getActivities } from "../src/services/api/activitiesService.js";
+import { getActivities, getActivity } from "../src/services/api/activitiesService.js";
 
 vi.mock("../src/services/api/periodsService.js", () => ({ getPeriods: vi.fn(), createPeriod: vi.fn(), updatePeriod: vi.fn() }));
 vi.mock("../src/services/api/dashboardService.js", () => ({ getDashboard: vi.fn() }));
@@ -83,6 +83,33 @@ describe("App FE-001 foundation", () => {
     expect(screen.getByRole("heading", { name: "Calendario" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Calendario" })).toHaveAttribute("aria-current", "page");
     await screen.findByText("No hay actividades para este mes");
+  });
+
+
+  it("navigates from an alert to the selected activity detail", async () => {
+    getPeriods.mockResolvedValue([{
+      id: "period-1", name: "Vacaciones", year: 2026,
+      start_date: "2026-01-01", end_date: "2026-12-31",
+    }]);
+    getPendingActiveAlerts.mockResolvedValue([{
+      id: "alert-1", activity_id: "activity-1", type: "Prioridad alta", status: "Pendiente",
+      activity: {
+        id: "activity-1", name: "Viaje familiar", start_date: "2026-12-20",
+        start_time: "08:00", priority: "Alta", status: "Pendiente",
+      },
+    }]);
+    getActivity.mockResolvedValue({
+      id: "activity-1", period_id: "period-1", name: "Viaje familiar",
+      description: "Un viaje de descanso", category: "Viajes", destination: "Santa Marta",
+      start_date: "2026-12-20", end_date: "2026-12-22",
+      start_time: "08:00", end_time: "18:00", priority: "Alta", status: "Pendiente",
+    });
+    render(<App />);
+    await screen.findByRole("heading", { name: "Dashboard" });
+    fireEvent.click(screen.getByRole("button", { name: /Abrir alertas/ }));
+    fireEvent.click(await screen.findByRole("button", { name: "Ver actividad" }));
+    expect(await screen.findByRole("dialog", { name: "Viaje familiar" })).toBeInTheDocument();
+    expect(getActivity).toHaveBeenCalledWith("activity-1");
   });
 
   it("opens and closes the mobile navigation", async () => {
