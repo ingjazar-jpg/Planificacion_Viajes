@@ -123,7 +123,7 @@ describe("ActivitiesPage list", () => {
     const detail = await screen.findByRole("dialog", { name: "Viaje familiar" });
     fireEvent.click(within(detail).getByRole("button", { name: "Editar actividad" }));
     const form = screen.getByRole("dialog", { name: "Editar actividad" });
-    fireEvent.change(within(form).getByLabelText("Nombre *"), { target: { value: "Viaje actualizado" } });
+    fireEvent.change(within(form).getByLabelText(/Nombre/), { target: { value: "Viaje actualizado" } });
     fireEvent.click(within(form).getByRole("button", { name: "Guardar actividad" }));
     await waitFor(() => expect(updateActivity).toHaveBeenCalledWith("activity-1", expect.objectContaining({
       name: "Viaje actualizado", status: "Pendiente",
