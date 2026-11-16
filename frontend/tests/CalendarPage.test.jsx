@@ -118,6 +118,19 @@ describe("CalendarPage", () => {
     expect(getActivity).toHaveBeenCalledWith("activity-1");
   });
 
+
+  it("supports approved status transitions from the calendar activity detail", async () => {
+    render(<CalendarPage />);
+    await screen.findByRole("heading", { name: "Noviembre de 2026" });
+    const event = (await screen.findAllByRole("button", { name: /Cena familiar/ }))[0];
+    fireEvent.click(event);
+    const detail = await screen.findByRole("dialog", { name: "Cena familiar" });
+    fireEvent.click(within(detail).getByRole("button", { name: "Iniciar actividad" }));
+    await waitFor(() => expect(updateActivityStatus).toHaveBeenCalledWith("activity-1", "En progreso"));
+    expect(await screen.findByText("En progreso")).toBeInTheDocument();
+    expect(getCalendar).toHaveBeenCalledTimes(2);
+  });
+
   it("limits dense day cells and keeps every event available in the day agenda", async () => {
     const denseActivities = Array.from({ length: 4 }, (_, index) => ({
       ...activities[0],
