@@ -3,9 +3,13 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import CalendarPage from "../src/features/calendar/CalendarPage.jsx";
 import { usePeriod } from "../src/context/PeriodContext.jsx";
 import { getCalendar } from "../src/services/api/calendarService.js";
+import { deleteActivity, getActivity, updateActivityStatus } from "../src/services/api/activitiesService.js";
 
 vi.mock("../src/context/PeriodContext.jsx", () => ({ usePeriod: vi.fn() }));
 vi.mock("../src/services/api/calendarService.js", () => ({ getCalendar: vi.fn() }));
+vi.mock("../src/services/api/activitiesService.js", () => ({
+  deleteActivity: vi.fn(), getActivity: vi.fn(), updateActivityStatus: vi.fn(),
+}));
 
 const period = {
   id: "period-2026",
@@ -38,6 +42,9 @@ describe("CalendarPage", () => {
       selectedPeriod: period,
     });
     getCalendar.mockResolvedValue(activities);
+    getActivity.mockResolvedValue(activities[0]);
+    deleteActivity.mockResolvedValue(null);
+    updateActivityStatus.mockImplementation(async (_id, status) => ({ ...activities[0], status }));
   });
 
   it("opens the current month, queries the visible inclusive range and shows a multi-day activity", async () => {
@@ -100,8 +107,10 @@ describe("CalendarPage", () => {
 
     const dayAgenda = screen.getByRole("region", { name: /Actividades del lunes, 16 de noviembre/ });
     fireEvent.click(within(dayAgenda).getByRole("button", { name: /Cena familiar/ }));
-    expect(screen.getByRole("region", { name: "Detalle de actividad" })).toHaveTextContent("Casa");
-    expect(screen.getByRole("region", { name: "Detalle de actividad" })).toHaveTextContent("19:00–22:00");
+    const detail = await screen.findByRole("dialog", { name: "Cena familiar" });
+    expect(detail).toHaveTextContent("Casa");
+    expect(detail).toHaveTextContent("19:00–22:00");
+    expect(getActivity).toHaveBeenCalledWith("activity-1");
   });
 
   it("limits dense day cells and keeps every event available in the day agenda", async () => {
