@@ -79,7 +79,7 @@ function AppLayout() {
         />
       );
     }
-    if (activeSection === "activities") return <CurrentPage activityId={activityDestinationId} />;
+    if (activeSection === "activities") return <CurrentPage key={`activities-${revision}`} activityId={activityDestinationId} />;
     return <CurrentPage key={activeSection === "data-management" ? undefined : `${activeSection}-${dashboardRevision}-${revision}`} />;
   }
 
