@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import { usePeriod } from "../../context/PeriodContext.jsx";
 import PeriodManagementDialog from "../../features/activities/PeriodManagementDialog.jsx";
 
-function Topbar({ onMenuClick, onAlertsClick, alertCount = 0 }) {
+function Topbar({ onMenuClick, onAlertsClick, alertCount = 0, disabled = false }) {
   const { periods, selectedPeriodId, isLoading, error, selectPeriod } = usePeriod();
   const [isPeriodDialogOpen, setIsPeriodDialogOpen] = useState(false);
   const closePeriodDialog = useCallback(() => setIsPeriodDialogOpen(false), []);
@@ -20,18 +20,18 @@ function Topbar({ onMenuClick, onAlertsClick, alertCount = 0 }) {
         <div className="topbar-context">
           <label htmlFor="period-selector">Período</label>
           <select id="period-selector" aria-label="Período activo" value={selectedPeriodId || ""}
-            disabled={isLoading || Boolean(error) || periods.length === 0}
+            disabled={disabled || isLoading || Boolean(error) || periods.length === 0}
             onChange={(event) => selectPeriod(event.target.value)}>
             <option value="">{placeholder}</option>
             {periods.map((period) => <option key={period.id} value={period.id}>{period.name} ({period.year})</option>)}
           </select>
-          <button className="topbar-manage-periods" type="button"
+          <button className="topbar-manage-periods" type="button" disabled={disabled}
             onClick={() => setIsPeriodDialogOpen(true)}>
             Administrar períodos
           </button>
         </div>
         <div className="topbar-actions">
-          <button className="alerts-button" type="button" onClick={onAlertsClick}
+          <button className="alerts-button" type="button" disabled={disabled} onClick={onAlertsClick}
             aria-label={`Abrir alertas: ${alertCount} pendientes`} aria-haspopup="dialog">
             <span aria-hidden="true">🔔</span><span>Alertas</span>
             {alertCount > 0 && <span className="alert-count" aria-label={`${alertCount} pendientes`}>{alertCount > 99 ? "99+" : alertCount}</span>}
