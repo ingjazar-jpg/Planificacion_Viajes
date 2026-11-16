@@ -8,7 +8,7 @@
 
 ## 1. Resumen ejecutivo
 
-La implementación del backend BE-001 a BE-010 está validada. La usuaria confirmó la suite backend completa con **197 passed, 0 failed**. FE-001 a FE-004 están validados y cerrados. **FE-005 — Informes — está implementado y validado** conforme a `docs/FE-005.md` v0.2: los cinco bloques completados, suite frontend completa con **150 passed, 0 failed** en 20 archivos y build de producción exitoso con Vite 8.3.8. La usuaria confirmó además la revisión visual y funcional. FE-006 — Gestión de datos e integración — cuenta con especificación `docs/FE-006.md` v0.2 aprobada para implementación el 16-11-2026. Las decisiones FE006-DEC-001 a DEC-010 están cerradas; la implementación aún no se ha iniciado. La validación reproducible con Python 3.14.10 continúa pendiente como tarea transversal de Sprint 0.
+La implementación del backend BE-001 a BE-010 está validada. La usuaria confirmó la suite backend completa con **197 passed, 0 failed**. FE-001 a FE-004 están validados y cerrados. **FE-005 — Informes — está implementado y validado** conforme a `docs/FE-005.md` v0.2: los cinco bloques completados, suite frontend completa con **150 passed, 0 failed** en 20 archivos y build de producción exitoso con Vite 8.3.8. La usuaria confirmó además la revisión visual y funcional. FE-006 — Gestión de datos e integración — cuenta con especificación `docs/FE-006.md` v0.2 aprobada para implementación el 16-11-2026. Las decisiones FE006-DEC-001 a DEC-011 están cerradas; la implementación aún no se ha iniciado. La validación reproducible con Python 3.14.10 continúa pendiente como tarea transversal de Sprint 0.
 
 ## 2. Estado por bloque de implementación
 
