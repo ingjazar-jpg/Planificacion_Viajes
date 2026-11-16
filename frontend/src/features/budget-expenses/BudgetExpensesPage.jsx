@@ -3,7 +3,7 @@ import { EmptyState, ErrorState, LoadingState } from "../../components/common/As
 import { usePeriod } from "../../context/PeriodContext.jsx";
 import { getActivities } from "../../services/api/activitiesService.js";
 import { createBudget, getBudget, updateBudget } from "../../services/api/budgetService.js";
-import { createExpense, getExpense, getExpenseHistory, getExpenses } from "../../services/api/expensesService.js";
+import { createExpense, deleteExpense, getExpense, getExpenseHistory, getExpenses, updateExpense } from "../../services/api/expensesService.js";
 import { centsToDecimal, decimalToCents, formatMoneyCOP, getUndistributedCents } from "../../utils/money.js";
 import "./BudgetExpensesPage.css";
 
@@ -80,6 +80,12 @@ function BudgetExpensesPage() {
   const [expenseHistory, setExpenseHistory] = useState([]);
   const [detailLoading, setDetailLoading] = useState(false);
   const [detailError, setDetailError] = useState(null);
+  const [editingExpense, setEditingExpense] = useState(false);
+  const [editExpenseForm, setEditExpenseForm] = useState(null);
+  const [editOptionalOpen, setEditOptionalOpen] = useState(false);
+  const [editExpenseError, setEditExpenseError] = useState("");
+  const [savingExpense, setSavingExpense] = useState(false);
+  const [deletingExpense, setDeletingExpense] = useState(false);
   const detailSequence = useRef(0);
   const budgetSequence = useRef(0);
   const expenseSequence = useRef(0);
@@ -271,9 +277,89 @@ function BudgetExpensesPage() {
     setDetailError(null); setDetailOpen(true); loadExpenseDetail(expense.id);
   }
   function closeExpenseDetail() {
+    if (savingExpense || deletingExpense) return;
     detailSequence.current += 1; setDetailOpen(false); setDetailLoading(false);
     setDetailError(null); setSelectedExpense(null); setExpenseHistory([]);
+    setEditingExpense(false); setEditExpenseForm(null); setEditExpenseError("");
   }
+  function beginExpenseEdit() {
+    if (!selectedExpense) return;
+    setEditExpenseForm({
+      concept: selectedExpense.concept ?? "", amount: selectedExpense.amount ?? "",
+      date: selectedExpense.date ?? "", category: selectedExpense.category ?? CATEGORIES[0],
+      activity_id: selectedExpense.activity_id ?? "", description: selectedExpense.description ?? "",
+      observations: selectedExpense.observations ?? "",
+    });
+    setEditOptionalOpen(Boolean(selectedExpense.description || selectedExpense.observations));
+    setEditExpenseError(""); setEditingExpense(true);
+  }
+  function cancelExpenseEdit() {
+    if (savingExpense) return;
+    setEditingExpense(false); setEditExpenseForm(null); setEditExpenseError("");
+  }
+  async function saveExpenseChanges(event) {
+    event.preventDefault();
+    if (savingExpense || !selectedExpense || !editExpenseForm) return;
+    let amount;
+    try {
+      amount = decimalToCents(editExpenseForm.amount);
+      if (amount <= 0n) throw new RangeError("El importe debe ser mayor que cero.");
+    } catch (validationError) { setEditExpenseError(validationError.message); return; }
+    const values = {
+      concept: editExpenseForm.concept.trim(), amount: centsToDecimal(amount),
+      date: editExpenseForm.date, category: editExpenseForm.category,
+      activity_id: editExpenseForm.activity_id || null,
+      description: editExpenseForm.description.trim() || null,
+      observations: editExpenseForm.observations.trim() || null,
+    };
+    if (!values.concept || !values.date || !values.category) {
+      setEditExpenseError("Completa concepto, fecha, categoría e importe."); return;
+    }
+    const payload = {};
+    for (const field of ["concept", "amount", "date", "category", "activity_id", "description", "observations"]) {
+      const previous = field === "amount" ? centsToDecimal(decimalToCents(selectedExpense.amount)) : (selectedExpense[field] ?? null);
+      if (values[field] !== previous) payload[field] = values[field];
+    }
+    if (!Object.keys(payload).length) {
+      setEditingExpense(false); setEditExpenseForm(null);
+      setExpenseNotice("No hay cambios para guardar."); return;
+    }
+    setSavingExpense(true); setEditExpenseError("");
+    try {
+      const updated = await updateExpense(selectedExpense.id, payload);
+      setSelectedExpense((current) => ({ ...current, ...values, ...(updated ?? {}) }));
+      setExpenses((current) => sortExpensesByDate(current.map((item) =>
+        item.id === selectedExpense.id ? { ...item, ...values, ...(updated ?? {}) } : item
+      )));
+      setEditingExpense(false); setEditExpenseForm(null);
+      await Promise.all([loadExpenses(appliedFilters), loadBudget(true), loadExpenseDetail(selectedExpense.id)]);
+      setExpenseNotice("Gasto actualizado correctamente.");
+    } catch (requestError) { setEditExpenseError(errorMessage(requestError)); }
+    finally { setSavingExpense(false); }
+  }
+  async function removeSelectedExpense() {
+    if (!selectedExpense || deletingExpense || savingExpense) return;
+    const activity = selectedExpense.activity_id ? activityNames.get(selectedExpense.activity_id) ?? "Actividad asociada" : "Sin actividad";
+    const confirmation = [
+      "¿Eliminar definitivamente este gasto?", "",
+      "Concepto: " + selectedExpense.concept,
+      "Importe: " + formatMoneyCOP(selectedExpense.amount),
+      "Fecha: " + selectedExpense.date,
+      "Categoría: " + selectedExpense.category,
+      "Actividad: " + activity, "",
+      "Esta acción también eliminará definitivamente todo el historial del gasto y no se puede deshacer.",
+    ].join("\n");
+    if (!window.confirm(confirmation)) return;
+    setDeletingExpense(true); setDetailError(null);
+    try {
+      await deleteExpense(selectedExpense.id);
+      setExpenses((current) => current.filter((item) => item.id !== selectedExpense.id));
+      closeExpenseDetail(); await loadBudget(true);
+      setExpenseNotice("Gasto eliminado correctamente. Su historial también fue eliminado.");
+    } catch (requestError) { setDetailError(requestError); }
+    finally { setDeletingExpense(false); }
+  }
+
 
   function clearFilters() {
     setFilters(EMPTY_FILTERS);
@@ -378,21 +464,44 @@ function BudgetExpensesPage() {
         <aside className="expense-drawer expense-detail-drawer" role="dialog" aria-modal="true" aria-labelledby="expense-detail-title">
           <div className="expense-drawer-heading"><div><p className="page-eyebrow">DETALLE DEL GASTO</p><h2 id="expense-detail-title">{selectedExpense?.concept ?? "Consultando gasto…"}</h2>
             <p>{selectedExpense?.date ?? ""} · {selectedExpense ? formatMoneyCOP(selectedExpense.amount) : ""}</p></div>
-            <button type="button" className="secondary-action" aria-label="Cerrar detalle" onClick={closeExpenseDetail}>×</button></div>
+            <button type="button" className="secondary-action" aria-label="Cerrar detalle" disabled={savingExpense || deletingExpense} onClick={closeExpenseDetail}>×</button></div>
           <div className="expense-detail-tabs" role="tablist" aria-label="Detalle del gasto">
-            <button type="button" role="tab" aria-selected={detailTab === "information"} className={detailTab === "information" ? "is-active" : ""} onClick={() => setDetailTab("information")}>Información</button>
-            <button type="button" role="tab" aria-selected={detailTab === "history"} className={detailTab === "history" ? "is-active" : ""} onClick={() => setDetailTab("history")}>Historial</button>
+            <button type="button" role="tab" aria-selected={detailTab === "information"} disabled={editingExpense || savingExpense} className={detailTab === "information" ? "is-active" : ""} onClick={() => setDetailTab("information")}>Información</button>
+            <button type="button" role="tab" aria-selected={detailTab === "history"} disabled={editingExpense || savingExpense} className={detailTab === "history" ? "is-active" : ""} onClick={() => setDetailTab("history")}>Historial</button>
           </div>
           {detailLoading && <LoadingState message="Consultando detalle e historial…" />}
           {detailError && <ErrorState message={errorMessage(detailError)} onRetry={() => selectedExpense && loadExpenseDetail(selectedExpense.id)} />}
-          {!detailLoading && !detailError && selectedExpense && detailTab === "information" && <dl className="expense-detail-fields">
-            <div><dt>Concepto</dt><dd>{selectedExpense.concept}</dd></div><div><dt>Importe</dt><dd>{formatMoneyCOP(selectedExpense.amount)}</dd></div>
-            <div><dt>Fecha</dt><dd>{selectedExpense.date}</dd></div><div><dt>Categoría</dt><dd>{selectedExpense.category}</dd></div>
-            <div><dt>Actividad</dt><dd>{selectedExpense.activity_id ? activityNames.get(selectedExpense.activity_id) ?? "Actividad asociada" : "Sin actividad"}</dd></div>
-            <div><dt>Descripción</dt><dd>{selectedExpense.description || "Sin descripción"}</dd></div><div><dt>Observaciones</dt><dd>{selectedExpense.observations || "Sin observaciones"}</dd></div>
-            <div><dt>Registrado</dt><dd>{selectedExpense.created_at ? formatHistoryDate(selectedExpense.created_at) : "No disponible"}</dd></div>
-            <div><dt>Última actualización</dt><dd>{selectedExpense.updated_at ? formatHistoryDate(selectedExpense.updated_at) : "No disponible"}</dd></div>
-          </dl>}
+          {!detailLoading && !detailError && selectedExpense && detailTab === "information" && editingExpense && editExpenseForm && <form className="expense-create-form" onSubmit={saveExpenseChanges}>
+            <label>Concepto<input aria-label="Concepto del gasto (edición)" required maxLength={160} value={editExpenseForm.concept} onChange={(event) => setEditExpenseForm((value) => ({ ...value, concept: event.target.value }))} /></label>
+            <label>Importe (COP)<input aria-label="Importe del gasto (edición)" required type="text" inputMode="decimal" value={editExpenseForm.amount} onChange={(event) => setEditExpenseForm((value) => ({ ...value, amount: event.target.value }))} /></label>
+            <label>Fecha<input aria-label="Fecha del gasto (edición)" required type="date" value={editExpenseForm.date} onChange={(event) => setEditExpenseForm((value) => ({ ...value, date: event.target.value }))} /></label>
+            <label>Categoría<select aria-label="Categoría del gasto (edición)" required value={editExpenseForm.category} onChange={(event) => setEditExpenseForm((value) => ({ ...value, category: event.target.value }))}>{CATEGORIES.map((category) => <option key={category} value={category}>{category}</option>)}</select></label>
+            <label>Actividad (opcional)<input aria-label="Buscar actividad (edición)" type="search" placeholder="Buscar actividad…" value={activitySearch} onChange={(event) => setActivitySearch(event.target.value)} />
+              <select aria-label="Actividad asociada (edición)" value={editExpenseForm.activity_id} onChange={(event) => setEditExpenseForm((value) => ({ ...value, activity_id: event.target.value }))}><option value="">Sin actividad</option>{filteredActivities.map((activity) => <option key={activity.id} value={activity.id}>{activity.title ?? activity.name ?? "Actividad"}</option>)}</select>
+            </label>
+            <button type="button" className="expense-optional-toggle" aria-expanded={editOptionalOpen} onClick={() => setEditOptionalOpen((value) => !value)}>{editOptionalOpen ? "Ocultar campos opcionales" : "Mostrar campos opcionales"}</button>
+            {editOptionalOpen && <div className="expense-optional-fields">
+              <label>Descripción<textarea aria-label="Descripción del gasto (edición)" rows="3" value={editExpenseForm.description} onChange={(event) => setEditExpenseForm((value) => ({ ...value, description: event.target.value }))} /></label>
+              <label>Observaciones<textarea aria-label="Observaciones del gasto (edición)" rows="3" value={editExpenseForm.observations} onChange={(event) => setEditExpenseForm((value) => ({ ...value, observations: event.target.value }))} /></label>
+            </div>}
+            {editExpenseError && <p role="alert" className="budget-form-error">{editExpenseError}</p>}
+            <div className="budget-form-actions"><button type="button" className="secondary-action" disabled={savingExpense} onClick={cancelExpenseEdit}>Cancelar</button>
+              <button type="submit" className="state-action" disabled={savingExpense}>{savingExpense ? "Guardando…" : "Guardar cambios"}</button></div>
+          </form>}
+          {!detailLoading && !detailError && selectedExpense && detailTab === "information" && !editingExpense && <>
+            <dl className="expense-detail-fields">
+              <div><dt>Concepto</dt><dd>{selectedExpense.concept}</dd></div><div><dt>Importe</dt><dd>{formatMoneyCOP(selectedExpense.amount)}</dd></div>
+              <div><dt>Fecha</dt><dd>{selectedExpense.date}</dd></div><div><dt>Categoría</dt><dd>{selectedExpense.category}</dd></div>
+              <div><dt>Actividad</dt><dd>{selectedExpense.activity_id ? activityNames.get(selectedExpense.activity_id) ?? "Actividad asociada" : "Sin actividad"}</dd></div>
+              <div><dt>Descripción</dt><dd>{selectedExpense.description || "Sin descripción"}</dd></div><div><dt>Observaciones</dt><dd>{selectedExpense.observations || "Sin observaciones"}</dd></div>
+              <div><dt>Registrado</dt><dd>{selectedExpense.created_at ? formatHistoryDate(selectedExpense.created_at) : "No disponible"}</dd></div>
+              <div><dt>Última actualización</dt><dd>{selectedExpense.updated_at ? formatHistoryDate(selectedExpense.updated_at) : "No disponible"}</dd></div>
+            </dl>
+            <div className="expense-detail-actions">
+              <button type="button" className="secondary-action" disabled={savingExpense || deletingExpense} onClick={beginExpenseEdit}>Editar gasto</button>
+              <button type="button" className="danger-action" disabled={savingExpense || deletingExpense} onClick={removeSelectedExpense}>{deletingExpense ? "Eliminando…" : "Eliminar gasto"}</button>
+            </div>
+          </>}
           {!detailLoading && !detailError && selectedExpense && detailTab === "history" && (expenseHistory.length === 0
             ? <p className="expense-history-empty">Este gasto no tiene eventos de historial.</p>
             : <ol className="expense-history-timeline">{expenseHistory.map((entry) => <li key={entry.id}><article className="expense-history-event">
