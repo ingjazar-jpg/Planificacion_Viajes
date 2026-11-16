@@ -3,12 +3,15 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import CalendarPage from "../src/features/calendar/CalendarPage.jsx";
 import { usePeriod } from "../src/context/PeriodContext.jsx";
 import { getCalendar } from "../src/services/api/calendarService.js";
-import { deleteActivity, getActivity, updateActivityStatus } from "../src/services/api/activitiesService.js";
+import {
+  createActivity, deleteActivity, getActivity, updateActivity, updateActivityStatus,
+} from "../src/services/api/activitiesService.js";
 
 vi.mock("../src/context/PeriodContext.jsx", () => ({ usePeriod: vi.fn() }));
 vi.mock("../src/services/api/calendarService.js", () => ({ getCalendar: vi.fn() }));
 vi.mock("../src/services/api/activitiesService.js", () => ({
-  deleteActivity: vi.fn(), getActivity: vi.fn(), updateActivityStatus: vi.fn(),
+  createActivity: vi.fn(), deleteActivity: vi.fn(), getActivity: vi.fn(),
+  updateActivity: vi.fn(), updateActivityStatus: vi.fn(),
 }));
 
 const period = {
@@ -43,6 +46,8 @@ describe("CalendarPage", () => {
     });
     getCalendar.mockResolvedValue(activities);
     getActivity.mockResolvedValue(activities[0]);
+    createActivity.mockResolvedValue(activities[0]);
+    updateActivity.mockResolvedValue(activities[0]);
     deleteActivity.mockResolvedValue(null);
     updateActivityStatus.mockImplementation(async (_id, status) => ({ ...activities[0], status }));
   });
