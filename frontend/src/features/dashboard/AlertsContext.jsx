@@ -2,6 +2,7 @@ import {
   createContext, useCallback, useContext, useEffect, useMemo, useRef, useState,
 } from "react";
 import { usePeriod } from "../../context/PeriodContext.jsx";
+import { useDataRecovery } from "../../context/DataRecoveryContext.jsx";
 import {
   evaluateAlerts, getPendingActiveAlerts, reviewAlert,
 } from "../../services/api/alertsService.js";
@@ -11,6 +12,7 @@ const AlertsContext = createContext(null);
 
 export function AlertsProvider({ children }) {
   const { selectedPeriodId } = usePeriod();
+  const { revision } = useDataRecovery();
   const [alerts, setAlerts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -48,7 +50,7 @@ export function AlertsProvider({ children }) {
 
   useEffect(() => {
     refreshAlerts();
-  }, [refreshAlerts]);
+  }, [refreshAlerts, revision]);
 
   const markReviewed = useCallback(async (alertId) => {
     setIsReviewing((current) => [...current, alertId]);
