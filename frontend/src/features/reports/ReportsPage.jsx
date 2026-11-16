@@ -343,8 +343,9 @@ function ReportsPage() {
   }, [selectedPeriodId]);
 
   useEffect(() => {
-    reportsRef.current = INITIAL_REPORT_STATE;
-    setReports(createReportState());
+    const nextReports = createReportState();
+    reportsRef.current = nextReports;
+    setReports(nextReports);
     setActivityOptions([]);
     setActivityOptionsLoading(false);
     setActivityOptionsLoaded(false);
