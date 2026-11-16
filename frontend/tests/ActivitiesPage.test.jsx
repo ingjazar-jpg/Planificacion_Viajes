@@ -3,13 +3,14 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import ActivitiesPage from "../src/features/activities/ActivitiesPage.jsx";
 import { usePeriod } from "../src/context/PeriodContext.jsx";
 import {
-  createActivity, getActivities, getActivity, updateActivity,
+  createActivity, deleteActivity, getActivities, getActivity, updateActivity, updateActivityStatus,
 } from "../src/services/api/activitiesService.js";
 import { getCalendar } from "../src/services/api/calendarService.js";
 
 vi.mock("../src/context/PeriodContext.jsx", () => ({ usePeriod: vi.fn() }));
 vi.mock("../src/services/api/activitiesService.js", () => ({
-  createActivity: vi.fn(), getActivities: vi.fn(), getActivity: vi.fn(), updateActivity: vi.fn(),
+  createActivity: vi.fn(), deleteActivity: vi.fn(), getActivities: vi.fn(), getActivity: vi.fn(),
+  updateActivity: vi.fn(), updateActivityStatus: vi.fn(),
 }));
 vi.mock("../src/services/api/calendarService.js", () => ({ getCalendar: vi.fn() }));
 
@@ -30,6 +31,8 @@ describe("ActivitiesPage list", () => {
     getActivity.mockResolvedValue(rows[0]);
     createActivity.mockResolvedValue({ ...rows[0], id: "activity-new" });
     updateActivity.mockResolvedValue({ ...rows[0], name: "Viaje actualizado" });
+    updateActivityStatus.mockImplementation(async (_id, status) => ({ ...rows[0], status }));
+    deleteActivity.mockResolvedValue(null);
     getCalendar.mockResolvedValue([]);
   });
 
@@ -130,6 +133,62 @@ describe("ActivitiesPage list", () => {
       name: "Viaje actualizado", status: "Pendiente",
     })));
     expect(await screen.findByRole("dialog", { name: "Viaje actualizado" })).toBeInTheDocument();
+  });
+
+
+  it("offers only the next allowed status transition and refreshes the list", async () => {
+    render(<ActivitiesPage />);
+    const table = await screen.findByRole("table", { name: "Listado de actividades" });
+    fireEvent.click(within(table).getByRole("button", { name: "Viaje familiar" }));
+    const detail = await screen.findByRole("dialog", { name: "Viaje familiar" });
+    expect(within(detail).getByRole("button", { name: "Iniciar actividad" })).toBeInTheDocument();
+    expect(within(detail).queryByRole("button", { name: "Completar actividad" })).not.toBeInTheDocument();
+    fireEvent.click(within(detail).getByRole("button", { name: "Iniciar actividad" }));
+    await waitFor(() => expect(updateActivityStatus).toHaveBeenCalledWith("activity-1", "En progreso"));
+    expect(await screen.findByText("En progreso")).toBeInTheDocument();
+    expect(getActivities).toHaveBeenCalledTimes(2);
+  });
+
+  it("requires confirmation before cancelling and keeps the activity record", async () => {
+    const confirm = vi.spyOn(window, "confirm").mockReturnValue(false);
+    render(<ActivitiesPage />);
+    const table = await screen.findByRole("table", { name: "Listado de actividades" });
+    fireEvent.click(within(table).getByRole("button", { name: "Viaje familiar" }));
+    const detail = await screen.findByRole("dialog", { name: "Viaje familiar" });
+    fireEvent.click(within(detail).getByRole("button", { name: "Cancelar actividad" }));
+    expect(confirm).toHaveBeenCalledWith(expect.stringContaining("Se conservará en el período"));
+    expect(updateActivityStatus).not.toHaveBeenCalled();
+    confirm.mockReturnValue(true);
+    fireEvent.click(within(detail).getByRole("button", { name: "Cancelar actividad" }));
+    await waitFor(() => expect(updateActivityStatus).toHaveBeenCalledWith("activity-1", "Cancelada"));
+    expect(await screen.findByText("Cancelada")).toBeInTheDocument();
+    confirm.mockRestore();
+  });
+
+  it("requires explicit cascade warning confirmation before permanent deletion", async () => {
+    const confirm = vi.spyOn(window, "confirm").mockReturnValue(true);
+    getActivities.mockResolvedValueOnce(rows).mockResolvedValueOnce([]);
+    render(<ActivitiesPage />);
+    const table = await screen.findByRole("table", { name: "Listado de actividades" });
+    fireEvent.click(within(table).getByRole("button", { name: "Viaje familiar" }));
+    const detail = await screen.findByRole("dialog", { name: "Viaje familiar" });
+    fireEvent.click(within(detail).getByRole("button", { name: "Eliminar actividad" }));
+    expect(confirm).toHaveBeenCalledWith(expect.stringContaining("gastos asociados"));
+    await waitFor(() => expect(deleteActivity).toHaveBeenCalledWith("activity-1"));
+    expect(await screen.findByText("Aún no hay actividades")).toBeInTheDocument();
+    expect(screen.queryByRole("dialog", { name: "Viaje familiar" })).not.toBeInTheDocument();
+    confirm.mockRestore();
+  });
+
+  it("does not reopen completed or cancelled activities", async () => {
+    getActivity.mockResolvedValue({ ...rows[0], status: "Completada" });
+    render(<ActivitiesPage />);
+    const table = await screen.findByRole("table", { name: "Listado de actividades" });
+    fireEvent.click(within(table).getByRole("button", { name: "Viaje familiar" }));
+    const detail = await screen.findByRole("dialog", { name: "Viaje familiar" });
+    expect(within(detail).queryByRole("button", { name: "Iniciar actividad" })).not.toBeInTheDocument();
+    expect(within(detail).queryByRole("button", { name: "Completar actividad" })).not.toBeInTheDocument();
+    expect(within(detail).getByRole("button", { name: "Cancelar actividad" })).toBeInTheDocument();
   });
 
   it("opens the requested activity detail when navigated from an alert", async () => {
