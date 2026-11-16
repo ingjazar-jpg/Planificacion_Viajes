@@ -65,8 +65,8 @@ function AppLayout() {
         </section>
       );
     }
-    if (isLoading) return <LoadingState message="Consultando períodos…" />;
-    if (error) {
+    if (isLoading && activeSection !== "data-management") return <LoadingState message="Consultando períodos…" />;
+    if (error && activeSection !== "data-management") {
       return <ErrorState message={error.message} onRetry={refreshPeriods} />;
     }
     if (periods.length === 0 && activeSection !== "activities" && activeSection !== "data-management") {
