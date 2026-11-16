@@ -18,7 +18,13 @@ FIXED_NOW = datetime(2026, 11, 15, 10, 0, tzinfo=TZ)
 
 def _client(tmp_path):
     repository = JsonRepository(tmp_path / "data.json")
-    return TestClient(create_app(repository=repository)), repository
+    app = create_app(repository=repository)
+
+    # Keep API-triggered evaluations deterministic and aligned with direct
+    # service evaluations performed by the tests.
+    app.state.alert_service.now = lambda: FIXED_NOW
+
+    return TestClient(app), repository
 
 
 def _period(client, start="2026-11-01", end="2026-12-31"):
@@ -181,7 +187,11 @@ def test_reviewed_alert_is_deactivated_and_reactivated_without_losing_review(tmp
         start_date="2026-11-17", end_date="2026-11-17",
     )
     _evaluate_at(repository, period["id"])
-    alert = repository.load().alerts[0]
+    alert = next(
+        item
+        for item in repository.load().alerts
+        if item.type == AlertType.HIGH_PRIORITY
+    )
     assert alert.type == AlertType.HIGH_PRIORITY
     assert client.patch(f"/api/v1/alerts/{alert.id}/review").status_code == 200
 
@@ -212,7 +222,11 @@ def test_reviewed_alert_is_deactivated_and_reactivated_without_losing_review(tmp
     }))
     reactivated = _evaluate_at(repository, period["id"])
     assert reactivated["reactivated_count"] == 1
-    restored = repository.load().alerts[0]
+    restored = next(
+        item
+        for item in repository.load().alerts
+        if item.type == AlertType.HIGH_PRIORITY
+    )
     assert restored.condition_active is True
     assert restored.status == AlertStatus.REVIEWED
     assert [event.event_type for event in restored.history] == [
