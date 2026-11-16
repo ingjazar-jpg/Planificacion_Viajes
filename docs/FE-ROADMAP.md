@@ -187,6 +187,7 @@ FE-001, FE-002 y FE-003 están validados y cerrados. FE-003 cerró el 16-11-2026
 - [FE-003 — Especificación de calendario y actividades](FE-003.md)
 - [FE-004 — Especificación de presupuesto y gastos](FE-004.md)
 - [FE-005 — Especificación de informes](FE-005.md)
+- [FE-006 — Gestión de datos e integración](FE-006.md)
 - [API-001 — Contratos de endpoints REST](API-001.md)
 - [ARCH-001 — Arquitectura técnica](ARCH.md)
 - [Estado del proyecto](project-status.md)
