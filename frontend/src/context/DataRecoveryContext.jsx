@@ -16,7 +16,7 @@ const DataRecoveryContext = createContext(null);
 
 function latestPeriod(periods) {
   return [...periods].sort((left, right) => {
-    const dateOrder = String(right.created_at ?? "").localeCompare(String(left.created_at ?? ""));
+    const dateOrder = new Date(right.created_at).getTime() - new Date(left.created_at).getTime();
     if (dateOrder !== 0) return dateOrder;
     return Number(right.year ?? 0) - Number(left.year ?? 0);
   })[0] ?? null;
@@ -50,7 +50,7 @@ async function refreshPeriodData(periodId, period) {
 }
 
 export function DataRecoveryProvider({ children }) {
-  const { selectedPeriodId, refreshPeriods, selectPeriod } = usePeriod();
+  const { selectedPeriodId, refreshPeriods } = usePeriod();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [refreshError, setRefreshError] = useState(null);
   const [restoreSucceeded, setRestoreSucceeded] = useState(false);
@@ -67,12 +67,9 @@ export function DataRecoveryProvider({ children }) {
         ?? latestPeriod(periods);
 
       if (!activePeriod) {
-        selectPeriod(null);
         setRevision((value) => value + 1);
         return true;
       }
-
-      selectPeriod(activePeriod.id);
       await refreshPeriodData(activePeriod.id, activePeriod);
       setRevision((value) => value + 1);
       return true;
@@ -82,7 +79,7 @@ export function DataRecoveryProvider({ children }) {
     } finally {
       setIsRefreshing(false);
     }
-  }, [refreshPeriods, selectedPeriodId, selectPeriod]);
+  }, [refreshPeriods, selectedPeriodId]);
 
   const completeRestoration = useCallback(async () => {
     setRestoreSucceeded(true);
