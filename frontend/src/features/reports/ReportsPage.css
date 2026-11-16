@@ -19,3 +19,28 @@
 .reports-filter-error{margin:0;color:var(--color-danger);font-size:.85rem}
 @media(max-width:900px){.reports-filter-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:520px){.reports-filter-heading{align-items:flex-start;flex-direction:column}.reports-filter-grid{grid-template-columns:1fr}.reports-filter-actions{display:grid;grid-template-columns:1fr 1fr}}
+
+/* FE-005 Bloque 5: exportación y grupos presupuestarios expandibles */
+.reports-export-toolbar{display:flex;justify-content:flex-end}
+.reports-export-toolbar button,.reports-export-actions button,.reports-export-error button,.reports-export-heading button{min-height:40px;padding:.5rem .9rem;border:1px solid var(--color-border);border-radius:var(--radius-control);background:var(--color-surface);color:var(--color-primary);font-weight:650;cursor:pointer}
+.reports-export-toolbar button{background:var(--color-primary);border-color:var(--color-primary);color:#fff}
+.reports-export-toolbar button:disabled,.reports-export-actions button:disabled,.reports-export-error button:disabled{opacity:.5;cursor:not-allowed}
+.reports-export-dialog{display:grid;gap:1rem;padding:1rem;border:1px solid var(--color-border);border-radius:var(--radius-card);background:var(--color-surface);box-shadow:var(--shadow-card)}
+.reports-export-heading{display:flex;justify-content:space-between;align-items:center;gap:1rem}
+.reports-export-heading h2{margin:0;color:var(--color-primary);font-size:1.05rem}
+.reports-export-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+.reports-export-fields label{display:grid;gap:.4rem;color:var(--color-text-secondary);font-size:.85rem;font-weight:650}
+.reports-export-fields select{width:100%;min-height:42px;padding:.5rem .65rem;border:1px solid var(--color-border);border-radius:var(--radius-control);background:var(--color-background);color:var(--color-text)}
+.reports-export-actions,.reports-export-error{display:flex;flex-wrap:wrap;gap:.65rem;align-items:center}
+.reports-export-actions button:first-child,.reports-export-error button:first-of-type{background:var(--color-primary);border-color:var(--color-primary);color:#fff}
+.reports-export-error p{flex-basis:100%;margin:0;color:var(--color-danger)}
+.reports-export-notice{margin:0;padding:.65rem .8rem;border-left:3px solid var(--color-secondary);background:var(--color-surface);color:var(--color-text-secondary)}
+.reports-group-card{overflow:hidden;border:1px solid var(--color-border);border-radius:var(--radius-control);background:var(--color-surface)}
+.reports-group-toggle{display:grid;width:100%;grid-template-columns:minmax(0,1fr) auto auto auto;align-items:center;gap:.8rem;padding:.85rem .9rem;border:0;background:transparent;color:var(--color-text);text-align:left;cursor:pointer}
+.reports-group-toggle:focus-visible,.reports-export-dialog button:focus-visible{outline:2px solid var(--color-secondary);outline-offset:2px}
+.reports-group-name{font-weight:700;color:var(--color-primary);overflow-wrap:anywhere}
+.reports-group-toggle>span:nth-child(2){font-size:.8rem;color:var(--color-text-secondary)}
+.reports-group-detail{padding:.2rem .9rem .9rem;border-top:1px solid var(--color-border)}
+.reports-group-page-note,.reports-group-empty{margin:.65rem 0;color:var(--color-text-secondary);font-size:.82rem}
+.reports-group-details{display:block}
+@media(max-width:520px){.reports-export-fields{grid-template-columns:1fr}.reports-group-toggle{grid-template-columns:minmax(0,1fr) auto;gap:.45rem}.reports-group-toggle strong{grid-column:1}.reports-group-toggle>span:last-child{grid-column:2;grid-row:1}.reports-group-detail{padding:.2rem .6rem .7rem}}
