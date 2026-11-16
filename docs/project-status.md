@@ -184,7 +184,7 @@ La advertencia deprecatoria de Starlette relacionada con `httpx` no produjo fall
 
 ### 6.2 FE-004 — Presupuesto y gastos
 
-**Estado:** refinement aprobado; Bloques 1–4 implementados, publicados y validados localmente. El Bloque 5 (detalle e historial) está implementado y publicado en GitHub; la usuaria confirmó **121 pruebas frontend aprobadas** tras sincronizar los cambios. La compilación de producción de este bloque queda pendiente de confirmación. Última suite frontend confirmada por la usuaria antes del Bloque 5: **118 passed**. Build de producción Vite 8.3.8 exitoso con 48 módulos transformados; el ajuste posterior para resolver dos consultas ambiguas afectó únicamente las pruebas.
+**Estado:** refinement aprobado; Bloques 1–4 implementados, publicados y validados localmente. El Bloque 5 (detalle e historial) está implementado y publicado en GitHub; la usuaria confirmó **121 pruebas frontend aprobadas** tras sincronizar los cambios. La usuaria confirmó también `npm run build` exitoso para este bloque. Última suite frontend confirmada por la usuaria antes del Bloque 5: **118 passed**. Build de producción Vite 8.3.8 exitoso con 48 módulos transformados; el ajuste posterior para resolver dos consultas ambiguas afectó únicamente las pruebas.
 
 - Documento: `docs/FE-004.md` v0.1.
 - Decisiones aprobadas: D1–D43. D43 opción A resuelve la ausencia de ordenamiento contractual: GET /expenses consulta el conjunto filtrado completo sin page/page_size; el frontend ordena globalmente por fecha descendente y pagina localmente con 10/20/50.
