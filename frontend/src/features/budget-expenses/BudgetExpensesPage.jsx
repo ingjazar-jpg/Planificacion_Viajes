@@ -1,12 +1,15 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { EmptyState, ErrorState, LoadingState } from "../../components/common/AsyncState.jsx";
 import { usePeriod } from "../../context/PeriodContext.jsx";
+import { getActivities } from "../../services/api/activitiesService.js";
 import { createBudget, getBudget, updateBudget } from "../../services/api/budgetService.js";
+import { getExpenses } from "../../services/api/expensesService.js";
 import { centsToDecimal, decimalToCents, formatMoneyCOP, getUndistributedCents } from "../../utils/money.js";
 import "./BudgetExpensesPage.css";
 
 const CATEGORIES = ["Viajes", "Transporte", "Alojamiento", "Recreación", "Turismo", "Reuniones familiares", "Otros"];
 const EMPTY_FORM = { total_budget: "0.00", category_budgets: Object.fromEntries(CATEGORIES.map((item) => [item, "0.00"])) };
+const EMPTY_FILTERS = { start_date: "", end_date: "", category: "", activity_id: "", min_amount: "", max_amount: "" };
 
 function formFromBudget(budget) {
   return {
@@ -24,6 +27,10 @@ function errorMessage(error) {
   return error?.message || "No fue posible completar la operación.";
 }
 
+function sortExpensesByDate(expenses) {
+  return [...expenses].sort((a, b) => String(b.date).localeCompare(String(a.date)));
+}
+
 function BudgetExpensesPage() {
   const { selectedPeriodId, selectedPeriod } = usePeriod();
   const [tab, setTab] = useState("budget");
@@ -35,11 +42,20 @@ function BudgetExpensesPage() {
   const [formError, setFormError] = useState("");
   const [saving, setSaving] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const sequence = useRef(0);
+  const [expenses, setExpenses] = useState([]);
+  const [expensesLoading, setExpensesLoading] = useState(false);
+  const [expensesError, setExpensesError] = useState(null);
+  const [activities, setActivities] = useState([]);
+  const [filters, setFilters] = useState(EMPTY_FILTERS);
+  const [appliedFilters, setAppliedFilters] = useState(EMPTY_FILTERS);
+  const [pageSize, setPageSize] = useState(20);
+  const [page, setPage] = useState(1);
+  const budgetSequence = useRef(0);
+  const expenseSequence = useRef(0);
   const snapshot = useRef(EMPTY_FORM);
 
   const loadBudget = useCallback(async (silent = false) => {
-    const id = ++sequence.current;
+    const id = ++budgetSequence.current;
     if (!selectedPeriodId) {
       setBudget(null); setLoading(false); setRefreshing(false); setError(null); return;
     }
@@ -48,22 +64,53 @@ function BudgetExpensesPage() {
     setError(null);
     try {
       const result = await getBudget(selectedPeriodId);
-      if (id === sequence.current) setBudget(result);
+      if (id === budgetSequence.current) setBudget(result);
     } catch (requestError) {
-      if (id !== sequence.current) return;
+      if (id !== budgetSequence.current) return;
       if (requestError?.status === 404 && requestError?.code === "BUDGET_NOT_FOUND") {
         setBudget(null); setError(null);
       } else setError(requestError);
     } finally {
-      if (id === sequence.current) { setLoading(false); setRefreshing(false); }
+      if (id === budgetSequence.current) { setLoading(false); setRefreshing(false); }
     }
   }, [selectedPeriodId, budget]);
+
+  const loadExpenses = useCallback(async (queryFilters = appliedFilters) => {
+    const id = ++expenseSequence.current;
+    if (!selectedPeriodId) {
+      setExpenses([]); setExpensesLoading(false); setExpensesError(null); return;
+    }
+    setExpensesLoading(true);
+    setExpensesError(null);
+    try {
+      const result = await getExpenses({ period_id: selectedPeriodId, ...queryFilters });
+      if (id === expenseSequence.current) setExpenses(sortExpensesByDate(result));
+    } catch (requestError) {
+      if (id === expenseSequence.current) setExpensesError(requestError);
+    } finally {
+      if (id === expenseSequence.current) setExpensesLoading(false);
+    }
+  }, [selectedPeriodId, appliedFilters]);
 
   useEffect(() => {
     setBudget(null); setLoading(true); setEditing(false); setForm(EMPTY_FORM); setError(null);
     loadBudget();
-    return () => { sequence.current += 1; };
+    return () => { budgetSequence.current += 1; };
   }, [selectedPeriodId]);
+
+  useEffect(() => {
+    setExpenses([]); setFilters(EMPTY_FILTERS); setAppliedFilters(EMPTY_FILTERS);
+    setPage(1);
+    loadExpenses(EMPTY_FILTERS);
+    getActivities({ period_id: selectedPeriodId })
+      .then(setActivities)
+      .catch(() => setActivities([]));
+    return () => { expenseSequence.current += 1; };
+  }, [selectedPeriodId]);
+
+  useEffect(() => {
+    loadExpenses(appliedFilters);
+  }, [appliedFilters, loadExpenses]);
 
   const undistributed = useMemo(() => {
     try { return getUndistributedCents(form.total_budget, CATEGORIES.map((c) => form.category_budgets[c])); }
@@ -71,6 +118,14 @@ function BudgetExpensesPage() {
   }, [form]);
   const overAllocated = undistributed !== null && undistributed < 0n;
   const dirty = JSON.stringify(form) !== JSON.stringify(snapshot.current);
+  const activityNames = useMemo(() => new Map(activities.map((activity) => [activity.id, activity.name])), [activities]);
+  const pageCount = Math.max(1, Math.ceil(expenses.length / pageSize));
+  const visibleExpenses = expenses.slice((page - 1) * pageSize, page * pageSize);
+  const hasFilters = Object.values(appliedFilters).some(Boolean);
+
+  useEffect(() => {
+    if (page > pageCount) setPage(pageCount);
+  }, [page, pageCount]);
 
   function beginEdit() {
     const next = budget ? formFromBudget(budget) : EMPTY_FORM;
@@ -114,6 +169,18 @@ function BudgetExpensesPage() {
     } catch (saveError) {
       setFormError(errorMessage(saveError));
     } finally { setSaving(false); }
+  }
+
+  function applyFilters(event) {
+    event.preventDefault();
+    setPage(1);
+    setAppliedFilters({ ...filters });
+  }
+
+  function clearFilters() {
+    setFilters(EMPTY_FILTERS);
+    setAppliedFilters(EMPTY_FILTERS);
+    setPage(1);
   }
 
   return (
@@ -168,7 +235,45 @@ function BudgetExpensesPage() {
               message="Puedes configurar un presupuesto y distribuirlo entre las siete categorías. También puedes registrar gastos desde la pestaña Gastos."
               actionLabel="Configurar presupuesto" onAction={beginEdit} />}
       </section> : <section id="expenses-panel" role="tabpanel" className="budget-tab-panel">
-        <EmptyState title="Gestión de gastos" message="La consulta, los filtros y el registro de gastos se incorporarán en el siguiente bloque de FE-004." />
+        <div className="budget-section-heading"><div><h2>Gastos del período</h2><p>Consulta el conjunto completo, filtra y ordena por fecha más reciente.</p></div></div>
+        <form className="expense-filters" onSubmit={applyFilters}>
+          <label>Desde<input aria-label="Fecha desde" type="date" value={filters.start_date} onChange={(e) => setFilters((v) => ({ ...v, start_date: e.target.value }))} /></label>
+          <label>Hasta<input aria-label="Fecha hasta" type="date" value={filters.end_date} onChange={(e) => setFilters((v) => ({ ...v, end_date: e.target.value }))} /></label>
+          <label>Categoría<select aria-label="Filtrar por categoría" value={filters.category} onChange={(e) => setFilters((v) => ({ ...v, category: e.target.value }))}><option value="">Todas</option>{CATEGORIES.map((item) => <option key={item} value={item}>{item}</option>)}</select></label>
+          <label>Actividad<select aria-label="Filtrar por actividad" value={filters.activity_id} onChange={(e) => setFilters((v) => ({ ...v, activity_id: e.target.value }))}><option value="">Todas</option>{activities.map((activity) => <option key={activity.id} value={activity.id}>{activity.name}</option>)}</select></label>
+          <label>Importe mínimo<input aria-label="Importe mínimo" type="text" inputMode="decimal" placeholder="0.00" value={filters.min_amount} onChange={(e) => setFilters((v) => ({ ...v, min_amount: e.target.value }))} /></label>
+          <label>Importe máximo<input aria-label="Importe máximo" type="text" inputMode="decimal" placeholder="0.00" value={filters.max_amount} onChange={(e) => setFilters((v) => ({ ...v, max_amount: e.target.value }))} /></label>
+          <div className="expense-filter-actions"><button className="state-action" type="submit">Aplicar filtros</button><button className="secondary-action" type="button" onClick={clearFilters}>Limpiar</button></div>
+        </form>
+        {expensesLoading ? <LoadingState message="Consultando gastos…" />
+          : expensesError ? <ErrorState message={errorMessage(expensesError)} onRetry={() => loadExpenses()} />
+            : expenses.length === 0 ? <EmptyState title={hasFilters ? "No hay gastos que coincidan" : "Aún no hay gastos registrados"}
+              message={hasFilters ? "Prueba ajustar o limpiar los filtros." : "Los gastos registrados para este período aparecerán aquí."}
+              actionLabel={hasFilters ? "Limpiar filtros" : undefined} onAction={hasFilters ? clearFilters : undefined} />
+              : <>
+                <div className="expense-list-toolbar"><span>{expenses.length} {expenses.length === 1 ? "gasto" : "gastos"}</span>
+                  <label>Mostrar<select aria-label="Tamaño de página" value={pageSize} onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }}>
+                    <option value={10}>10</option><option value={20}>20</option><option value={50}>50</option>
+                  </select></label></div>
+                <div className="expense-table-wrap"><table className="expense-table">
+                  <thead><tr><th>Fecha</th><th>Concepto</th><th>Categoría</th><th>Actividad</th><th>Importe</th><th>Acciones</th></tr></thead>
+                  <tbody>{visibleExpenses.map((expense) => <tr key={expense.id}>
+                    <td>{expense.date}</td><td>{expense.concept}</td><td>{expense.category}</td>
+                    <td>{expense.activity_id ? activityNames.get(expense.activity_id) ?? "Actividad asociada" : "Sin actividad"}</td>
+                    <td>{formatMoneyCOP(expense.amount)}</td><td><button type="button" className="text-action" disabled title="Disponible en el siguiente bloque">Ver detalle</button></td>
+                  </tr>)}</tbody>
+                </table></div>
+                <div className="expense-mobile-list">{visibleExpenses.map((expense) => <article className="expense-mobile-card" key={expense.id}>
+                  <div><span>{expense.date}</span><strong>{formatMoneyCOP(expense.amount)}</strong></div><h3>{expense.concept}</h3>
+                  <p>{expense.category} · {expense.activity_id ? activityNames.get(expense.activity_id) ?? "Actividad asociada" : "Sin actividad"}</p>
+                  <button type="button" className="text-action" disabled title="Disponible en el siguiente bloque">Ver detalle</button>
+                </article>)}</div>
+                <nav className="expense-pagination" aria-label="Paginación de gastos">
+                  <span>Página {page} de {pageCount}</span>
+                  <div><button type="button" className="secondary-action" disabled={page <= 1} onClick={() => setPage((v) => v - 1)}>Anterior</button>
+                    <button type="button" className="secondary-action" disabled={page >= pageCount} onClick={() => setPage((v) => v + 1)}>Siguiente</button></div>
+                </nav>
+              </>}
       </section>}
     </div>
   );
