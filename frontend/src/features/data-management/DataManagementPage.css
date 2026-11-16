@@ -42,3 +42,6 @@
   .data-restore-actions { flex-direction: column-reverse; }
   .data-restore-actions button { width: 100%; }
 }
+
+.data-recovery-actions { display: flex; flex-wrap: wrap; gap: .65rem; margin-top: .75rem; }
+@media (max-width: 520px) { .data-recovery-actions { flex-direction: column; } .data-recovery-actions button { width: 100%; } }
