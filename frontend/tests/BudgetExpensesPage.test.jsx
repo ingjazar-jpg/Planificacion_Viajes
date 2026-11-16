@@ -3,16 +3,16 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import BudgetExpensesPage from "../src/features/budget-expenses/BudgetExpensesPage.jsx";
 import { usePeriod } from "../src/context/PeriodContext.jsx";
 import { createBudget, getBudget, updateBudget } from "../src/services/api/budgetService.js";
-import { createExpense, getExpense, getExpenseHistory, getExpenses } from "../src/services/api/expensesService.js";
+import { createExpense, deleteExpense, getExpense, getExpenseHistory, getExpenses, updateExpense } from "../src/services/api/expensesService.js";
 import { getActivities } from "../src/services/api/activitiesService.js";
 vi.mock("../src/context/PeriodContext.jsx", () => ({ usePeriod: vi.fn() }));
 vi.mock("../src/services/api/budgetService.js", () => ({ createBudget: vi.fn(), getBudget: vi.fn(), updateBudget: vi.fn() }));
-vi.mock("../src/services/api/expensesService.js", () => ({ createExpense: vi.fn(), getExpense: vi.fn(), getExpenseHistory: vi.fn(), getExpenses: vi.fn() }));
+vi.mock("../src/services/api/expensesService.js", () => ({ createExpense: vi.fn(), deleteExpense: vi.fn(), getExpense: vi.fn(), getExpenseHistory: vi.fn(), getExpenses: vi.fn(), updateExpense: vi.fn() }));
 vi.mock("../src/services/api/activitiesService.js", () => ({ getActivities: vi.fn() }));
 const period = { id: "period-1", name: "Vacaciones 2026" };
 const budget = { id:"budget-1",period_id:period.id,total_budget:"5000000.00",total_expenses:"850000.00",general_balance:"4150000.00",execution_percentage:"17.00",category_budgets:["Viajes","Transporte","Alojamiento","Recreación","Turismo","Reuniones familiares","Otros"].map((category)=>({category,allocated_amount:category==="Viajes"?"2500000.00":category==="Alojamiento"?"1500000.00":"0.00",spent_amount:category==="Alojamiento"?"850000.00":"0.00",balance:category==="Alojamiento"?"650000.00":category==="Viajes"?"2500000.00":"0.00",over_budget:false})) };
 describe("BudgetExpensesPage",()=>{
- beforeEach(()=>{vi.clearAllMocks();usePeriod.mockReturnValue({selectedPeriodId:period.id,selectedPeriod:period});getBudget.mockResolvedValue(budget);getExpenses.mockResolvedValue([]);getExpense.mockResolvedValue({id:"expense-1",period_id:period.id,concept:"Reserva",amount:"850000.00",date:"2026-12-22",category:"Alojamiento",activity_id:null,description:"Hotel",observations:"Pagado",created_at:"2026-11-14T10:00:00-05:00",updated_at:"2026-11-14T10:00:00-05:00"});getExpenseHistory.mockResolvedValue([{id:"history-1",expense_id:"expense-1",modification_type:"Creación",previous_values:{},new_values:{concept:"Reserva",amount:"850000.00"},modified_at:"2026-11-14T10:00:00-05:00"}]);createExpense.mockResolvedValue({id:"expense-new",concept:"Compra de prueba",amount:"125.50",date:"2026-12-01",category:"Viajes",activity_id:null});getActivities.mockResolvedValue([]);createBudget.mockResolvedValue({id:"budget-new"});updateBudget.mockResolvedValue(budget);});
+ beforeEach(()=>{vi.clearAllMocks();usePeriod.mockReturnValue({selectedPeriodId:period.id,selectedPeriod:period});getBudget.mockResolvedValue(budget);getExpenses.mockResolvedValue([]);getExpense.mockResolvedValue({id:"expense-1",period_id:period.id,concept:"Reserva",amount:"850000.00",date:"2026-12-22",category:"Alojamiento",activity_id:null,description:"Hotel",observations:"Pagado",created_at:"2026-11-14T10:00:00-05:00",updated_at:"2026-11-14T10:00:00-05:00"});getExpenseHistory.mockResolvedValue([{id:"history-1",expense_id:"expense-1",modification_type:"Creación",previous_values:{},new_values:{concept:"Reserva",amount:"850000.00"},modified_at:"2026-11-14T10:00:00-05:00"}]);createExpense.mockResolvedValue({id:"expense-new",concept:"Compra de prueba",amount:"125.50",date:"2026-12-01",category:"Viajes",activity_id:null});updateExpense.mockImplementation(async(_id,payload)=>({id:"expense-1",period_id:period.id,concept:"Reserva",amount:"850000.00",date:"2026-12-22",category:"Alojamiento",activity_id:null,description:"Hotel",observations:"Pagado",...payload}));deleteExpense.mockResolvedValue(undefined);getActivities.mockResolvedValue([]);createBudget.mockResolvedValue({id:"budget-new"});updateBudget.mockResolvedValue(budget);});
  it("renders backend indicators and all seven categories",async()=>{render(<BudgetExpensesPage/>);expect(await screen.findByText("Resumen del presupuesto")).toBeInTheDocument();expect(screen.getByText("$ 5.000.000,00")).toBeInTheDocument();for(const c of ["Viajes","Transporte","Alojamiento","Recreación","Turismo","Reuniones familiares","Otros"])expect(screen.getByRole("heading",{name:c})).toBeInTheDocument();});
  it("treats BUDGET_NOT_FOUND as the expected empty state",async()=>{getBudget.mockRejectedValueOnce(Object.assign(new Error("Sin presupuesto"),{status:404,code:"BUDGET_NOT_FOUND"}));render(<BudgetExpensesPage/>);expect(await screen.findByText("Este período aún no tiene presupuesto")).toBeInTheDocument();});
  it("retries failed requests",async()=>{getBudget.mockRejectedValueOnce(new Error("API no disponible"));render(<BudgetExpensesPage/>);expect(await screen.findByRole("alert")).toHaveTextContent("API no disponible");fireEvent.click(screen.getByRole("button",{name:"Reintentar"}));await waitFor(()=>expect(getBudget).toHaveBeenCalledTimes(2));});
@@ -97,6 +97,61 @@ describe("BudgetExpensesPage",()=>{
   render(<BudgetExpensesPage/>);fireEvent.click(await screen.findByRole("tab",{name:"Gastos"}));
   fireEvent.click(await screen.findAllByRole("button",{name:"Ver detalle"}).then((buttons)=>buttons[0]));fireEvent.click(await screen.findByRole("tab",{name:"Historial"}));
   expect(await screen.findByText("Este gasto no tiene eventos de historial.")).toBeInTheDocument();
+ });
+
+
+ it("edits only changed expense fields with PATCH and refreshes budget and history",async()=>{
+  getExpenses.mockResolvedValue([{id:"expense-1",date:"2026-12-22",concept:"Reserva",category:"Alojamiento",amount:"850000.00",activity_id:null}]);
+  render(<BudgetExpensesPage/>);fireEvent.click(await screen.findByRole("tab",{name:"Gastos"}));
+  fireEvent.click((await screen.findAllByRole("button",{name:"Ver detalle"}))[0]);
+  fireEvent.click(await screen.findByRole("button",{name:"Editar gasto"}));
+  fireEvent.change(screen.getByLabelText("Concepto del gasto (edición)"),{target:{value:"Reserva confirmada"}});
+  fireEvent.click(screen.getByRole("button",{name:"Guardar cambios"}));
+  await waitFor(()=>expect(updateExpense).toHaveBeenCalledWith("expense-1",{concept:"Reserva confirmada"}));
+  await waitFor(()=>expect(getBudget).toHaveBeenCalledTimes(2));
+  await waitFor(()=>expect(getExpenseHistory).toHaveBeenCalledTimes(2));
+  expect(await screen.findByText("Gasto actualizado correctamente.")).toBeInTheDocument();
+ });
+ it("sends null when an optional expense field is cleared",async()=>{
+  getExpenses.mockResolvedValue([{id:"expense-1",date:"2026-12-22",concept:"Reserva",category:"Alojamiento",amount:"850000.00",activity_id:null}]);
+  render(<BudgetExpensesPage/>);fireEvent.click(await screen.findByRole("tab",{name:"Gastos"}));
+  fireEvent.click((await screen.findAllByRole("button",{name:"Ver detalle"}))[0]);
+  fireEvent.click(await screen.findByRole("button",{name:"Editar gasto"}));
+  fireEvent.click(screen.getByRole("button",{name:"Mostrar campos opcionales"}));
+  fireEvent.change(screen.getByLabelText("Descripción del gasto (edición)"),{target:{value:""}});
+  fireEvent.click(screen.getByRole("button",{name:"Guardar cambios"}));
+  await waitFor(()=>expect(updateExpense).toHaveBeenCalledWith("expense-1",{description:null}));
+ });
+ it("does not call PATCH when the expense edit has no changes",async()=>{
+  getExpenses.mockResolvedValue([{id:"expense-1",date:"2026-12-22",concept:"Reserva",category:"Alojamiento",amount:"850000.00",activity_id:null}]);
+  render(<BudgetExpensesPage/>);fireEvent.click(await screen.findByRole("tab",{name:"Gastos"}));
+  fireEvent.click((await screen.findAllByRole("button",{name:"Ver detalle"}))[0]);
+  fireEvent.click(await screen.findByRole("button",{name:"Editar gasto"}));
+  fireEvent.click(screen.getByRole("button",{name:"Guardar cambios"}));
+  expect(updateExpense).not.toHaveBeenCalled();
+  expect(await screen.findByText("No hay cambios para guardar.")).toBeInTheDocument();
+ });
+ it("requires destructive confirmation and deletes the expense",async()=>{
+  const confirm=vi.spyOn(window,"confirm").mockReturnValue(true);
+  getExpenses.mockResolvedValue([{id:"expense-1",date:"2026-12-22",concept:"Reserva",category:"Alojamiento",amount:"850000.00",activity_id:null}]);
+  render(<BudgetExpensesPage/>);fireEvent.click(await screen.findByRole("tab",{name:"Gastos"}));
+  fireEvent.click((await screen.findAllByRole("button",{name:"Ver detalle"}))[0]);
+  fireEvent.click(await screen.findByRole("button",{name:"Eliminar gasto"}));
+  await waitFor(()=>expect(deleteExpense).toHaveBeenCalledWith("expense-1"));
+  expect(confirm).toHaveBeenCalledWith(expect.stringContaining("historial del gasto"));
+  expect(await screen.findByText(/Gasto eliminado correctamente/)).toBeInTheDocument();
+  expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  expect(screen.queryByText("Reserva")).not.toBeInTheDocument();
+ });
+ it("keeps the expense when deletion is cancelled",async()=>{
+  const confirm=vi.spyOn(window,"confirm").mockReturnValue(false);
+  getExpenses.mockResolvedValue([{id:"expense-1",date:"2026-12-22",concept:"Reserva",category:"Alojamiento",amount:"850000.00",activity_id:null}]);
+  render(<BudgetExpensesPage/>);fireEvent.click(await screen.findByRole("tab",{name:"Gastos"}));
+  fireEvent.click((await screen.findAllByRole("button",{name:"Ver detalle"}))[0]);
+  fireEvent.click(await screen.findByRole("button",{name:"Eliminar gasto"}));
+  expect(confirm).toHaveBeenCalled();
+  expect(deleteExpense).not.toHaveBeenCalled();
+  expect(screen.getByRole("dialog")).toBeInTheDocument();
  });
 
 });
