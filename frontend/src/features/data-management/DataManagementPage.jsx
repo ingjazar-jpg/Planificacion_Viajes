@@ -21,8 +21,8 @@ const STATUS_LABELS = {
 };
 
 function restoreErrorMessage(error) {
-  if (error?.code === "BACKUP_NOT_FOUND") return "La copia seleccionada ya no está disponible. Se ha actualizado el catálogo.";
-  if (error?.code === "BACKUP_NOT_RESTORABLE") return "La copia no superó la validación actual y no puede restaurarse. Se ha actualizado el catálogo.";
+  if (error?.code === "BACKUP_NOT_FOUND") return "La copia seleccionada ya no está disponible. Se consultará nuevamente el catálogo.";
+  if (error?.code === "BACKUP_NOT_RESTORABLE") return "La copia no superó la validación actual y no puede restaurarse. Se consultará nuevamente el catálogo.";
   if (error?.code === "RESTORE_CONFIRMATION_REQUIRED") return "La solicitud no fue aceptada porque la confirmación no fue válida.";
   if (error?.code === "BACKUP_RESTORE_FAILED") return "No fue posible completar la restauración. Los datos anteriores se conservaron.";
   return error?.message || "No fue posible restaurar la copia seleccionada.";
