@@ -328,19 +328,19 @@ function BudgetReport({ report }) {
       <section className="reports-section">
         <h3>Gastos por actividad</h3>
         <div className="reports-groups">
-          {activityGroups.map((group) => {
+          {activityGroups.length ? activityGroups.map((group) => {
             const key = `activity:${group.activity_id || "unassigned"}`;
             return <BudgetGroup key={key} group={group} groupType="activity" items={items}
               expanded={Boolean(expanded[key])} onToggle={() => toggle(key)} />;
-          })}
+          }) : <EmptyState title="Sin gastos" message="No hay gastos para los criterios seleccionados." />}
         </div>
         <h3>Gastos por categoría</h3>
         <div className="reports-groups">
-          {categoryGroups.map((group) => {
+          {categoryGroups.length ? categoryGroups.map((group) => {
             const key = `category:${group.category}`;
             return <BudgetGroup key={key} group={group} groupType="category" items={items}
               expanded={Boolean(expanded[key])} onToggle={() => toggle(key)} />;
-          })}
+          }) : <EmptyState title="Sin gastos" message="No hay gastos para los criterios seleccionados." />}
         </div>
       </section>
       <section className="reports-section">
@@ -584,6 +584,12 @@ function ReportsPage() {
           <p>Consulta los resultados del período y revisa su evolución presupuestaria.</p>
         </div>
       </header>
+      {exportState?.isLoading && exportState.reportType !== activeTab && (
+        <p className="reports-export-notice" role="status">
+          Generando archivo del informe {exportState.reportType}…
+          <button type="button" onClick={cancelExport}>Cancelar exportación</button>
+        </p>
+      )}
       <div className="reports-tabs" role="tablist" aria-label="Tipos de informe">
         {REPORT_TABS.map((tab) => (
           <button key={tab.id} type="button" role="tab" id={`reports-tab-${tab.id}`}
