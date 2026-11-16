@@ -72,6 +72,8 @@ Los seis bloques FE son unidades de planificación e implementación; no implica
 
 ### FE-004 — Presupuesto y gastos
 
+**Estado FE-004 al 16-11-2026: REFINEMENT APROBADO; especificación docs/FE-004.md v0.1 aprobada para implementación.** La usuaria aprobó las decisiones D1–D42 y D43 opción A. D43 establece consultar el conjunto completo filtrado, ordenar globalmente por fecha descendente en frontend y paginar localmente con 10/20/50 registros; no se envían page/page_size ni se modifica API-001 o BE-007.
+
 - Sección conjunta con pestañas internas Presupuesto y Gastos.
 - Resumen general y distribución de siete categorías.
 - Creación y reemplazo del presupuesto.
@@ -158,11 +160,11 @@ Cada bloque FE se cerrará cuando:
 | FE-001 | Validado y cerrado — 15-11-2026 |
 | FE-002 | Validado y cerrado — 15-11-2026 |
 | FE-003 | Validado y cerrado — 16-11-2026; 84 pruebas frontend aprobadas, build exitoso y regresión integrada FastAPI satisfactoria |
-| FE-004 | Pendiente de refinement |
+| FE-004 | Refinement aprobado; especificación docs/FE-004.md v0.1 aprobada para implementación el 16-11-2026 (D1–D43) |
 | FE-005 | Pendiente de refinement |
 | FE-006 | Pendiente de refinement |
 
-FE-001, FE-002 y FE-003 están validados y cerrados. FE-003 cerró el 16-11-2026 con 84 pruebas frontend aprobadas, build de producción exitoso y regresión integrada contra FastAPI satisfactoria, confirmada por la usuaria. FE-004 a FE-006 permanecen pendientes de refinement.
+FE-001, FE-002 y FE-003 están validados y cerrados. FE-003 cerró el 16-11-2026 con 84 pruebas frontend aprobadas, build de producción exitoso y regresión integrada contra FastAPI satisfactoria, confirmada por la usuaria. FE-004 tiene refinement aprobado y especificación v0.1 publicada para implementación. FE-005 y FE-006 permanecen pendientes de refinement.
 
 ## 9. Documentos relacionados
 
