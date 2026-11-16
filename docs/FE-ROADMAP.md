@@ -72,7 +72,7 @@ Los seis bloques FE son unidades de planificación e implementación; no implica
 
 ### FE-004 — Presupuesto y gastos
 
-**Estado FE-004 al 16-11-2026: IMPLEMENTACIÓN EN CURSO; refinement aprobado y especificación docs/FE-004.md v0.1.** La usuaria aprobó D1–D43, incluida D43 opción A: consultar el conjunto completo filtrado, ordenar globalmente por fecha descendente en frontend y paginar localmente con 10/20/50 registros; no se envían page/page_size ni se modifica API-001 o BE-007. El Bloque 1 (servicios y utilidades monetarias) quedó validado con 107 pruebas frontend aprobadas. El Bloque 2 (vista inicial de presupuesto y editor) quedó validado con 114 pruebas frontend aprobadas y build Vite 8.3.8 exitoso (47 módulos transformados).
+**Estado FE-004 al 16-11-2026: IMPLEMENTACIÓN EN CURSO; refinement aprobado y especificación docs/FE-004.md v0.1.** La usuaria aprobó D1–D43, incluida D43 opción A: consultar el conjunto completo filtrado, ordenar globalmente por fecha descendente en frontend y paginar localmente con 10/20/50 registros; no se envían page/page_size ni se modifica API-001 o BE-007. Los Bloques 1–5 están validados y cerrados; el Bloque 5 cuenta con 121 pruebas frontend aprobadas y build exitoso confirmados por la usuaria. El Bloque 6 está implementado y publicado, pendiente de validación local.
 
 - Sección conjunta con pestañas internas Presupuesto y Gastos.
 - Resumen general y distribución de siete categorías.
@@ -85,7 +85,9 @@ Los seis bloques FE son unidades de planificación e implementación; no implica
 
 **Bloque 4 validado y cerrado:** formulario lateral para registrar gastos con campos obligatorios y opcionales, búsqueda y asociación opcional de actividades del período, validación monetaria exacta (importe mayor que cero), POST contractual con `period_id` global y actualización posterior del listado e indicadores. La usuaria confirmó **118 pruebas frontend aprobadas** en la suite completa. `npm run build` había finalizado exitosamente con Vite 8.3.8 y 48 módulos transformados; la corrección posterior solo ajustó las consultas de dos pruebas, sin modificar código de producción.
 
-**Bloque 5 implementado, publicado y con suite frontend validada:** la usuaria confirmó **121 pruebas aprobadas** tras sincronizar los cambios. La usuaria confirmó también `npm run build` exitoso para este bloque. Alcance:  panel lateral de detalle del gasto, consulta del recurso completo e historial mediante los GET contractuales de API-001, pestañas Información/Historial, timeline cronológico ascendente con fecha/hora `America/Bogota`, campos afectados y valores previos/nuevos, además del estado vacío de historial. Se añadieron pruebas de componente para el detalle, el orden cronológico y el historial sin eventos. Edición y eliminación continúan pendientes.
+**Bloque 5 validado y cerrado:** la usuaria confirmó **121 pruebas aprobadas** y `npm run build` exitoso. Alcance: panel lateral de detalle, consultas contractuales del gasto y su historial, pestañas Información/Historial y timeline cronológico ascendente con fecha/hora `America/Bogota`.
+
+**Bloque 6 implementado y publicado, pendiente de validación local:** edición desde el panel lateral mediante PATCH con solo los campos modificados, validación monetaria exacta, soporte de `null` para opcionales, `period_id` inmutable, refresco del listado/indicadores e historial actualizado. Eliminación mediante DELETE con confirmación explícita que muestra los datos del gasto y advierte que su historial también se elimina. Se añadieron cinco pruebas de componente para edición parcial, limpieza de campos opcionales, ausencia de cambios, confirmación de eliminación y cancelación.
 
 ### FE-005 — Informes
 
