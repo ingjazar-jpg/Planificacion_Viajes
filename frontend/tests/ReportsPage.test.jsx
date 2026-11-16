@@ -59,8 +59,8 @@ describe("ReportsPage", () => {
     render(<ReportsPage />);
     await screen.findByText("Vacaciones 2026");
     fireEvent.click(screen.getByRole("tab", { name: "Actividades" }));
-    expect(await screen.findByText("Viaje familiar")).toBeInTheDocument();
-    expect(screen.getByText("Cancelada")).toBeInTheDocument();
+    expect(await screen.findAllByText("Viaje familiar")).toHaveLength(2);
+    expect(screen.getAllByText("Cancelada")).toHaveLength(2);
     expect(mocks.getActivitiesReport).toHaveBeenCalledWith("period-1", { page: 1, page_size: 20 });
   });
 
@@ -68,7 +68,7 @@ describe("ReportsPage", () => {
     render(<ReportsPage />);
     await screen.findByText("Vacaciones 2026");
     fireEvent.click(screen.getByRole("tab", { name: "Actividades" }));
-    await screen.findByText("Viaje familiar");
+    expect(await screen.findAllByText("Viaje familiar")).toHaveLength(2);
     fireEvent.click(screen.getByRole("tab", { name: "General" }));
     expect(await screen.findByText("Resumen presupuestario")).toBeInTheDocument();
     expect(mocks.getGeneralReport).toHaveBeenCalledTimes(1);
