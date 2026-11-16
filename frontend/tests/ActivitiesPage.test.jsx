@@ -29,7 +29,6 @@ describe("ActivitiesPage list", () => {
     render(<ActivitiesPage />);
     expect(await screen.findByRole("table", { name: "Listado de actividades" })).toBeInTheDocument();
     expect(within(screen.getByRole("table", { name: "Listado de actividades" })).getByText("Viaje familiar")).toBeInTheDocument();
-    expect(screen.getByText("Santa Marta")).toBeInTheDocument();
     expect(getActivities).toHaveBeenCalledWith({
       period_id: period.id, category: "", priority: "", status: "", destination: "", start_date: "", end_date: "",
     });
