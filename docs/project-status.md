@@ -177,7 +177,8 @@ La advertencia deprecatoria de Starlette relacionada con `httpx` no produjo fall
 
 - **Administración de períodos: validada y cerrada.** La usuaria confirmó 48 pruebas aprobadas, build exitoso e integración manual de creación/edición y manejo de conflictos.
 - **Calendario mensual: primera entrega validada y cerrada el 16-11-2026.** La usuaria confirmó localmente 12 archivos de pruebas, **59 passed, 0 failed**, y build Vite 8.3.8 exitoso con 41 módulos transformados. La prueba de integración App ya no presenta advertencias React `act(...)`; queda el aviso informativo de jsdom. La usuaria confirmó satisfactorias todas las pruebas visuales y funcionales: mes inicial, navegación, filtros combinados, agenda diaria, detalle, desbordamiento de actividades y vista móvil de 360 px.
-- **FE-003 no está cerrado en su totalidad.** Permanecen pendientes listado y CRUD de actividades, transiciones de estado, cancelación/eliminación e integración completa de navegación desde alertas.
+- **Listado y filtros de actividades: primera entrega validada y cerrada el 16-11-2026.** La usuaria confirmó localmente **68 passed, 0 failed** en 14 archivos y build Vite 8.3.8 exitoso con 42 módulos transformados. La validación visual confirmó tabla de escritorio, tarjetas móviles, filtros combinados de categoría/prioridad/estado/destino/fechas, limpieza, validación de rango inválido sin consulta, estados vacío y error/reintento y alternancia Calendario/Listado. Vitest mostró únicamente un aviso informativo de creación de entornos jsdom.
+- **FE-003 no está cerrado en su totalidad.** Permanecen pendientes creación, detalle y edición de actividades, transiciones de estado, cancelación/eliminación e integración completa de navegación desde alertas.
 - FE-004 a FE-006 permanecen pendientes de refinement.
 
 ## 7. Calidad y validación
@@ -187,6 +188,7 @@ La advertencia deprecatoria de Starlette relacionada con `httpx` no produjo fall
 - Suite frontend FE-002: **37 passed, 0 failed** en 8 archivos; build de producción exitoso.
 - FE-003 administración de períodos: **48 passed, 0 failed** en 10 archivos; build exitoso.
 - FE-003 calendario mensual primera entrega: **59 passed, 0 failed** en 12 archivos; build Vite 8.3.8 exitoso; validación visual/funcional confirmada por la usuaria.
+- FE-003 listado y filtros de actividades primera entrega: **68 passed, 0 failed** en 14 archivos; build Vite 8.3.8 exitoso con 42 módulos; validación visual/funcional confirmada por la usuaria.
 - Validación manual integrada FE-002: Dashboard, alertas, revisión, navegación, responsive y teclado confirmados por la usuaria.
 - Build frontend de producción: exitoso.
 - La ejecución backend mostró una advertencia deprecatoria de Starlette por el uso de `httpx` con `starlette.testclient`; no afectó el resultado. La actualización de dependencias queda fuera del alcance de FE-001 y requiere revisión independiente.
