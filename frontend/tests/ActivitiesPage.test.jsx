@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import ActivitiesPage from "../src/features/activities/ActivitiesPage.jsx";
 import { usePeriod } from "../src/context/PeriodContext.jsx";
@@ -28,7 +28,7 @@ describe("ActivitiesPage list", () => {
   it("loads and displays activity fields in the desktop table", async () => {
     render(<ActivitiesPage />);
     expect(await screen.findByRole("table", { name: "Listado de actividades" })).toBeInTheDocument();
-    expect(screen.getByText("Viaje familiar")).toBeInTheDocument();
+    expect(within(screen.getByRole("table", { name: "Listado de actividades" })).getByText("Viaje familiar")).toBeInTheDocument();
     expect(screen.getByText("Santa Marta")).toBeInTheDocument();
     expect(getActivities).toHaveBeenCalledWith({
       period_id: period.id, category: "", priority: "", status: "", destination: "", start_date: "", end_date: "",
@@ -37,7 +37,8 @@ describe("ActivitiesPage list", () => {
 
   it("combines filters and can clear them", async () => {
     render(<ActivitiesPage />);
-    await screen.findByText("Viaje familiar");
+    const table = await screen.findByRole("table", { name: "Listado de actividades" });
+    expect(within(table).getByText("Viaje familiar")).toBeInTheDocument();
     fireEvent.change(screen.getByLabelText("Categoría"), { target: { value: "Viajes" } });
     fireEvent.change(screen.getByLabelText("Prioridad"), { target: { value: "Alta" } });
     fireEvent.change(screen.getByLabelText("Destino"), { target: { value: "Santa Marta" } });
