@@ -1,0 +1,44 @@
+.data-management-page { display: grid; gap: 1.25rem; max-width: 1200px; margin: 0 auto; }
+.data-management-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+.data-management-heading h1 { margin: .15rem 0 .45rem; color: var(--color-primary); font-size: clamp(1.55rem, 3vw, 2rem); }
+.data-management-heading p:not(.page-eyebrow) { max-width: 720px; margin: 0; color: var(--color-text-secondary); line-height: 1.55; }
+.data-backups-panel { min-width: 0; padding: clamp(.85rem, 2vw, 1.35rem); border: 1px solid var(--color-border); border-radius: var(--radius-card); background: var(--color-surface); box-shadow: var(--shadow-card); }
+.data-backups-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; }
+.data-backups-heading h2 { margin: 0; color: var(--color-primary); font-size: 1.05rem; }
+.data-backups-heading p { margin: .35rem 0 0; color: var(--color-text-secondary); font-size: .82rem; }
+.data-backup-count { flex: 0 0 auto; padding: .35rem .6rem; border-radius: 999px; color: var(--color-text-secondary); background: var(--color-background); font-size: .75rem; font-weight: 700; }
+.data-backups-list { display: grid; gap: .7rem; }
+.data-backup-card { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .9rem; border: 1px solid var(--color-border); border-radius: 10px; }
+.data-backup-details { display: grid; min-width: 0; gap: .35rem; }
+.data-backup-date { color: var(--color-primary); font-weight: 750; }
+.data-backup-details code, .data-restore-dialog code { overflow-wrap: anywhere; color: var(--color-text-secondary); font-size: .72rem; }
+.data-backup-status { width: fit-content; color: var(--color-danger); font-size: .75rem; font-weight: 700; }
+.data-backup-status.is-valid { color: var(--color-success); }
+.data-restore-button, .data-confirm-button, .data-recovery-warning button { min-height: 40px; padding: .55rem .85rem; border: 1px solid var(--color-secondary); border-radius: var(--radius-control); color: #fff; background: var(--color-secondary); font-weight: 700; cursor: pointer; }
+.data-restore-button:disabled, .data-confirm-button:disabled, .data-recovery-warning button:disabled { opacity: .5; cursor: not-allowed; }
+.data-backups-empty { padding: 1.5rem 1rem; border: 1px dashed var(--color-border); border-radius: 10px; text-align: center; }
+.data-backups-empty strong { color: var(--color-primary); }
+.data-backups-empty p { margin: .4rem 0 0; color: var(--color-text-secondary); font-size: .85rem; }
+.data-management-notice { margin: 0; padding: .85rem 1rem; border: 1px solid rgb(37 131 94 / 25%); border-radius: 9px; color: var(--color-success); background: rgb(37 131 94 / 7%); font-size: .86rem; }
+.data-management-notice.is-error { border-color: rgb(187 81 69 / 25%); color: var(--color-danger); background: rgb(187 81 69 / 7%); }
+.data-recovery-warning { padding: 1rem; border: 1px solid rgb(155 112 30 / 35%); border-radius: 10px; background: rgb(155 112 30 / 7%); }
+.data-recovery-warning h2 { margin: 0; color: var(--color-primary); font-size: 1rem; }
+.data-recovery-warning p { color: var(--color-text-secondary); font-size: .86rem; line-height: 1.5; }
+.data-dialog-backdrop { position: fixed; z-index: 100; inset: 0; display: grid; place-items: center; overflow-y: auto; padding: 1rem; background: rgb(15 25 40 / 52%); }
+.data-restore-dialog { width: min(100%, 540px); max-height: min(90vh, 760px); overflow-y: auto; padding: clamp(1rem, 3vw, 1.5rem); border: 1px solid var(--color-border); border-radius: var(--radius-card); background: var(--color-surface); box-shadow: 0 24px 64px rgb(15 25 40 / 25%); }
+.data-restore-dialog h2 { margin: 0 0 .75rem; color: var(--color-primary); font-size: 1.25rem; }
+.data-restore-dialog > p { color: var(--color-text-secondary); font-size: .88rem; line-height: 1.55; }
+.data-restore-dialog dl { display: grid; gap: .65rem; margin: 1rem 0; padding: .85rem; border-radius: 8px; background: var(--color-background); }
+.data-restore-dialog dl div { display: grid; gap: .2rem; }
+.data-restore-dialog dt { color: var(--color-text-secondary); font-size: .72rem; font-weight: 750; }
+.data-restore-dialog dd { margin: 0; overflow-wrap: anywhere; font-size: .85rem; }
+.data-restore-progress { padding: .7rem; border-radius: 8px; background: var(--color-background); }
+.data-restore-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: .65rem; margin-top: 1.1rem; }
+.data-cancel-button { min-height: 40px; padding: .55rem .85rem; border: 1px solid var(--color-border); border-radius: var(--radius-control); color: var(--color-primary); background: var(--color-surface); font-weight: 700; cursor: pointer; }
+.data-cancel-button:disabled { opacity: .5; cursor: not-allowed; }
+@media (max-width: 520px) {
+  .data-backup-card { align-items: flex-start; flex-direction: column; }
+  .data-restore-button { width: 100%; }
+  .data-restore-actions { flex-direction: column-reverse; }
+  .data-restore-actions button { width: 100%; }
+}
