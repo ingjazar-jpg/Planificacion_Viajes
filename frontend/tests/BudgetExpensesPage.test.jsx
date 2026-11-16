@@ -50,7 +50,7 @@ describe("BudgetExpensesPage",()=>{
  it("registers an expense using the active period and exact decimal amount",async()=>{
   render(<BudgetExpensesPage/>);
   fireEvent.click(await screen.findByRole("tab",{name:"Gastos"}));
-  fireEvent.click(screen.getByRole("button",{name:"Registrar gasto"}));
+  fireEvent.click(screen.getAllByRole("button",{name:"Registrar gasto"})[0]);
   fireEvent.change(screen.getByLabelText("Concepto"),{target:{value:"Compra de prueba"}});
   fireEvent.change(screen.getByLabelText("Importe del gasto"),{target:{value:"125.50"}});
   fireEvent.change(screen.getByLabelText("Fecha del gasto"),{target:{value:"2026-12-01"}});
@@ -63,7 +63,7 @@ describe("BudgetExpensesPage",()=>{
  it("blocks a zero-value expense without calling the API",async()=>{
   render(<BudgetExpensesPage/>);
   fireEvent.click(await screen.findByRole("tab",{name:"Gastos"}));
-  fireEvent.click(screen.getByRole("button",{name:"Registrar gasto"}));
+  fireEvent.click(screen.getAllByRole("button",{name:"Registrar gasto"})[0]);
   fireEvent.change(screen.getByLabelText("Concepto"),{target:{value:"Importe cero"}});
   fireEvent.change(screen.getByLabelText("Importe del gasto"),{target:{value:"0.00"}});
   fireEvent.change(screen.getByLabelText("Fecha del gasto"),{target:{value:"2026-12-01"}});
