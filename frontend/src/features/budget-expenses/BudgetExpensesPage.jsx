@@ -3,7 +3,7 @@ import { EmptyState, ErrorState, LoadingState } from "../../components/common/As
 import { usePeriod } from "../../context/PeriodContext.jsx";
 import { getActivities } from "../../services/api/activitiesService.js";
 import { createBudget, getBudget, updateBudget } from "../../services/api/budgetService.js";
-import { createExpense, getExpenses } from "../../services/api/expensesService.js";
+import { createExpense, getExpense, getExpenseHistory, getExpenses } from "../../services/api/expensesService.js";
 import { centsToDecimal, decimalToCents, formatMoneyCOP, getUndistributedCents } from "../../utils/money.js";
 import "./BudgetExpensesPage.css";
 
@@ -30,6 +30,22 @@ function errorMessage(error) {
 
 function sortExpensesByDate(expenses) {
   return [...expenses].sort((a, b) => String(b.date).localeCompare(String(a.date)));
+}
+function formatHistoryDate(value) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return String(value ?? "Fecha no disponible");
+  return new Intl.DateTimeFormat("es-CO", { dateStyle: "medium", timeStyle: "short", timeZone: "America/Bogota" }).format(date);
+}
+const HISTORY_FIELD_LABELS = { concept: "Concepto", amount: "Importe", date: "Fecha", category: "Categoría", activity_id: "Actividad", description: "Descripción", observations: "Observaciones" };
+function historyValue(field, value, activityNames) {
+  if (value === null || value === undefined || value === "") return "Sin valor";
+  if (field === "amount" && typeof value === "string") { try { return formatMoneyCOP(value); } catch { return value; } }
+  if (field === "activity_id") return activityNames.get(value) ?? String(value);
+  if (typeof value === "object") return JSON.stringify(value);
+  return String(value);
+}
+function historyFields(event) {
+  return [...new Set([...Object.keys(event.previous_values ?? {}), ...Object.keys(event.new_values ?? {})])];
 }
 
 function BudgetExpensesPage() {
@@ -58,6 +74,13 @@ function BudgetExpensesPage() {
   const [createError, setCreateError] = useState("");
   const [creating, setCreating] = useState(false);
   const [expenseNotice, setExpenseNotice] = useState("");
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [detailTab, setDetailTab] = useState("information");
+  const [selectedExpense, setSelectedExpense] = useState(null);
+  const [expenseHistory, setExpenseHistory] = useState([]);
+  const [detailLoading, setDetailLoading] = useState(false);
+  const [detailError, setDetailError] = useState(null);
+  const detailSequence = useRef(0);
   const budgetSequence = useRef(0);
   const expenseSequence = useRef(0);
   const snapshot = useRef(EMPTY_FORM);
@@ -229,6 +252,29 @@ function BudgetExpensesPage() {
     }
   }
 
+  const loadExpenseDetail = useCallback(async (expenseId) => {
+    const requestId = ++detailSequence.current;
+    setDetailLoading(true); setDetailError(null);
+    try {
+      const [detail, history] = await Promise.all([getExpense(expenseId), getExpenseHistory(expenseId)]);
+      if (requestId !== detailSequence.current) return;
+      setSelectedExpense(detail);
+      setExpenseHistory([...history].sort((a, b) => String(a.modified_at).localeCompare(String(b.modified_at))));
+    } catch (requestError) {
+      if (requestId === detailSequence.current) setDetailError(requestError);
+    } finally {
+      if (requestId === detailSequence.current) setDetailLoading(false);
+    }
+  }, []);
+  function openExpenseDetail(expense) {
+    setSelectedExpense(expense); setExpenseHistory([]); setDetailTab("information");
+    setDetailError(null); setDetailOpen(true); loadExpenseDetail(expense.id);
+  }
+  function closeExpenseDetail() {
+    detailSequence.current += 1; setDetailOpen(false); setDetailLoading(false);
+    setDetailError(null); setSelectedExpense(null); setExpenseHistory([]);
+  }
+
   function clearFilters() {
     setFilters(EMPTY_FILTERS);
     setAppliedFilters(EMPTY_FILTERS);
@@ -312,13 +358,13 @@ function BudgetExpensesPage() {
                   <tbody>{visibleExpenses.map((expense) => <tr key={expense.id}>
                     <td>{expense.date}</td><td>{expense.concept}</td><td>{expense.category}</td>
                     <td>{expense.activity_id ? activityNames.get(expense.activity_id) ?? "Actividad asociada" : "Sin actividad"}</td>
-                    <td>{formatMoneyCOP(expense.amount)}</td><td><button type="button" className="text-action" disabled title="Disponible en el siguiente bloque">Ver detalle</button></td>
+                    <td>{formatMoneyCOP(expense.amount)}</td><td><button type="button" className="text-action" onClick={() => openExpenseDetail(expense)}>Ver detalle</button></td>
                   </tr>)}</tbody>
                 </table></div>
                 <div className="expense-mobile-list">{visibleExpenses.map((expense) => <article className="expense-mobile-card" key={expense.id}>
                   <div><span>{expense.date}</span><strong>{formatMoneyCOP(expense.amount)}</strong></div><h3>{expense.concept}</h3>
                   <p>{expense.category} · {expense.activity_id ? activityNames.get(expense.activity_id) ?? "Actividad asociada" : "Sin actividad"}</p>
-                  <button type="button" className="text-action" disabled title="Disponible en el siguiente bloque">Ver detalle</button>
+                  <button type="button" className="text-action" onClick={() => openExpenseDetail(expense)}>Ver detalle</button>
                 </article>)}</div>
                 <nav className="expense-pagination" aria-label="Paginación de gastos">
                   <span>Página {page} de {pageCount}</span>
@@ -328,6 +374,36 @@ function BudgetExpensesPage() {
               </>}
       </section>}
       {expenseNotice && <p className="expense-success" role="status">{expenseNotice}<button type="button" aria-label="Cerrar notificación" onClick={() => setExpenseNotice("")}>×</button></p>}
+      {detailOpen && <div className="expense-drawer-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) closeExpenseDetail(); }}>
+        <aside className="expense-drawer expense-detail-drawer" role="dialog" aria-modal="true" aria-labelledby="expense-detail-title">
+          <div className="expense-drawer-heading"><div><p className="page-eyebrow">DETALLE DEL GASTO</p><h2 id="expense-detail-title">{selectedExpense?.concept ?? "Consultando gasto…"}</h2>
+            <p>{selectedExpense?.date ?? ""} · {selectedExpense ? formatMoneyCOP(selectedExpense.amount) : ""}</p></div>
+            <button type="button" className="secondary-action" aria-label="Cerrar detalle" onClick={closeExpenseDetail}>×</button></div>
+          <div className="expense-detail-tabs" role="tablist" aria-label="Detalle del gasto">
+            <button type="button" role="tab" aria-selected={detailTab === "information"} className={detailTab === "information" ? "is-active" : ""} onClick={() => setDetailTab("information")}>Información</button>
+            <button type="button" role="tab" aria-selected={detailTab === "history"} className={detailTab === "history" ? "is-active" : ""} onClick={() => setDetailTab("history")}>Historial</button>
+          </div>
+          {detailLoading && <LoadingState message="Consultando detalle e historial…" />}
+          {detailError && <ErrorState message={errorMessage(detailError)} onRetry={() => selectedExpense && loadExpenseDetail(selectedExpense.id)} />}
+          {!detailLoading && !detailError && selectedExpense && detailTab === "information" && <dl className="expense-detail-fields">
+            <div><dt>Concepto</dt><dd>{selectedExpense.concept}</dd></div><div><dt>Importe</dt><dd>{formatMoneyCOP(selectedExpense.amount)}</dd></div>
+            <div><dt>Fecha</dt><dd>{selectedExpense.date}</dd></div><div><dt>Categoría</dt><dd>{selectedExpense.category}</dd></div>
+            <div><dt>Actividad</dt><dd>{selectedExpense.activity_id ? activityNames.get(selectedExpense.activity_id) ?? "Actividad asociada" : "Sin actividad"}</dd></div>
+            <div><dt>Descripción</dt><dd>{selectedExpense.description || "Sin descripción"}</dd></div><div><dt>Observaciones</dt><dd>{selectedExpense.observations || "Sin observaciones"}</dd></div>
+            <div><dt>Registrado</dt><dd>{selectedExpense.created_at ? formatHistoryDate(selectedExpense.created_at) : "No disponible"}</dd></div>
+            <div><dt>Última actualización</dt><dd>{selectedExpense.updated_at ? formatHistoryDate(selectedExpense.updated_at) : "No disponible"}</dd></div>
+          </dl>}
+          {!detailLoading && !detailError && selectedExpense && detailTab === "history" && (expenseHistory.length === 0
+            ? <p className="expense-history-empty">Este gasto no tiene eventos de historial.</p>
+            : <ol className="expense-history-timeline">{expenseHistory.map((entry) => <li key={entry.id}><article className="expense-history-event">
+              <div className="expense-history-event-heading"><strong>{entry.modification_type}</strong><time dateTime={entry.modified_at}>{formatHistoryDate(entry.modified_at)}</time></div>
+              <dl>{historyFields(entry).map((field) => <div key={field}><dt>{HISTORY_FIELD_LABELS[field] ?? field}</dt><dd>
+                {entry.modification_type === "Creación" ? <span>{historyValue(field, entry.new_values?.[field], activityNames)}</span>
+                  : <span><del>{historyValue(field, entry.previous_values?.[field], activityNames)}</del><span aria-hidden="true"> → </span><strong>{historyValue(field, entry.new_values?.[field], activityNames)}</strong></span>}
+              </dd></div>)}</dl>
+            </article></li>)}</ol>)}
+        </aside>
+      </div>}
       {createOpen && <div className="expense-drawer-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget && !creating) setCreateOpen(false); }}>
         <aside className="expense-drawer" role="dialog" aria-modal="true" aria-labelledby="expense-create-title">
           <div className="expense-drawer-heading"><div><p className="page-eyebrow">NUEVO REGISTRO</p><h2 id="expense-create-title">Registrar gasto</h2><p>Período: {selectedPeriod?.name ?? "Período seleccionado"}</p></div>
