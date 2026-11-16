@@ -139,61 +139,29 @@ Cualquier endpoint transversal adicional que la revisión identifique como falta
 
 ## 6. Trabajo pendiente del frontend e integración
 
-- Sustituir placeholders por páginas funcionales.
-- Conectar formularios, tablas, filtros, indicadores y acciones con la API.
-- Implementar estados de carga, vacío, éxito y error.
-- Verificar navegación y selección global de período.
-- Implementar visualizaciones e informes conforme a UI-001 y SPEC-005.
-- Validar los flujos completos frontend-backend y el manejo de errores.
-- Verificar accesibilidad, responsive y compatibilidad indicadas en las especificaciones.
+FE-001 a FE-005 están implementados y validados. El trabajo funcional frontend pendiente se concentra en FE-006 — Gestión de datos e integración — y en la regresión transversal de cierre.
 
-El shell y la navegación inicial del frontend ya habían sido validados localmente con 3 pruebas y una compilación de producción satisfactoria. Esa evidencia no equivale a validar los módulos funcionales ni su integración con el backend.
+- Implementar el catálogo de copias semanales y la restauración confirmada conforme a FE-006, una vez aprobada su especificación.
+- Conectar la restauración con el contexto global de períodos y garantizar la recarga de datos, incluso si el identificador del período activo no cambia.
+- Ejecutar pruebas integrales frontend-backend y regresión de FE-001 a FE-006.
+- Verificar accesibilidad, responsive y compatibilidad indicadas en SPEC-006.
+
+El shell, la navegación y los módulos FE-001 a FE-005 ya cuentan con evidencia de validación registrada en este documento. La validación reproducible del backend con Python 3.14.10 continúa como tarea transversal de Sprint 0 y no se confunde con el cierre funcional de FE-006.
 
 ### 6.1 Plan de implementación frontend
 
-Se consolidó el mapa de implementación en seis bloques FE. FE-001 y FE-002 están validados y cerrados; FE-003 cuenta con especificación aprobada para implementación:
+El mapa de implementación de seis bloques se mantiene en `docs/FE-ROADMAP.md`. FE-001 a FE-005 están validados y cerrados. Los documentos específicos son:
 
-- `docs/FE-ROADMAP.md`: mapa de trazabilidad de seis bloques FE con pantallas, componentes, endpoints y dependencias.
-- `docs/FE-001.md`: especificación aprobada para la fundación frontend.
-- `docs/FE-002.md`: especificación aprobada para Dashboard y alertas (15 decisiones, 31 requisitos funcionales y 27 criterios de aceptación).
-- `docs/FE-003.md`: especificación aprobada para calendario y actividades (27 decisiones, 46 requisitos funcionales y 32 criterios de aceptación).
+- `docs/FE-001.md`: fundación frontend.
+- `docs/FE-002.md`: Dashboard y alertas.
+- `docs/FE-003.md`: calendario y actividades.
+- `docs/FE-004.md`: presupuesto y gastos.
+- `docs/FE-005.md`: informes, versión 0.2.
+- `docs/FE-006.md`: gestión de datos e integración, versión 0.1 en refinement.
 
-Decisiones aprobadas para FE-001:
-- Cliente HTTP: `fetch` nativo centralizado.
-- Estado global del período: React Context y hooks.
-- Persistencia de selección: no persistir en almacenamiento del navegador; seleccionar al iniciar el período más reciente devuelto por backend.
+**FE-005 — VALIDADO Y CERRADO el 16-11-2026.** La usuaria confirmó cinco bloques implementados, suite frontend completa con **150 passed, 0 failed** en 20 archivos, `npm run build` exitoso con Vite 8.3.8 y revisión visual/funcional satisfactoria. La especificación v0.2 incluye FE005-D01 a D62, RF-001 a RF-090 y CA-001 a CA-022 + B5-CA01 a B5-CA12. El commit `0789bac9920bdab27df3c9244d627ac54e477520` corrigió una consulta ambigua en una prueba de exportación. No se modificaron contratos normativos.
 
-La implementación de FE-001 está publicada en `feat/backend-domain-foundation`. Incluye cliente HTTP centralizado con `fetch`, configuración `VITE_API_URL`, servicio de períodos, React Context, selector global y estados compartidos de carga/error/vacío. Se conserva el shell existente y no se han añadido dependencias.
-
-**FE-001: VALIDADO Y CERRADO el 15-11-2026.** La usuaria confirmó localmente **12 pruebas frontend aprobadas, 0 fallidas**, `npm run build` exitoso y regresión backend completa con **197 passed, 0 failed**, incluidos los dos tests CORS. También confirmó la integración real con FastAPI y Vite simultáneos, carga correcta de la aplicación, consulta real de `GET /api/v1/periods`, selector de período conectado y consola sin errores visibles. Las comprobaciones manuales responsive a 360 × 800 px, navegación móvil, foco visible, operación por teclado y activación mediante `Enter` o `Espacio` fueron satisfactorias.
-
-La advertencia deprecatoria de Starlette relacionada con `httpx` no produjo fallos y queda registrada como observación técnica no bloqueante. La validación reproducible con Python 3.14.10 permanece pendiente como tarea transversal de Sprint 0; no bloquea el cierre funcional de FE-001.
-
-**FE-002 — Dashboard y alertas: VALIDADO Y CERRADO el 15-11-2026.** La usuaria confirmó localmente la suite frontend completa con **37 passed, 0 failed** en 8 archivos y `npm run build` exitoso con Vite 8.3.8. La validación integrada manual confirmó Dashboard conectado a FastAPI, indicadores y cuatro gráficos, estados vacíos, alertas y contador, revisión y actualización sin recarga, navegación a Actividades, actualización al regresar al Dashboard, responsive a 360 × 800 px y operación básica por teclado (Escape y gestión de foco). No hubo warnings React `act(...)` en la última ejecución; Vitest mostró solo una advertencia informativa sobre creación de entornos jsdom. El detalle funcional de actividad se mantiene dentro del alcance FE-003. El cierre no modifica ni reabre UI-001, API-001 ni las SPEC.
-
-**FE-003 — Calendario y actividades:** refinement aprobado el 15-11-2026; especificación `docs/FE-003.md` v0.1 aprobada para implementación.
-
-- **Administración de períodos: validada y cerrada.** La usuaria confirmó 48 pruebas aprobadas, build exitoso e integración manual de creación/edición y manejo de conflictos.
-- **Calendario mensual: primera entrega validada y cerrada el 16-11-2026.** La usuaria confirmó localmente 12 archivos de pruebas, **59 passed, 0 failed**, y build Vite 8.3.8 exitoso con 41 módulos transformados. La prueba de integración App ya no presenta advertencias React `act(...)`; queda el aviso informativo de jsdom. La usuaria confirmó satisfactorias todas las pruebas visuales y funcionales: mes inicial, navegación, filtros combinados, agenda diaria, detalle, desbordamiento de actividades y vista móvil de 360 px.
-- **Listado y filtros de actividades: primera entrega validada y cerrada el 16-11-2026.** La usuaria confirmó localmente **68 passed, 0 failed** en 14 archivos y build Vite 8.3.8 exitoso con 42 módulos transformados. La validación visual confirmó tabla de escritorio, tarjetas móviles, filtros combinados de categoría/prioridad/estado/destino/fechas, limpieza, validación de rango inválido sin consulta, estados vacío y error/reintento y alternancia Calendario/Listado. Vitest mostró únicamente un aviso informativo de creación de entornos jsdom.
-- **FE-003 — VALIDADO Y CERRADO el 16-11-2026.** Todas las entregas funcionales están validadas individualmente. La suite frontend completa confirmó **84 passed, 0 failed** y el build Vite 8.3.8 finalizó correctamente con 44 módulos transformados. La usuaria confirmó que la regresión integrada con FastAPI, con ambos servidores iniciados, se completó sin problemas; quedaron cubiertos los flujos de persistencia, transiciones, cancelación, eliminación en cascada y actualización de calendario/listado.
-- **FE-004 — Presupuesto y gastos:** refinement aprobado el 16-11-2026. La especificación `docs/FE-004.md` v0.1 está publicada y aprobada para implementación; incluye 43 decisiones (D1–D43), 68 requisitos funcionales, contratos, criterios de aceptación y estrategia de pruebas. D43 opción A establece consultar el conjunto completo filtrado, ordenar globalmente por fecha descendente en frontend y paginar localmente con 10/20/50. No se modifican API-001 ni se reabre BE-007. Los Bloques 1–6 están implementados, publicados y validados; la usuaria confirmó 126 pruebas frontend aprobadas y build de producción exitoso.
-- **FE-005 — Informes: IMPLEMENTADO, VALIDADO Y CERRADO el 16-11-2026.** `docs/FE-005.md` v0.2 contiene FE005-D01 a FE005-D62, RF-001 a RF-090 y los criterios de aceptación CA-001 a CA-022 y B5-CA01 a B5-CA12. Los cinco bloques están implementados y publicados en `feat/backend-domain-foundation`. La usuaria confirmó `npm test -- ReportsPage.test.jsx` con 13 passed; suite frontend completa con **150 passed, 0 failed** en 20 archivos; `npm run build` exitoso con Vite 8.3.8; y revisión visual/funcional satisfactoria. El test ambiguo de notificación fue corregido en GitHub mediante el commit `0789bac9920bdab27df3c9244d627ac54e477520`. Los warnings informativos de React `act(...)`, navegación jsdom y rendimiento de entornos jsdom no produjeron fallos. No se modificaron API-001 ni otras especificaciones normativas.
-- FE-006 — Gestión de datos e integración: refinement iniciado el 16-11-2026; especificación en elaboración, pendiente de decisiones y aprobación.
-
-### 6.2 FE-004 — Presupuesto y gastos
-
-**Estado:** refinement aprobado; Bloques 1–6 implementados, publicados y validados. La usuaria confirmó **126 pruebas frontend aprobadas** para el Bloque 6 y build de producción exitoso.
-
-- Documento: `docs/FE-004.md` v0.1.
-- Decisiones aprobadas: D1–D43. D43 opción A resuelve la ausencia de ordenamiento contractual: GET /expenses consulta el conjunto filtrado completo sin page/page_size; el frontend ordena globalmente por fecha descendente y pagina localmente con 10/20/50.
-- Requisitos: 68 requisitos funcionales para presupuesto, gastos, filtros, paginación, detalle, historial, estados, calidad y accesibilidad.
-- Contratos: GET/POST/PUT de presupuesto; GET/POST/GET/PUT/PATCH/DELETE de gastos; GET de historial; consulta de actividades para asociación. Todos conforme a API-001 v0.8.
-- Restricción: no se modifica API-001 ni se reabre BE-007.
-- Bloque 3 validado: listado completo de gastos, filtros combinables, ordenamiento global por fecha descendente y paginación local 10/20/50. Evidencia: 116 pruebas frontend aprobadas en 18 archivos y build exitoso con 48 módulos transformados.
-- Bloque 4 validado: formulario lateral de registro, actividad opcional del período, campos opcionales colapsados, validación monetaria exacta y actualización del listado e indicadores tras crear. Evidencia: 118 pruebas frontend aprobadas. El ajuste que resolvió dos consultas ambiguas se limitó al archivo de pruebas; no modificó código de producción ni contratos.
-- Bloque 5 validado y cerrado: panel lateral de detalle, consulta contractual `GET /expenses/{expense_id}`, pestañas Información/Historial, consulta `GET /expenses/{expense_id}/history`, línea de tiempo cronológica ascendente y estado vacío. Evidencia de usuaria: 121 pruebas frontend aprobadas y build de producción exitoso.
-- Bloque 6 implementado, publicado y validado: **126 pruebas frontend aprobadas** y `npm run build` exitoso, ambos confirmados por la usuaria. Alcance: edición desde el panel lateral mediante `PATCH /expenses/{expense_id}` enviando únicamente campos modificados; importes con validación decimal exacta; campos opcionales limpiados enviados como `null`; `period_id` nunca editable ni enviado. Incluye prevención de doble envío, actualización del gasto y del historial, refresco de indicadores y listado, y eliminación mediante `DELETE /expenses/{expense_id}` con confirmación que muestra todos los datos y advierte la eliminación definitiva del historial. Se añadieron pruebas para edición parcial, campos opcionales, edición sin cambios, confirmación de eliminación y cancelación.
+**FE-006 — REFINEMENT INICIADO el 16-11-2026.** El borrador `docs/FE-006.md` v0.1 registra el alcance de backups e integración, contratos existentes de API-001 §5.9, restricciones heredadas, 32 requisitos preliminares, criterios de aceptación, estrategia de pruebas y Definition of Done. La especificación no está aprobada para implementación. Quedan pendientes decisiones de Product Owner sobre la recuperación del contexto si falla la consulta de períodos después de una restauración exitosa y sobre la consulta/actualización del catálogo.
 
 ## 7. Calidad y validación
 
@@ -277,13 +245,15 @@ API-001 v0.8 devuelve por categoría `allocated_amount`, `spent_amount`, `balanc
 
 ## 6.3 FE-005 — Informes
 
-**Estado:** refinement aprobado el 16-11-2026; especificación v0.1 publicada y aprobada para implementación. Implementación pendiente.
+**Estado: VALIDADO Y CERRADO el 16-11-2026.** Documento `docs/FE-005.md` v0.2, con FE005-D01 a D62, RF-001 a RF-090, CA-001 a CA-022 y B5-CA01 a B5-CA12. Los cinco bloques están implementados y publicados. La usuaria confirmó 13 pruebas de ReportsPage, suite frontend completa con **150 passed, 0 failed** en 20 archivos, build Vite 8.3.8 exitoso y revisión visual/funcional satisfactoria. La corrección del test de notificación de exportación se publicó en el commit `0789bac9920bdab27df3c9244d627ac54e477520`. Los warnings informativos de React/jsdom no produjeron fallos.
 
-- Documento: [FE-005 — Especificación de informes](FE-005.md).
-- Refinement: decisiones FE005-D01 a FE005-D61 consolidadas. D01–D57 aprobadas durante el refinement; D58 opción B aceptada explícitamente; D59–D61 definidas por delegación técnica expresa para optimizar la implementación.
-- Alcance: cuatro pestañas — General, Actividades, Presupuesto y gastos, Comparación histórica.
-- Requisitos: 78 requisitos funcionales y 22 criterios de aceptación.
-- Contratos: tres endpoints de informes individuales y endpoint de comparación histórica definidos en API-001 §5.8. No se crean ni modifican endpoints.
-- Exportación: PDF/XLSX para los tres informes individuales con alcance `filtered` o `period`; la comparación histórica no es exportable.
-- Restricciones: cálculos e indicadores provienen del backend; no persistir filtros ni resultados en almacenamiento local; no modificar SPEC-005, UI-001, API-001 ni DATA-001.
-- Validación: pendiente. No se declara FE-005 validado hasta recibir evidencia local de pruebas, build e integración con FastAPI confirmada por la usuaria.
+## 6.4 FE-006 — Gestión de datos e integración
+
+**Estado: REFINEMENT INICIADO el 16-11-2026; no aprobado para implementación.**
+
+- Documento: `docs/FE-006.md` v0.1, borrador en refinement.
+- Alcance heredado: catálogo de copias semanales, restauración confirmada y recarga del contexto; regresión integral y revisión transversal de calidad.
+- Contratos: `GET /backups` y `POST /backups/restore`, definidos en API-001 §5.9. No se crean endpoints ni se exponen respaldos `pre_write`.
+- Restricciones: máximo 15 copias semanales; restaurables únicamente las copias cuyo estado listado sea `valid`; confirmación explícita; backend vuelve a validar antes de reemplazar datos; aplicación de API-DEC-038 después del éxito.
+- El borrador contiene 32 requisitos preliminares, 15 criterios de aceptación preliminares y preguntas abiertas. La Product Owner debe resolverlas y aprobar la especificación antes de iniciar la implementación.
+
