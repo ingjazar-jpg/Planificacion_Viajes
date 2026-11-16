@@ -68,7 +68,7 @@ Los seis bloques FE son unidades de planificación e implementación; no implica
 - Confirmaciones para cancelar/eliminar y comunicación explícita de eliminación en cascada.
 - Decisiones FE003-DEC-001 a FE003-DEC-027 aprobadas; especificación formal en docs/FE-003.md.
 
-**Estado FE-003 al 16-11-2026:** administración de períodos, calendario mensual y primera entrega de listado/filtros están validados y cerrados individualmente. El listado/filtros quedó validado con 68 pruebas aprobadas en 14 archivos, build Vite 8.3.8 exitoso (42 módulos) y comprobaciones visuales de escritorio, móvil, filtros, estados y alternancia. FE-003 continúa en curso: quedan creación, detalle, edición, transiciones de estado, cancelación/eliminación e integración completa desde alertas.
+**Estado FE-003 al 16-11-2026:** están validadas y cerradas individualmente la administración de períodos, el calendario mensual, el listado/filtros, el CRUD/detalle/navegación desde alertas y las transiciones/cancelación/eliminación. La última entrega confirmó **84 pruebas frontend aprobadas, 0 fallidas** y build Vite 8.3.8 exitoso (44 módulos transformados), además de las comprobaciones manuales funcionales. FE-003 permanece en validación de integración final contra FastAPI, incluida la comprobación de persistencia y eliminación en cascada.
 
 ### FE-004 — Presupuesto y gastos
 
@@ -157,12 +157,12 @@ Cada bloque FE se cerrará cuando:
 |---|---|
 | FE-001 | Validado y cerrado — 15-11-2026 |
 | FE-002 | Validado y cerrado — 15-11-2026 |
-| FE-003 | En implementación: administración de períodos y calendario mensual validados; CRUD/listado de actividades pendiente |
+| FE-003 | En validación de integración final: entregas funcionales validadas; pendiente regresión integrada contra FastAPI |
 | FE-004 | Pendiente de refinement |
 | FE-005 | Pendiente de refinement |
 | FE-006 | Pendiente de refinement |
 
-FE-001 y FE-002 están validados y cerrados. FE-003 tiene refinement aprobado; sus primeras entregas de administración de períodos y calendario mensual están validadas localmente, con 59 pruebas frontend aprobadas y build de producción exitoso para la entrega del calendario. El listado y mantenimiento CRUD de actividades, transiciones, cancelación/eliminación e integración completa con alertas siguen pendientes. FE-004 a FE-006 permanecen pendientes de refinement.
+FE-001 y FE-002 están validados y cerrados. FE-003 tiene refinement aprobado y todas sus entregas funcionales están validadas individualmente; la última ejecución reportó 84 pruebas aprobadas y build de producción exitoso. Solo resta la regresión integrada final contra FastAPI y documentar su evidencia. FE-004 a FE-006 permanecen pendientes de refinement.
 
 ## 9. Documentos relacionados
 
