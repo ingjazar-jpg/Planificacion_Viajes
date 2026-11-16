@@ -60,7 +60,8 @@ function DataManagementPage() {
 
   useEffect(() => {
     if (!selectedBackup) return undefined;
-    cancelButtonRef.current?.focus();
+    if (isRestoring) dialogRef.current?.focus();
+    else cancelButtonRef.current?.focus();
 
     function handleKeyDown(event) {
       if (event.key === "Escape") {
@@ -68,7 +69,12 @@ function DataManagementPage() {
         if (!isRestoring) closeConfirmation();
         return;
       }
-      if (event.key !== "Tab" || isRestoring) return;
+      if (event.key !== "Tab") return;
+      if (isRestoring) {
+        event.preventDefault();
+        dialogRef.current?.focus();
+        return;
+      }
       const focusable = dialogRef.current?.querySelectorAll(
         'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
       );
@@ -218,6 +224,7 @@ function DataManagementPage() {
             aria-labelledby="restore-dialog-title"
             aria-describedby="restore-dialog-description"
             ref={dialogRef}
+            tabIndex="-1"
           >
             <h2 id="restore-dialog-title">Confirmar restauración</h2>
             <p id="restore-dialog-description">
