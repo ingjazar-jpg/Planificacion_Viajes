@@ -8,7 +8,7 @@
 
 ## 1. Resumen ejecutivo
 
-La implementación del backend BE-001 a BE-010 está validada. La usuaria confirmó la suite backend completa con **197 passed, 0 failed**. FE-001 a FE-004 están validados y cerrados. **FE-005 — Informes — está implementado y validado** conforme a `docs/FE-005.md` v0.2: los cinco bloques completados, suite frontend completa con **150 passed, 0 failed** en 20 archivos y build de producción exitoso con Vite 8.3.8. La usuaria confirmó además la revisión visual y funcional. FE-006 inicia refinement el 16-11-2026; su especificación aún no está aprobada ni existe autorización para iniciar su implementación. La validación reproducible con Python 3.14.10 continúa pendiente como tarea transversal de Sprint 0.
+La implementación del backend BE-001 a BE-010 está validada. La usuaria confirmó la suite backend completa con **197 passed, 0 failed**. FE-001 a FE-004 están validados y cerrados. **FE-005 — Informes — está implementado y validado** conforme a `docs/FE-005.md` v0.2: los cinco bloques completados, suite frontend completa con **150 passed, 0 failed** en 20 archivos y build de producción exitoso con Vite 8.3.8. La usuaria confirmó además la revisión visual y funcional. FE-006 — Gestión de datos e integración — cuenta con especificación `docs/FE-006.md` v0.2 aprobada para implementación el 16-11-2026. Las decisiones FE006-DEC-001 a DEC-010 están cerradas; la implementación aún no se ha iniciado. La validación reproducible con Python 3.14.10 continúa pendiente como tarea transversal de Sprint 0.
 
 ## 2. Estado por bloque de implementación
 
@@ -157,11 +157,11 @@ El mapa de implementación de seis bloques se mantiene en `docs/FE-ROADMAP.md`. 
 - `docs/FE-003.md`: calendario y actividades.
 - `docs/FE-004.md`: presupuesto y gastos.
 - `docs/FE-005.md`: informes, versión 0.2.
-- `docs/FE-006.md`: gestión de datos e integración, versión 0.1 en refinement.
+- `docs/FE-006.md`: gestión de datos e integración, versión 0.2 aprobada para implementación.
 
 **FE-005 — VALIDADO Y CERRADO el 16-11-2026.** La usuaria confirmó cinco bloques implementados, suite frontend completa con **150 passed, 0 failed** en 20 archivos, `npm run build` exitoso con Vite 8.3.8 y revisión visual/funcional satisfactoria. La especificación v0.2 incluye FE005-D01 a D62, RF-001 a RF-090 y CA-001 a CA-022 + B5-CA01 a B5-CA12. El commit `0789bac9920bdab27df3c9244d627ac54e477520` corrigió una consulta ambigua en una prueba de exportación. No se modificaron contratos normativos.
 
-**FE-006 — REFINEMENT INICIADO el 16-11-2026.** El borrador `docs/FE-006.md` v0.1 registra el alcance de backups e integración, contratos existentes de API-001 §5.9, restricciones heredadas, 32 requisitos preliminares, criterios de aceptación, estrategia de pruebas y Definition of Done. La especificación no está aprobada para implementación. Quedan pendientes decisiones de Product Owner sobre la recuperación del contexto si falla la consulta de períodos después de una restauración exitosa y sobre la consulta/actualización del catálogo.
+**FE-006 — ESPECIFICACIÓN APROBADA PARA IMPLEMENTACIÓN el 16-11-2026.** `docs/FE-006.md` v0.2 consolida FE006-DEC-001 a DEC-010, RF-001 a RF-045 y CA-001 a CA-025. Quedaron cerradas todas las decisiones de catálogo, confirmación, errores, restauración, selección de período, recarga global, recuperación GET-only y regresión. No se modificaron API-001 §5.9 ni las especificaciones normativas. La implementación está pendiente.
 
 ## 7. Calidad y validación
 
