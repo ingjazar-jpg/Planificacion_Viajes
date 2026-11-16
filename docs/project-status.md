@@ -8,7 +8,7 @@
 
 ## 1. Resumen ejecutivo
 
-La implementación del backend BE-001 a BE-010 está validada. Tras incorporar CORS y sus dos pruebas de regresión, la usuaria confirmó la suite backend completa con **197 passed, 0 failed**. FE-001 y FE-002 están validados y cerrados. FE-001 cuenta con **12 pruebas frontend aprobadas**; FE-002, con **37 pruebas frontend aprobadas** y build de producción exitoso. FE-003 tiene refinement aprobado (D1–D27). La administración de períodos y la primera entrega del calendario mensual están validadas; el resto de la gestión de actividades continúa pendiente.
+La implementación del backend BE-001 a BE-010 está validada. Tras incorporar CORS y sus dos pruebas de regresión, la usuaria confirmó la suite backend completa con **197 passed, 0 failed**. FE-001 y FE-002 están validados y cerrados. FE-001 cuenta con **12 pruebas frontend aprobadas**; FE-002, con **37 pruebas frontend aprobadas** y build de producción exitoso. FE-003 tiene refinement aprobado (D1–D27) y sus entregas funcionales están validadas individualmente: administración de períodos, calendario, listado/filtros, CRUD/detalle/navegación y ciclo de vida de actividades. La última suite frontend reportó **84 passed, 0 failed** y build Vite 8.3.8 exitoso con 44 módulos transformados. FE-003 queda en validación de integración final contra FastAPI.
 
 El resultado de 195 pruebas corresponde a la ejecución completa validada después de BE-010. Los resultados históricos por bloque son hitos acumulativos, no cantidades que deban sumarse.
 
@@ -178,7 +178,7 @@ La advertencia deprecatoria de Starlette relacionada con `httpx` no produjo fall
 - **Administración de períodos: validada y cerrada.** La usuaria confirmó 48 pruebas aprobadas, build exitoso e integración manual de creación/edición y manejo de conflictos.
 - **Calendario mensual: primera entrega validada y cerrada el 16-11-2026.** La usuaria confirmó localmente 12 archivos de pruebas, **59 passed, 0 failed**, y build Vite 8.3.8 exitoso con 41 módulos transformados. La prueba de integración App ya no presenta advertencias React `act(...)`; queda el aviso informativo de jsdom. La usuaria confirmó satisfactorias todas las pruebas visuales y funcionales: mes inicial, navegación, filtros combinados, agenda diaria, detalle, desbordamiento de actividades y vista móvil de 360 px.
 - **Listado y filtros de actividades: primera entrega validada y cerrada el 16-11-2026.** La usuaria confirmó localmente **68 passed, 0 failed** en 14 archivos y build Vite 8.3.8 exitoso con 42 módulos transformados. La validación visual confirmó tabla de escritorio, tarjetas móviles, filtros combinados de categoría/prioridad/estado/destino/fechas, limpieza, validación de rango inválido sin consulta, estados vacío y error/reintento y alternancia Calendario/Listado. Vitest mostró únicamente un aviso informativo de creación de entornos jsdom.
-- **FE-003 no está cerrado en su totalidad.** Permanecen pendientes creación, detalle y edición de actividades, transiciones de estado, cancelación/eliminación e integración completa de navegación desde alertas.
+- **FE-003 — validación de integración final pendiente.** Todas las entregas funcionales están validadas individualmente, incluida creación, detalle, edición, navegación desde alertas, transiciones, cancelación y eliminación. La última suite frontend confirmó **84 passed, 0 failed**; el build de producción Vite 8.3.8 también finalizó correctamente con 44 módulos transformados. Resta ejecutar la regresión integrada contra FastAPI y verificar los efectos persistidos y la eliminación en cascada antes del cierre global.
 - FE-004 a FE-006 permanecen pendientes de refinement.
 
 ## 7. Calidad y validación
@@ -189,6 +189,7 @@ La advertencia deprecatoria de Starlette relacionada con `httpx` no produjo fall
 - FE-003 administración de períodos: **48 passed, 0 failed** en 10 archivos; build exitoso.
 - FE-003 calendario mensual primera entrega: **59 passed, 0 failed** en 12 archivos; build Vite 8.3.8 exitoso; validación visual/funcional confirmada por la usuaria.
 - FE-003 listado y filtros de actividades primera entrega: **68 passed, 0 failed** en 14 archivos; build Vite 8.3.8 exitoso con 42 módulos; validación visual/funcional confirmada por la usuaria.
+- FE-003 CRUD, detalle, navegación desde alertas, transiciones, cancelación y eliminación: suite frontend completa **84 passed, 0 failed**; build Vite 8.3.8 exitoso con 44 módulos; comprobaciones manuales funcionales confirmadas por la usuaria.
 - Validación manual integrada FE-002: Dashboard, alertas, revisión, navegación, responsive y teclado confirmados por la usuaria.
 - Build frontend de producción: exitoso.
 - La ejecución backend mostró una advertencia deprecatoria de Starlette por el uso de `httpx` con `starlette.testclient`; no afectó el resultado. La actualización de dependencias queda fuera del alcance de FE-001 y requiere revisión independiente.
@@ -217,7 +218,7 @@ Las especificaciones aprobadas siguen siendo la fuente de verdad funcional y té
 
 ## 10. Próximos pasos inmediatos
 
-1. Continuar FE-003 con el listado y mantenimiento CRUD de actividades, conforme a la especificación aprobada y sin reabrir decisiones cerradas.
+1. Completar la regresión integrada final de FE-003 contra FastAPI, verificando persistencia de cambios, transiciones, cancelación y eliminación en cascada; después registrar evidencia y cerrar el bloque si todos los criterios se satisfacen.
 2. Mantener pendiente la validación reproducible con Python 3.14.10, según la línea base técnica aprobada.
 
 ---
