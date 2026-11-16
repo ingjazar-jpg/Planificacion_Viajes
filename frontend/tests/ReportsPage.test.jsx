@@ -9,6 +9,7 @@ const mocks = vi.hoisted(() => ({
   getBudgetReport: vi.fn(),
   getBudgetComparison: vi.fn(),
   refreshPeriods: vi.fn(),
+  getActivities: vi.fn(),
 }));
 
 vi.mock("../src/context/PeriodContext.jsx", () => ({
@@ -16,6 +17,7 @@ vi.mock("../src/context/PeriodContext.jsx", () => ({
 }));
 
 vi.mock("../src/services/api/reportsService.js", () => mocks);
+vi.mock("../src/services/api/activitiesService.js", () => ({ getActivities: mocks.getActivities }));
 
 const generalResponse = {
   data: {
@@ -62,6 +64,7 @@ describe("ReportsPage", () => {
     mocks.getActivitiesReport.mockResolvedValue(activitiesResponse);
     mocks.getBudgetComparison.mockResolvedValue(comparisonResponse);
     mocks.refreshPeriods.mockResolvedValue(availablePeriods);
+    mocks.getActivities.mockResolvedValue([{ id: "activity-1", name: "Viaje familiar", start_date: "2026-12-20", end_date: "2026-12-22" }]);
     mocks.getBudgetReport.mockResolvedValue({ data: { period: generalResponse.data.period, budget: { total_budget: "0.00", categories: [] }, expenses: { total: "0.00", balance: "0.00", execution_percentage: "0.00", by_activity: [], by_category: [], items: [] } } });
   });
 
@@ -69,7 +72,7 @@ describe("ReportsPage", () => {
     render(<ReportsPage />);
     expect(await screen.findByText("Vacaciones 2026")).toBeInTheDocument();
     expect(screen.getByText("COP 1000000.00")).toBeInTheDocument();
-    expect(mocks.getGeneralReport).toHaveBeenCalledWith("period-1", { page: 1, page_size: 20 });
+    expect(mocks.getGeneralReport).toHaveBeenCalledWith("period-1", { filters: {}, page: 1, page_size: 20 });
   });
 
   it("loads the activities tab on demand and distinguishes cancelled activities", async () => {
@@ -78,7 +81,7 @@ describe("ReportsPage", () => {
     fireEvent.click(screen.getByRole("tab", { name: "Actividades" }));
     expect(await screen.findAllByText("Viaje familiar")).toHaveLength(2);
     expect(container.querySelectorAll(".reports-status")).toHaveLength(2);
-    expect(mocks.getActivitiesReport).toHaveBeenCalledWith("period-1", { page: 1, page_size: 20 });
+    expect(mocks.getActivitiesReport).toHaveBeenCalledWith("period-1", { filters: {}, page: 1, page_size: 20 });
   });
 
   it("keeps a loaded report when navigating back to its tab", async () => {
@@ -142,6 +145,50 @@ describe("ReportsPage", () => {
 
     expect(await screen.findByText("Se necesitan al menos dos períodos disponibles para realizar una comparación.")).toBeInTheDocument();
     expect(mocks.getBudgetComparison).not.toHaveBeenCalled();
+  });
+
+
+  it("applies report filters only after confirmation and sends only applicable values", async () => {
+    render(<ReportsPage />);
+    await screen.findByText("Vacaciones 2026");
+    fireEvent.click(screen.getByRole("button", { name: "Mostrar filtros" }));
+    await waitFor(() => expect(mocks.getActivities).toHaveBeenCalledWith({ period_id: "period-1" }));
+    fireEvent.change(screen.getByLabelText("Categoría"), { target: { value: "Viajes" } });
+    fireEvent.change(screen.getByLabelText("Estado"), { target: { value: "Completada" } });
+    expect(mocks.getGeneralReport).toHaveBeenCalledTimes(1);
+    fireEvent.click(screen.getByRole("button", { name: "Aplicar filtros" }));
+    await waitFor(() => expect(mocks.getGeneralReport).toHaveBeenLastCalledWith("period-1", {
+      filters: { category: "Viajes", status: "Completada" }, page: 1, page_size: 20,
+    }));
+  });
+
+  it("blocks invalid date ranges before sending a report request", async () => {
+    render(<ReportsPage />);
+    await screen.findByText("Vacaciones 2026");
+    fireEvent.click(screen.getByRole("button", { name: "Mostrar filtros" }));
+    fireEvent.change(screen.getByLabelText("Fecha inicial"), { target: { value: "2026-12-30" } });
+    expect(screen.getByRole("alert")).toHaveTextContent("Debes indicar las dos fechas del rango.");
+    expect(screen.getByRole("button", { name: "Aplicar filtros" })).toBeDisabled();
+    fireEvent.change(screen.getByLabelText("Fecha final"), { target: { value: "2026-12-20" } });
+    expect(screen.getByRole("alert")).toHaveTextContent("La fecha inicial no puede ser posterior");
+    expect(mocks.getGeneralReport).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps applied filters when changing the page", async () => {
+    mocks.getGeneralReport.mockResolvedValue({
+      ...generalResponse,
+      meta: { total: 25, page: 1, page_size: 20, total_pages: 2 },
+    });
+    render(<ReportsPage />);
+    await screen.findByText("Vacaciones 2026");
+    fireEvent.click(screen.getByRole("button", { name: "Mostrar filtros" }));
+    fireEvent.change(screen.getByLabelText("Categoría"), { target: { value: "Viajes" } });
+    fireEvent.click(screen.getByRole("button", { name: "Aplicar filtros" }));
+    await screen.findByText("Página 1 de 2");
+    fireEvent.click(screen.getByRole("button", { name: "Siguiente" }));
+    await waitFor(() => expect(mocks.getGeneralReport).toHaveBeenLastCalledWith("period-1", {
+      filters: { category: "Viajes" }, page: 2, page_size: 20,
+    }));
   });
 
 });
