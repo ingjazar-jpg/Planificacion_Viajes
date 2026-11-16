@@ -117,6 +117,7 @@ describe("ActivitiesPage list", () => {
   });
 
   it("edits the selected activity while preserving its status in the PUT contract", async () => {
+    getActivity.mockResolvedValueOnce(rows[0]).mockResolvedValueOnce({ ...rows[0], name: "Viaje actualizado" });
     render(<ActivitiesPage />);
     const table = await screen.findByRole("table", { name: "Listado de actividades" });
     fireEvent.click(within(table).getByRole("button", { name: "Viaje familiar" }));
