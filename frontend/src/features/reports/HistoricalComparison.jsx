@@ -110,6 +110,10 @@ export default function HistoricalComparison({ isActive }) {
   const [retryComparison, setRetryComparison] = useState(0);
   const periodsRequestId = useRef(0);
   const comparisonRequestId = useRef(0);
+  const firstPeriodIdRef = useRef(firstPeriodId);
+  const secondPeriodIdRef = useRef(secondPeriodId);
+  firstPeriodIdRef.current = firstPeriodId;
+  secondPeriodIdRef.current = secondPeriodId;
 
   const loadPeriods = useCallback(async () => {
     const requestId = ++periodsRequestId.current;
@@ -123,7 +127,7 @@ export default function HistoricalComparison({ isActive }) {
       if (!Array.isArray(result)) throw new Error("No fue posible consultar los períodos disponibles.");
       const sorted = sortPeriods(result);
       setPeriods(sorted);
-      const [nextFirst, nextSecond] = chooseInitialPeriods(sorted, firstPeriodId, secondPeriodId);
+      const [nextFirst, nextSecond] = chooseInitialPeriods(sorted, firstPeriodIdRef.current, secondPeriodIdRef.current);
       setFirstPeriodId(nextFirst);
       setSecondPeriodId(nextSecond);
     } catch (error) {
@@ -132,7 +136,7 @@ export default function HistoricalComparison({ isActive }) {
     } finally {
       if (requestId === periodsRequestId.current) setPeriodsLoading(false);
     }
-  }, [refreshPeriods, firstPeriodId, secondPeriodId]);
+  }, [refreshPeriods]);
 
   useEffect(() => {
     if (isActive) loadPeriods();
