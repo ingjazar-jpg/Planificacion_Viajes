@@ -168,11 +168,11 @@ Cada bloque FE se cerrará cuando:
 | FE-001 | Validado y cerrado — 15-11-2026 |
 | FE-002 | Validado y cerrado — 15-11-2026 |
 | FE-003 | Validado y cerrado — 16-11-2026; 84 pruebas frontend aprobadas, build exitoso y regresión integrada FastAPI satisfactoria |
-| FE-004 | Implementación en curso; Bloques 1–4 validados y cerrados |
+| FE-004 | Implementación en curso; Bloques 1–5 validados y cerrados; Bloque 6 pendiente de validación local |
 | FE-005 | Pendiente de refinement |
 | FE-006 | Pendiente de refinement |
 
-FE-001, FE-002 y FE-003 están validados y cerrados. FE-003 cerró el 16-11-2026 con 84 pruebas frontend aprobadas, build de producción exitoso y regresión integrada contra FastAPI satisfactoria, confirmada por la usuaria. FE-004 tiene refinement aprobado y especificación v0.1 publicada para implementación; Bloques 1–4 validados. El Bloque 4 cerró con 118 pruebas frontend aprobadas y build de producción exitoso en la validación de la entrega. FE-005 y FE-006 permanecen pendientes de refinement.
+FE-001, FE-002 y FE-003 están validados y cerrados. FE-003 cerró el 16-11-2026 con 84 pruebas frontend aprobadas, build de producción exitoso y regresión integrada contra FastAPI satisfactoria, confirmada por la usuaria. FE-004 tiene refinement aprobado y especificación v0.1 publicada para implementación; Bloques 1–5 validados. El Bloque 5 cerró con 121 pruebas frontend aprobadas y build de producción exitoso. El Bloque 6 está implementado y publicado, pendiente de validación local. FE-005 y FE-006 permanecen pendientes de refinement.
 
 ## 9. Documentos relacionados
 
