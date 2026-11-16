@@ -8,7 +8,7 @@
 
 ## 1. Resumen ejecutivo
 
-La implementación del backend BE-001 a BE-010 está validada. La usuaria confirmó la suite backend completa con **197 passed, 0 failed**. FE-001 a FE-004 están validados y cerrados. **FE-005 — Informes — está implementado y validado** conforme a `docs/FE-005.md` v0.2: los cinco bloques completados, suite frontend completa con **150 passed, 0 failed** en 20 archivos y build de producción exitoso con Vite 8.3.8. La usuaria confirmó además la revisión visual y funcional. FE-006 — Gestión de datos e integración — cuenta con especificación `docs/FE-006.md` v0.2 aprobada para implementación el 16-11-2026. Las decisiones FE006-DEC-001 a DEC-011 están cerradas; la implementación aún no se ha iniciado. La validación reproducible con Python 3.14.10 continúa pendiente como tarea transversal de Sprint 0.
+La implementación del backend BE-001 a BE-010 está validada; la suite backend completa más reciente reportada por la usuaria finalizó con **197 passed, 0 failed**. FE-001 a FE-006 están implementados, validados y cerrados. **FE-005 — Informes** cerró con 150 pruebas frontend aprobadas y build de producción exitoso. **FE-006 — Gestión de datos e integración** cerró el 16-11-2026 conforme a `docs/FE-006.md` v0.2: Bloques 1 y 2 validados, suite frontend completa con **170 passed, 0 failed**, suite backend completa con **197 passed, 0 failed**, build de producción exitoso, integración real con FastAPI satisfactoria y revisiones responsive y de accesibilidad WCAG 2.2 AA confirmadas por la usuaria. La validación reproducible con Python 3.14.10 se mantiene como tarea transversal de Sprint 0 independiente del cierre funcional FE-006.
 
 ## 2. Estado por bloque de implementación
 
@@ -139,7 +139,7 @@ Cualquier endpoint transversal adicional que la revisión identifique como falta
 
 ## 6. Trabajo pendiente del frontend e integración
 
-FE-001 a FE-005 están implementados y validados. El trabajo funcional frontend pendiente se concentra en FE-006 — Gestión de datos e integración — y en la regresión transversal de cierre.
+FE-001 a FE-006 están implementados y validados. La regresión transversal de frontend, backend e integración quedó aprobada; no hay bloques funcionales frontend pendientes dentro del alcance FE-ROADMAP.
 
 - Implementar el catálogo de copias semanales y la restauración confirmada conforme a `docs/FE-006.md` v0.2 aprobada.
 - Conectar la restauración con el contexto global de períodos y garantizar la recarga de datos, incluso si el identificador del período activo no cambia.
@@ -150,7 +150,7 @@ El shell, la navegación y los módulos FE-001 a FE-005 ya cuentan con evidencia
 
 ### 6.1 Plan de implementación frontend
 
-El mapa de implementación de seis bloques se mantiene en `docs/FE-ROADMAP.md`. FE-001 a FE-005 están validados y cerrados. Los documentos específicos son:
+El mapa de implementación de seis bloques se mantiene en `docs/FE-ROADMAP.md`. FE-001 a FE-006 están validados y cerrados. Los documentos específicos son:
 
 - `docs/FE-001.md`: fundación frontend.
 - `docs/FE-002.md`: Dashboard y alertas.
@@ -161,7 +161,7 @@ El mapa de implementación de seis bloques se mantiene en `docs/FE-ROADMAP.md`. 
 
 **FE-005 — VALIDADO Y CERRADO el 16-11-2026.** La usuaria confirmó cinco bloques implementados, suite frontend completa con **150 passed, 0 failed** en 20 archivos, `npm run build` exitoso con Vite 8.3.8 y revisión visual/funcional satisfactoria. La especificación v0.2 incluye FE005-D01 a D62, RF-001 a RF-090 y CA-001 a CA-022 + B5-CA01 a B5-CA12. El commit `0789bac9920bdab27df3c9244d627ac54e477520` corrigió una consulta ambigua en una prueba de exportación. No se modificaron contratos normativos.
 
-**FE-006 — ESPECIFICACIÓN APROBADA PARA IMPLEMENTACIÓN el 16-11-2026.** `docs/FE-006.md` v0.2 consolida FE006-DEC-001 a DEC-011, RF-001 a RF-045 y CA-001 a CA-025. Quedaron cerradas todas las decisiones de catálogo, confirmación, errores, restauración, selección de período, recarga global, recuperación GET-only y regresión. No se modificaron API-001 §5.9 ni las especificaciones normativas. La implementación está pendiente.
+**FE-006 — VALIDADO Y CERRADO el 16-11-2026.** `docs/FE-006.md` v0.2, con FE006-DEC-001 a DEC-011, RF-001 a RF-045 y CA-001 a CA-025, se implementó sin modificar API-001 §5.9 ni las especificaciones normativas. La usuaria confirmó: Bloque 1 (servicio de respaldos) aprobado; Bloque 2 (Gestión de datos y recuperación global) aprobado con 26 pruebas específicas y build exitoso; suite frontend completa con **170 passed, 0 failed**; suite backend completa con **197 passed, 0 failed**; integración real con FastAPI satisfactoria; revisión responsive desde 360 px y revisión de accesibilidad WCAG 2.2 AA correctas. Se preservaron los contratos existentes y el flujo de recuperación GET-only tras restauración.
 
 ## 7. Calidad y validación
 
@@ -202,9 +202,9 @@ Las especificaciones aprobadas siguen siendo la fuente de verdad funcional y té
 
 ## 10. Próximos pasos inmediatos
 
-1. Implementar FE-006 conforme a `docs/FE-006.md` v0.2 aprobada, en bloques verificables y sin modificar contratos normativos.
-2. Mantener pendiente la validación reproducible con Python 3.14.10, según la línea base técnica aprobada.
-3. Ejecutar regresión integral, integración real con FastAPI y revisión responsive/accesibilidad antes de solicitar el cierre de FE-006.
+1. Mantener FE-006 cerrado; cualquier cambio posterior deberá gestionarse como nueva incidencia o cambio controlado, sin reabrir decisiones aprobadas de forma implícita.
+2. Mantener como tarea transversal independiente la validación reproducible con Python 3.14.10, según la línea base técnica aprobada.
+3. Continuar con mantenimiento y evolución únicamente mediante nuevas especificaciones o cambios aprobados.
 
 ---
 
@@ -249,7 +249,7 @@ API-001 v0.8 devuelve por categoría `allocated_amount`, `spent_amount`, `balanc
 
 ## 6.4 FE-006 — Gestión de datos e integración
 
-**Estado: ESPECIFICACIÓN APROBADA PARA IMPLEMENTACIÓN el 16-11-2026; implementación pendiente.**
+**Estado: VALIDADO Y CERRADO el 16-11-2026.**
 
 - Documento: `docs/FE-006.md` v0.2, aprobado para implementación.
 - Alcance heredado: catálogo de copias semanales, restauración confirmada y recarga del contexto; regresión integral y revisión transversal de calidad.
