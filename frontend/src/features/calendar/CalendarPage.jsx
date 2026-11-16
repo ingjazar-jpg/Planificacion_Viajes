@@ -184,6 +184,7 @@ function CalendarPage() {
   const goToToday = () => {
     setVisibleDate(getInitialDate(selectedPeriod));
     setSelectedDate(null);
+    setSelectedActivityId(null);
     setSelectedActivity(null);
   };
 
@@ -195,6 +196,7 @@ function CalendarPage() {
 
   const selectActivity = (activity, dayKey) => {
     setSelectedDate(dayKey);
+    setActivityActionError("");
     setSelectedActivityId(activity.id);
   };
 
@@ -429,7 +431,12 @@ function CalendarPage() {
               isLoading={isDetailLoading}
               error={detailError}
               onRetry={() => setDetailRetryKey((current) => current + 1)}
-              onClose={() => { if (!isMutatingActivity) setSelectedActivityId(null); }}
+              onClose={() => {
+                if (!isMutatingActivity) {
+                  setSelectedActivityId(null);
+                  setActivityActionError("");
+                }
+              }}
               onEdit={openEditActivity}
               onChangeStatus={handleStatusChange}
               onDelete={handleDeleteActivity}
