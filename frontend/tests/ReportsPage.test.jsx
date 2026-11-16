@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import ReportsPage from "../src/features/reports/ReportsPage.jsx";
 
@@ -59,6 +59,8 @@ const activitiesResponse = {
 };
 
 describe("ReportsPage", () => {
+  afterEach(() => vi.unstubAllGlobals());
+
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.getGeneralReport.mockResolvedValue(generalResponse);
@@ -79,8 +81,9 @@ describe("ReportsPage", () => {
   });
 
   it("exports applied filters only and ignores pending filter edits", async () => {
-    const createUrl = vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:download");
-    const revokeUrl = vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => {});
+    const createUrl = vi.fn().mockReturnValue("blob:download");
+    const revokeUrl = vi.fn();
+    vi.stubGlobal("URL", { createObjectURL: createUrl, revokeObjectURL: revokeUrl });
     render(<ReportsPage />);
     await screen.findByText("Vacaciones 2026");
     fireEvent.click(screen.getByRole("button", { name: "Mostrar filtros" }));
@@ -100,9 +103,7 @@ describe("ReportsPage", () => {
     })));
     expect(await screen.findByRole("status")).toHaveTextContent("Archivo descargado correctamente.");
     expect(createUrl).toHaveBeenCalledTimes(1);
-    expect(revokeUrl).toHaveBeenCalledWith("blob:download");
-    createUrl.mockRestore();
-    revokeUrl.mockRestore();
+    await waitFor(() => expect(revokeUrl).toHaveBeenCalledWith("blob:download"));
   });
 
   it("shows budget group details from the current page without changing backend aggregates", async () => {
