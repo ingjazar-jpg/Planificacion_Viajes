@@ -72,7 +72,7 @@ Los seis bloques FE son unidades de planificación e implementación; no implica
 
 ### FE-004 — Presupuesto y gastos
 
-**Estado FE-004 al 16-11-2026: IMPLEMENTACIÓN EN CURSO; refinement aprobado y especificación docs/FE-004.md v0.1.** La usuaria aprobó D1–D43, incluida D43 opción A: consultar el conjunto completo filtrado, ordenar globalmente por fecha descendente en frontend y paginar localmente con 10/20/50 registros; no se envían page/page_size ni se modifica API-001 o BE-007. Los Bloques 1–5 están validados y cerrados. El Bloque 6 está implementado y publicado; la usuaria confirmó 126 pruebas frontend aprobadas. El build de producción del Bloque 6 está pendiente de confirmación.
+**Estado FE-004 al 16-11-2026: BLOQUES 1–6 IMPLEMENTADOS, VALIDADOS Y CERRADOS.** Refinement aprobado y especificación `docs/FE-004.md` v0.1. La usuaria aprobó D1–D43, incluida D43 opción A: consultar el conjunto completo filtrado, ordenar globalmente por fecha descendente en frontend y paginar localmente con 10/20/50 registros; no se envían page/page_size ni se modifica API-001 o BE-007. Para el Bloque 6, confirmó **126 pruebas frontend aprobadas** y build de producción exitoso.
 
 - Sección conjunta con pestañas internas Presupuesto y Gastos.
 - Resumen general y distribución de siete categorías.
@@ -87,7 +87,7 @@ Los seis bloques FE son unidades de planificación e implementación; no implica
 
 **Bloque 5 validado y cerrado:** la usuaria confirmó **121 pruebas aprobadas** y `npm run build` exitoso. Alcance: panel lateral de detalle, consultas contractuales del gasto y su historial, pestañas Información/Historial y timeline cronológico ascendente con fecha/hora `America/Bogota`.
 
-**Bloque 6 implementado y publicado; suite frontend validada con 126 pruebas aprobadas:** edición desde el panel lateral mediante PATCH con solo los campos modificados, validación monetaria exacta, soporte de `null` para opcionales, `period_id` inmutable, refresco del listado/indicadores e historial actualizado. Eliminación mediante DELETE con confirmación explícita que muestra los datos del gasto y advierte que su historial también se elimina. Se añadieron cinco pruebas de componente para edición parcial, limpieza de campos opcionales, ausencia de cambios, confirmación de eliminación y cancelación. La usuaria confirmó 126 pruebas frontend aprobadas. `npm run build` del Bloque 6 queda pendiente de confirmación.
+**Bloque 6 validado y cerrado; suite frontend con 126 pruebas aprobadas y build de producción exitoso:** edición desde el panel lateral mediante PATCH con solo los campos modificados, validación monetaria exacta, soporte de `null` para opcionales, `period_id` inmutable, refresco del listado/indicadores e historial actualizado. Eliminación mediante DELETE con confirmación explícita que muestra los datos del gasto y advierte que su historial también se elimina. Se añadieron cinco pruebas de componente para edición parcial, limpieza de campos opcionales, ausencia de cambios, confirmación de eliminación y cancelación. La usuaria confirmó **126 pruebas frontend aprobadas** y `npm run build` exitoso.
 
 ### FE-005 — Informes
 
@@ -168,11 +168,11 @@ Cada bloque FE se cerrará cuando:
 | FE-001 | Validado y cerrado — 15-11-2026 |
 | FE-002 | Validado y cerrado — 15-11-2026 |
 | FE-003 | Validado y cerrado — 16-11-2026; 84 pruebas frontend aprobadas, build exitoso y regresión integrada FastAPI satisfactoria |
-| FE-004 | Implementación en curso; Bloques 1–6 implementados; 126 pruebas frontend aprobadas en Bloque 6; build pendiente de confirmación |
+| FE-004 | Validado y cerrado — Bloques 1–6; Bloque 6 con 126 pruebas aprobadas y build exitoso |
 | FE-005 | Pendiente de refinement |
 | FE-006 | Pendiente de refinement |
 
-FE-001, FE-002 y FE-003 están validados y cerrados. FE-003 cerró el 16-11-2026 con 84 pruebas frontend aprobadas, build de producción exitoso y regresión integrada contra FastAPI satisfactoria, confirmada por la usuaria. FE-004 tiene refinement aprobado y especificación v0.1 publicada para implementación; Bloques 1–5 validados. El Bloque 6 está implementado y publicado, con 126 pruebas frontend aprobadas; build de producción pendiente de confirmación. FE-005 y FE-006 permanecen pendientes de refinement.
+FE-001, FE-002 y FE-003 están validados y cerrados. FE-003 cerró el 16-11-2026 con 84 pruebas frontend aprobadas, build de producción exitoso y regresión integrada contra FastAPI satisfactoria, confirmada por la usuaria. FE-004 tiene refinement aprobado y especificación v0.1 publicada; Bloques 1–6 están implementados, publicados y validados. El Bloque 6 cerró con 126 pruebas frontend aprobadas y build de producción exitoso. FE-005 y FE-006 permanecen pendientes de refinement.
 
 ## 9. Documentos relacionados
 
