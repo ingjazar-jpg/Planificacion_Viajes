@@ -346,6 +346,7 @@ function ReportsPage() {
     reportsRef.current = INITIAL_REPORT_STATE;
     setReports(createReportState());
     setActivityOptions([]);
+    setActivityOptionsLoading(false);
     setActivityOptionsLoaded(false);
     setActivityOptionsError(null);
     activityOptionsSequence.current += 1;
@@ -374,10 +375,12 @@ function ReportsPage() {
   }
 
   function toggleFilters(reportType) {
+    const shouldOpen = !reportsRef.current[reportType].filtersOpen;
     setReports((state) => ({
       ...state,
-      [reportType]: { ...state[reportType], filtersOpen: !state[reportType].filtersOpen },
+      [reportType]: { ...state[reportType], filtersOpen: shouldOpen },
     }));
+    if (shouldOpen && REPORT_FILTER_FIELDS[reportType].includes("activity_id")) loadActivityOptions();
   }
 
   function applyFilters(reportType) {
