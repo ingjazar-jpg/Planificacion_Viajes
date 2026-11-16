@@ -231,7 +231,7 @@ Las especificaciones aprobadas siguen siendo la fuente de verdad funcional y té
 
 ## 10. Próximos pasos inmediatos
 
-1. Implementar el siguiente incremento FE-004: registro de gastos y detalle, respetando contratos y criterios de aceptación de docs/FE-004.md.
+1. Sincronizar y validar localmente el Bloque 4 de FE-004 (registro de gastos); después continuar con detalle e historial.
 2. Mantener pendiente la validación reproducible con Python 3.14.10, según la línea base técnica aprobada.
 3. Refinar FE-005 y FE-006 después de completar el trabajo priorizado.
 
@@ -264,7 +264,7 @@ Publicado en GitHub y validado localmente en pruebas:
 - Confirmación al descartar cambios antes de cambiar de pestaña.
 - Pruebas de componente para carga, estado vacío, reintento, creación, actualización y validación de distribución.
 
-La suite frontend completa reportada tras sincronizar el Bloque 2: **114 passed**. La usuaria confirmó `npm run build` exitoso con Vite 8.3.8 y **47 módulos transformados**. **Bloque 2 validado y cerrado.** La pestaña Gastos ya incorpora el listado inicial, filtros combinables, ordenamiento global por fecha descendente y paginación local (Bloque 3). La usuaria confirmó 116 pruebas frontend aprobadas en 18 archivos y build Vite 8.3.8 exitoso con 48 módulos transformados. Bloque 3 validado y cerrado. El registro, detalle, edición, eliminación e historial siguen pendientes.
+La suite frontend completa reportada tras sincronizar el Bloque 2: **114 passed**. La usuaria confirmó `npm run build` exitoso con Vite 8.3.8 y **47 módulos transformados**. **Bloque 2 validado y cerrado.** La pestaña Gastos ya incorpora el listado inicial, filtros combinables, ordenamiento global por fecha descendente y paginación local (Bloque 3). La usuaria confirmó 116 pruebas frontend aprobadas en 18 archivos y build Vite 8.3.8 exitoso con 48 módulos transformados. Bloque 3 validado y cerrado. El Bloque 4 ya incorpora el formulario lateral de registro con asociación opcional de actividad, campos opcionales colapsados y validación exacta de importe; está publicado y pendiente de validación local. El detalle, edición, eliminación e historial siguen pendientes.
 
 ### Observación contractual pendiente
 
