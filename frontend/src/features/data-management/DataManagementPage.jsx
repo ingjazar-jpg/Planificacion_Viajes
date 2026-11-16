@@ -65,7 +65,7 @@ function DataManagementPage() {
     function handleKeyDown(event) {
       if (event.key === "Escape") {
         event.preventDefault();
-        if (!isRestoring) setSelectedBackup(null);
+        if (!isRestoring) closeConfirmation();
         return;
       }
       if (event.key !== "Tab" || isRestoring) return;
@@ -91,6 +91,12 @@ function DataManagementPage() {
     };
   }, [selectedBackup, isRestoring]);
 
+  function closeConfirmation() {
+    if (isRestoring) return;
+    setSelectedBackup(null);
+    restoreButtonRef.current?.focus();
+  }
+
   function openConfirmation(backup, event) {
     restoreButtonRef.current = event.currentTarget;
     setNotice("");
@@ -103,8 +109,10 @@ function DataManagementPage() {
     setIsRestoring(true);
     setNotice("");
     setNoticeIsError(false);
+    let restored = false;
     try {
       const result = await restoreBackup(selectedBackup.backup_id);
+      restored = true;
       setSelectedBackup(null);
       setNotice(result.message || "La restauración se completó correctamente.");
       setNoticeIsError(false);
@@ -121,6 +129,7 @@ function DataManagementPage() {
       }
     } finally {
       setIsRestoring(false);
+      if (restored) restoreButtonRef.current?.focus();
     }
   }
 
@@ -196,7 +205,7 @@ function DataManagementPage() {
         <div
           className="data-dialog-backdrop"
           onMouseDown={(event) => {
-            if (event.target === event.currentTarget && !isRestoring) setSelectedBackup(null);
+            if (event.target === event.currentTarget && !isRestoring) closeConfirmation();
           }}
         >
           <section
@@ -217,7 +226,7 @@ function DataManagementPage() {
             </dl>
             {isRestoring && <p className="data-restore-progress" role="status">Restaurando copia de seguridad. No cierres esta ventana…</p>}
             <div className="data-restore-actions">
-              <button ref={cancelButtonRef} type="button" className="data-cancel-button" disabled={isRestoring} onClick={() => setSelectedBackup(null)}>Cancelar</button>
+              <button ref={cancelButtonRef} type="button" className="data-cancel-button" disabled={isRestoring} onClick={closeConfirmation}>Cancelar</button>
               <button type="button" className="data-confirm-button" disabled={isRestoring} onClick={confirmRestore}>
                 {isRestoring ? "Restaurando…" : "Confirmar restauración"}
               </button>
