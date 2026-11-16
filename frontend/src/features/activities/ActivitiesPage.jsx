@@ -127,11 +127,17 @@ function ActivitiesPage({ activityId = null }) {
     setIsFormOpen(true);
   }
 
-  function openEditForm(activity) {
+  const openEditForm = useCallback((activity) => {
     setEditingActivity(activity);
     setSelectedActivityId(null);
     setIsFormOpen(true);
-  }
+  }, []);
+
+  const closeActivityDetail = useCallback(() => setSelectedActivityId(null), []);
+  const retryActivityDetail = useCallback(
+    () => loadActivityDetail(selectedActivityId),
+    [loadActivityDetail, selectedActivityId],
+  );
 
   async function handleSaved(savedActivity) {
     await loadActivities();
@@ -274,8 +280,8 @@ function ActivitiesPage({ activityId = null }) {
       <ActivityFormDialog open={isFormOpen} activity={editingActivity} period={selectedPeriod}
         onClose={() => { setIsFormOpen(false); setEditingActivity(null); }} onSaved={handleSaved} />
       <ActivityDetailDialog open={Boolean(selectedActivityId)} activity={selectedActivity}
-        isLoading={isDetailLoading} error={detailError} onRetry={() => loadActivityDetail(selectedActivityId)}
-        onClose={() => setSelectedActivityId(null)} onEdit={openEditForm} />
+        isLoading={isDetailLoading} error={detailError} onRetry={retryActivityDetail}
+        onClose={closeActivityDetail} onEdit={openEditForm} />
     </div>
   );
 }
