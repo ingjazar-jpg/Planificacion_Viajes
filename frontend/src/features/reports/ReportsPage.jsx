@@ -5,6 +5,7 @@ import {
   getActivitiesReport,
   getBudgetReport,
   getGeneralReport,
+  exportReport,
 } from "../../services/api/reportsService.js";
 import { getActivities } from "../../services/api/activitiesService.js";
 import HistoricalComparison from "./HistoricalComparison.jsx";
@@ -244,8 +245,57 @@ function ActivitiesReport({ report }) {
   );
 }
 
+function BudgetExpenseDetails({ items }) {
+  if (!items.length) return <p className="reports-group-empty">No hay gastos de este grupo en la página actual.</p>;
+  return (
+    <>
+      <p className="reports-group-page-note">Mostrando los gastos de este grupo incluidos en la página actual.</p>
+      <div className="reports-table-wrap reports-group-details">
+        <table className="reports-table">
+          <thead><tr><th>Concepto</th><th>Fecha</th><th>Categoría</th><th>Importe</th></tr></thead>
+          <tbody>{items.map((expense) => (
+            <tr key={expense.id}>
+              <td>{expense.concept}</td><td>{expense.date}</td><td>{expense.category}</td>
+              <td><Money value={expense.amount} /></td>
+            </tr>
+          ))}</tbody>
+        </table>
+      </div>
+    </>
+  );
+}
+
+function BudgetGroup({ group, groupType, items, expanded, onToggle }) {
+  const groupItems = groupType === "category"
+    ? items.filter((expense) => expense.category === group.category)
+    : items.filter((expense) => (expense.activity_id ?? null) === (group.activity_id ?? null));
+  const label = groupType === "category" ? group.category : group.activity_name;
+  const id = `budget-group-${groupType}-${groupType === "category" ? group.category : (group.activity_id || "unassigned")}`;
+  return (
+    <article className="reports-group-card">
+      <button type="button" className="reports-group-toggle" aria-expanded={expanded}
+        aria-controls={id} onClick={onToggle}>
+        <span className="reports-group-name">{label}</span>
+        <span>{group.count} gastos</span>
+        <strong><Money value={group.total} /></strong>
+        <span aria-hidden="true">{expanded ? "−" : "+"}</span>
+      </button>
+      {expanded && (
+        <div id={id} className="reports-group-detail">
+          <BudgetExpenseDetails items={groupItems} />
+        </div>
+      )}
+    </article>
+  );
+}
+
 function BudgetReport({ report }) {
   const { period, budget, expenses } = report;
+  const [expanded, setExpanded] = useState({});
+  const toggle = (key) => setExpanded((state) => ({ ...state, [key]: !state[key] }));
+  const items = expenses?.items || [];
+  const activityGroups = expenses?.by_activity || [];
+  const categoryGroups = expenses?.by_category || [];
   return (
     <>
       <ReportHeader period={period} />
@@ -278,31 +328,28 @@ function BudgetReport({ report }) {
       <section className="reports-section">
         <h3>Gastos por actividad</h3>
         <div className="reports-groups">
-          {(expenses?.by_activity || []).map((item) => (
-            <article key={item.activity_id || "unassigned"} className="reports-group">
-              <strong>{item.activity_name}</strong>
-              <span>{item.count} gastos</span>
-              <b><Money value={item.total} /></b>
-            </article>
-          ))}
+          {activityGroups.map((group) => {
+            const key = `activity:${group.activity_id || "unassigned"}`;
+            return <BudgetGroup key={key} group={group} groupType="activity" items={items}
+              expanded={Boolean(expanded[key])} onToggle={() => toggle(key)} />;
+          })}
         </div>
         <h3>Gastos por categoría</h3>
         <div className="reports-groups">
-          {(expenses?.by_category || []).map((item) => (
-            <article key={item.category} className="reports-group">
-              <strong>{item.category}</strong><span>{item.count} gastos</span><b><Money value={item.total} /></b>
-            </article>
-          ))}
+          {categoryGroups.map((group) => {
+            const key = `category:${group.category}`;
+            return <BudgetGroup key={key} group={group} groupType="category" items={items}
+              expanded={Boolean(expanded[key])} onToggle={() => toggle(key)} />;
+          })}
         </div>
       </section>
       <section className="reports-section">
-        <h3>Detalle de gastos</h3>
-        <ExpenseResults items={expenses?.items || []} />
+        <h3>Detalle de gastos de la página actual</h3>
+        <ExpenseResults items={items} />
       </section>
     </>
   );
 }
-
 function ReportsPage() {
   const { selectedPeriodId } = usePeriod();
   const [activeTab, setActiveTab] = useState("general");
@@ -315,6 +362,9 @@ function ReportsPage() {
   const requestSequences = useRef({ general: 0, activities: 0, budget: 0 });
   const reportsRef = useRef(reports);
   reportsRef.current = reports;
+  const [exportState, setExportState] = useState(null);
+  const [exportNotice, setExportNotice] = useState("");
+  const exportControllerRef = useRef(null);
 
   const loadReport = useCallback(async (reportType, page = 1, pageSize = 20, force = false, filters = reportsRef.current[reportType]?.appliedFilters || {}) => {
     if (!selectedPeriodId || !REPORT_LOADERS[reportType]) return;
@@ -425,6 +475,103 @@ function ReportsPage() {
     }
   }, [selectedPeriodId, activityOptionsLoaded, activityOptionsLoading]);
 
+  function openExportDialog(reportType) {
+    const current = reportsRef.current[reportType];
+    const hasAppliedFilters = Object.keys(current.appliedFilters).length > 0;
+    setExportNotice("");
+    setExportState({
+      reportType, format: "pdf", scope: hasAppliedFilters ? "filtered" : "period",
+      hasAppliedFilters, isLoading: false, error: null,
+    });
+  }
+
+  function updateExportOption(key, value) {
+    setExportState((state) => state ? { ...state, [key]: value } : state);
+  }
+
+  async function confirmExport() {
+    if (!exportState || exportState.isLoading || !selectedPeriodId) return;
+    const controller = new AbortController();
+    exportControllerRef.current = controller;
+    const currentExport = exportState;
+    setExportState({ ...currentExport, isLoading: true, error: null });
+    try {
+      const result = await exportReport(currentExport.reportType, selectedPeriodId, {
+        format: currentExport.format,
+        scope: currentExport.scope,
+        filters: currentExport.scope === "filtered"
+          ? reportsRef.current[currentExport.reportType].appliedFilters
+          : {},
+        signal: controller.signal,
+      });
+      const objectUrl = URL.createObjectURL(result.blob);
+      const anchor = document.createElement("a");
+      anchor.href = objectUrl;
+      anchor.download = result.filename;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      window.setTimeout(() => URL.revokeObjectURL(objectUrl), 0);
+      setExportState(null);
+      setExportNotice("Archivo descargado correctamente.");
+    } catch (error) {
+      if (error?.name === "AbortError") {
+        setExportState(null);
+      } else {
+        setExportState({ ...currentExport, isLoading: false, error });
+      }
+    } finally {
+      if (exportControllerRef.current === controller) exportControllerRef.current = null;
+    }
+  }
+
+  function cancelExport() {
+    exportControllerRef.current?.abort();
+    exportControllerRef.current = null;
+    setExportState(null);
+  }
+
+  function renderExportDialog() {
+    if (!exportState || exportState.reportType !== activeTab) return null;
+    return (
+      <section className="reports-export-dialog" role="dialog" aria-labelledby="reports-export-title" aria-modal="false">
+        <div className="reports-export-heading">
+          <h2 id="reports-export-title">Exportar informe</h2>
+          <button type="button" onClick={cancelExport} disabled={exportState.isLoading}>Cerrar</button>
+        </div>
+        <div className="reports-export-fields">
+          <label>Formato
+            <select aria-label="Formato de exportación" value={exportState.format} disabled={exportState.isLoading}
+              onChange={(event) => updateExportOption("format", event.target.value)}>
+              <option value="pdf">PDF</option><option value="xlsx">XLSX</option>
+            </select>
+          </label>
+          <label>Alcance
+            <select aria-label="Alcance de exportación" value={exportState.scope} disabled={exportState.isLoading}
+              onChange={(event) => updateExportOption("scope", event.target.value)}>
+              {exportState.hasAppliedFilters && <option value="filtered">Resultados filtrados</option>}
+              <option value="period">Período completo</option>
+            </select>
+          </label>
+        </div>
+        {exportState.isLoading ? (
+          <p role="status">Generando archivo…</p>
+        ) : exportState.error ? (
+          <div className="reports-export-error" role="alert">
+            <p>{exportState.error.message || "No fue posible generar el archivo."}</p>
+            <button type="button" onClick={confirmExport}>Reintentar</button>
+            <button type="button" onClick={cancelExport}>Cancelar</button>
+          </div>
+        ) : (
+          <div className="reports-export-actions">
+            <button type="button" onClick={confirmExport}>Exportar</button>
+            <button type="button" onClick={cancelExport}>Cancelar</button>
+          </div>
+        )}
+      </section>
+    );
+  }
+
   const activeReport = reports[activeTab];
   const retry = () => loadReport(activeTab, activeReport.page, activeReport.pageSize, true, activeReport.appliedFilters);
 
@@ -458,6 +605,14 @@ function ReportsPage() {
               onApply={applyFilters} onClear={clearFilters}
               activities={activityOptions} activitiesLoading={activityOptionsLoading}
               activitiesError={activityOptionsError} onLoadActivities={loadActivityOptions} />
+            <div className="reports-export-toolbar">
+              <button type="button" onClick={() => openExportDialog(activeTab)}
+                disabled={Boolean(exportState?.isLoading)}>
+                Exportar informe
+              </button>
+            </div>
+            {renderExportDialog()}
+            {exportNotice && <p className="reports-export-notice" role="status">{exportNotice}</p>}
             {activeReport?.isLoading ? (
           <LoadingState message="Generando informe…" />
         ) : activeReport?.error ? (
