@@ -191,7 +191,7 @@ La advertencia deprecatoria de Starlette relacionada con `httpx` no produjo fall
 - Requisitos: 68 requisitos funcionales para presupuesto, gastos, filtros, paginación, detalle, historial, estados, calidad y accesibilidad.
 - Contratos: GET/POST/PUT de presupuesto; GET/POST/GET/PUT/PATCH/DELETE de gastos; GET de historial; consulta de actividades para asociación. Todos conforme a API-001 v0.8.
 - Restricción: no se modifica API-001 ni se reabre BE-007.
-- Próximo paso: iniciar implementación FE-004 según la especificación aprobada, publicar cambios primero en GitHub y validar localmente después de sincronizar.
+- Próximo paso: validar localmente el Bloque 3 de FE-004 (listado, filtros, ordenamiento global y paginación local), publicado en GitHub en la rama autorizada.
 
 ## 7. Calidad y validación
 
@@ -231,7 +231,7 @@ Las especificaciones aprobadas siguen siendo la fuente de verdad funcional y té
 
 ## 10. Próximos pasos inmediatos
 
-1. Iniciar implementación FE-004 conforme a `docs/FE-004.md` v0.1 aprobada.
+1. Sincronizar y validar localmente el Bloque 3 de FE-004 (listado, filtros, ordenamiento global y paginación local); después continuar con registro y detalle de gastos.
 2. Mantener pendiente la validación reproducible con Python 3.14.10, según la línea base técnica aprobada.
 3. Refinar FE-005 y FE-006 después de completar el trabajo priorizado.
 
@@ -264,7 +264,7 @@ Publicado en GitHub y validado localmente en pruebas:
 - Confirmación al descartar cambios antes de cambiar de pestaña.
 - Pruebas de componente para carga, estado vacío, reintento, creación, actualización y validación de distribución.
 
-La suite frontend completa reportada tras sincronizar el Bloque 2: **114 passed**. La usuaria confirmó `npm run build` exitoso con Vite 8.3.8 y **47 módulos transformados**. **Bloque 2 validado y cerrado.** La pestaña Gastos conserva un estado informativo temporal; su listado, filtros, registro, detalle e historial siguen pendientes de implementación.
+La suite frontend completa reportada tras sincronizar el Bloque 2: **114 passed**. La usuaria confirmó `npm run build` exitoso con Vite 8.3.8 y **47 módulos transformados**. **Bloque 2 validado y cerrado.** La pestaña Gastos ya incorpora el listado inicial, filtros combinables, ordenamiento global por fecha descendente y paginación local (Bloque 3), pendiente de validación local. El registro, detalle, edición, eliminación e historial siguen pendientes.
 
 ### Observación contractual pendiente
 
