@@ -75,7 +75,7 @@ describe("BudgetExpensesPage",()=>{
  it("opens the full expense detail in a side panel",async()=>{
   getExpenses.mockResolvedValue([{id:"expense-1",date:"2026-12-22",concept:"Reserva",category:"Alojamiento",amount:"850000.00",activity_id:null}]);
   render(<BudgetExpensesPage/>);fireEvent.click(await screen.findByRole("tab",{name:"Gastos"}));
-  fireEvent.click(await screen.findByRole("button",{name:"Ver detalle"}));
+  fireEvent.click(await screen.findAllByRole("button",{name:"Ver detalle"}).then((buttons)=>buttons[0]));
   expect(await screen.findByRole("dialog",{name:/Reserva/})).toBeInTheDocument();
   expect(await screen.findByText("Hotel")).toBeInTheDocument();
   expect(getExpense).toHaveBeenCalledWith("expense-1");expect(getExpenseHistory).toHaveBeenCalledWith("expense-1");
@@ -87,7 +87,7 @@ describe("BudgetExpensesPage",()=>{
    {id:"h1",expense_id:"expense-1",modification_type:"Creación",previous_values:{},new_values:{concept:"Reserva"},modified_at:"2026-11-14T10:00:00-05:00"},
   ]);
   render(<BudgetExpensesPage/>);fireEvent.click(await screen.findByRole("tab",{name:"Gastos"}));
-  fireEvent.click(await screen.findByRole("button",{name:"Ver detalle"}));fireEvent.click(await screen.findByRole("tab",{name:"Historial"}));
+  fireEvent.click(await screen.findAllByRole("button",{name:"Ver detalle"}).then((buttons)=>buttons[0]));fireEvent.click(await screen.findByRole("tab",{name:"Historial"}));
   await waitFor(()=>expect(screen.getAllByText(/Creación|Edición/)).toHaveLength(2));
   const events=screen.getAllByText(/Creación|Edición/);expect(events[0]).toHaveTextContent("Creación");expect(events[1]).toHaveTextContent("Edición");
   expect(screen.getByText("Reserva confirmada")).toBeInTheDocument();
@@ -95,7 +95,7 @@ describe("BudgetExpensesPage",()=>{
  it("shows an empty state when a valid expense has no history events",async()=>{
   getExpenses.mockResolvedValue([{id:"expense-1",date:"2026-12-22",concept:"Reserva",category:"Alojamiento",amount:"850000.00",activity_id:null}]);getExpenseHistory.mockResolvedValue([]);
   render(<BudgetExpensesPage/>);fireEvent.click(await screen.findByRole("tab",{name:"Gastos"}));
-  fireEvent.click(await screen.findByRole("button",{name:"Ver detalle"}));fireEvent.click(await screen.findByRole("tab",{name:"Historial"}));
+  fireEvent.click(await screen.findAllByRole("button",{name:"Ver detalle"}).then((buttons)=>buttons[0]));fireEvent.click(await screen.findByRole("tab",{name:"Historial"}));
   expect(await screen.findByText("Este gasto no tiene eventos de historial.")).toBeInTheDocument();
  });
 
