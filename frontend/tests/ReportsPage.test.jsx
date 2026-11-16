@@ -116,7 +116,7 @@ describe("ReportsPage", () => {
     await waitFor(() => expect(mocks.exportReport).toHaveBeenCalledWith("general", "period-1", expect.objectContaining({
       format: "xlsx", scope: "filtered", filters: { category: "Viajes" }, signal: expect.any(AbortSignal),
     })));
-    expect(await screen.findByRole("status")).toHaveTextContent("Archivo descargado correctamente.");
+    expect(await screen.findByText("Archivo descargado correctamente.", { exact: true })).toBeInTheDocument();
     expect(createUrl).toHaveBeenCalledTimes(1);
     await waitFor(() => expect(revokeUrl).toHaveBeenCalledWith("blob:download"));
   });
