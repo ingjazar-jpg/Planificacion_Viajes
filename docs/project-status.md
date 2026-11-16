@@ -8,9 +8,7 @@
 
 ## 1. Resumen ejecutivo
 
-La implementación del backend BE-001 a BE-010 está validada. Tras incorporar CORS y sus dos pruebas de regresión, la usuaria confirmó la suite backend completa con **197 passed, 0 failed**. FE-001 y FE-002 están validados y cerrados. FE-001 cuenta con **12 pruebas frontend aprobadas**; FE-002, con **37 pruebas frontend aprobadas** y build de producción exitoso. FE-003 tiene refinement aprobado (D1–D27) y sus entregas funcionales están validadas individualmente: administración de períodos, calendario, listado/filtros, CRUD/detalle/navegación y ciclo de vida de actividades. La última suite frontend reportó **84 passed, 0 failed** y build Vite 8.3.8 exitoso con 44 módulos transformados. FE-003 está validado y cerrado, incluida la regresión integrada contra FastAPI. FE-004 inició implementación: el Bloque 1 (servicios y utilidades monetarias) quedó validado con **107 pruebas frontend aprobadas**; tras publicar el Bloque 2 (vista inicial de presupuesto), la usuaria confirmó **114 pruebas frontend aprobadas** en la suite completa y build de producción exitoso con Vite 8.3.8 (47 módulos transformados). El Bloque 2 queda validado. Posteriormente, el Bloque 3 (listado, filtros, ordenamiento global y paginación local) quedó validado con **116 pruebas frontend aprobadas** en 18 archivos y build Vite 8.3.8 exitoso con 48 módulos transformados. El Bloque 4 (formulario lateral de registro de gastos) quedó validado tras corregir dos consultas ambiguas en las pruebas; la usuaria confirmó **118 pruebas frontend aprobadas**. El build de producción Vite 8.3.8 había sido exitoso con 48 módulos transformados antes de ese ajuste, que solo modificó el archivo de pruebas.
-
-El resultado de 195 pruebas corresponde a la ejecución completa validada después de BE-010. Los resultados históricos por bloque son hitos acumulativos, no cantidades que deban sumarse.
+La implementación del backend BE-001 a BE-010 está validada. La usuaria confirmó la suite backend completa con **197 passed, 0 failed**. FE-001, FE-002, FE-003 y FE-004 están validados y cerrados con sus respectivas suites frontend, builds de producción y evidencias de integración registradas en este documento. FE-005 — Informes — completó el refinement el 16-11-2026; su especificación `docs/FE-005.md` v0.1 está publicada y aprobada para implementación con 61 decisiones, 78 requisitos funcionales y 22 criterios de aceptación. La implementación FE-005 aún no ha comenzado. FE-006 permanece pendiente de refinement. La validación reproducible con Python 3.14.10 continúa pendiente como tarea transversal de Sprint 0.
 
 ## 2. Estado por bloque de implementación
 
@@ -274,3 +272,17 @@ La suite frontend completa reportada tras sincronizar el Bloque 2: **114 passed*
 
 API-001 v0.8 devuelve por categoría `allocated_amount`, `spent_amount`, `balance` y `over_budget`, pero no define un porcentaje de ejecución por categoría. FE-004 F08/D6 solicita mostrar dicho porcentaje. La interfaz no inventa ni recalcula ese indicador: debe resolverse mediante una decisión explícita de producto o una modificación contractual independiente, sin alterar silenciosamente API-001.
 
+
+
+## 6.3 FE-005 — Informes
+
+**Estado:** refinement aprobado el 16-11-2026; especificación v0.1 publicada y aprobada para implementación. Implementación pendiente.
+
+- Documento: [FE-005 — Especificación de informes](FE-005.md).
+- Refinement: decisiones FE005-D01 a FE005-D61 consolidadas. D01–D57 aprobadas durante el refinement; D58 opción B aceptada explícitamente; D59–D61 definidas por delegación técnica expresa para optimizar la implementación.
+- Alcance: cuatro pestañas — General, Actividades, Presupuesto y gastos, Comparación histórica.
+- Requisitos: 78 requisitos funcionales y 22 criterios de aceptación.
+- Contratos: tres endpoints de informes individuales y endpoint de comparación histórica definidos en API-001 §5.8. No se crean ni modifican endpoints.
+- Exportación: PDF/XLSX para los tres informes individuales con alcance `filtered` o `period`; la comparación histórica no es exportable.
+- Restricciones: cálculos e indicadores provienen del backend; no persistir filtros ni resultados en almacenamiento local; no modificar SPEC-005, UI-001, API-001 ni DATA-001.
+- Validación: pendiente. No se declara FE-005 validado hasta recibir evidencia local de pruebas, build e integración con FastAPI confirmada por la usuaria.
