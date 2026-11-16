@@ -80,4 +80,24 @@ describe("PeriodProvider", () => {
     await waitFor(() => expect(screen.getByTestId("selected")).toHaveTextContent("period-2028"));
   });
 
+  it("selects the latest created period deterministically when the active period disappeared", async () => {
+    const newerLowerYear = {
+      id: "period-2026-new", name: "Vacaciones 2026", year: 2026,
+      created_at: "2026-03-01T10:00:00-05:00",
+    };
+    const newerHigherYear = {
+      id: "period-2028-new", name: "Vacaciones 2028", year: 2028,
+      created_at: "2026-03-01T10:00:00-05:00",
+    };
+    getPeriods.mockResolvedValueOnce([{
+      ...firstPeriod, created_at: "2026-01-01T10:00:00-05:00",
+    }]).mockResolvedValueOnce([newerLowerYear, newerHigherYear]);
+
+    render(<PeriodProvider><ContextProbe /></PeriodProvider>);
+    await waitFor(() => expect(screen.getByTestId("selected")).toHaveTextContent("period-2027"));
+    await act(async () => screen.getByRole("button", { name: "Refresh" }).click());
+
+    await waitFor(() => expect(screen.getByTestId("selected")).toHaveTextContent("period-2028-new"));
+  });
+
 });
