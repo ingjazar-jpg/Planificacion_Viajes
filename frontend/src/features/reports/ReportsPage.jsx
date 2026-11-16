@@ -327,8 +327,8 @@ function ReportsPage() {
               onPageSizeChange={(size) => changePageSize(activeTab, size)} />
           </>
         )}
+        <HistoricalComparison isActive={activeTab === "comparison"} />
       </section>
-      <HistoricalComparison isActive={activeTab === "comparison"} />
     </div>
   );
 }
