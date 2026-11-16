@@ -114,7 +114,7 @@ describe("CalendarPage", () => {
     fireEvent.click(within(dayAgenda).getByRole("button", { name: /Cena familiar/ }));
     const detail = await screen.findByRole("dialog", { name: "Cena familiar" });
     expect(detail).toHaveTextContent("Casa");
-    expect(detail).toHaveTextContent("19:00–22:00");
+    expect(detail).toHaveTextContent("19:00 – 22:00");
     expect(getActivity).toHaveBeenCalledWith("activity-1");
   });
 
@@ -127,7 +127,7 @@ describe("CalendarPage", () => {
     const detail = await screen.findByRole("dialog", { name: "Cena familiar" });
     fireEvent.click(within(detail).getByRole("button", { name: "Iniciar actividad" }));
     await waitFor(() => expect(updateActivityStatus).toHaveBeenCalledWith("activity-1", "En progreso"));
-    expect(await screen.findByText("En progreso")).toBeInTheDocument();
+    expect(await within(detail).findByText("En progreso")).toBeInTheDocument();
     expect(getCalendar).toHaveBeenCalledTimes(2);
   });
 
