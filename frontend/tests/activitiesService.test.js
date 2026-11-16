@@ -60,7 +60,7 @@ describe("activitiesService", () => {
     });
   });
 
-  it("updates an activity using PUT without adding immutable fields", async () => {
+  it("updates only supplied activity fields using PATCH", async () => {
     const payload = {
       name: "Viaje actualizado", description: "", category: "Viajes",
       destination: "Santa Marta", start_date: "2026-12-20", end_date: "2026-12-22",
@@ -69,10 +69,10 @@ describe("activitiesService", () => {
     request.mockResolvedValue({ data: activity });
     await expect(updateActivity("activity-1", payload)).resolves.toEqual(activity);
     expect(request).toHaveBeenCalledWith("/activities/activity-1", {
-      method: "PUT", body: JSON.stringify(payload),
+      method: "PATCH", body: JSON.stringify(payload),
     });
     expect(payload).not.toHaveProperty("period_id");
-    expect(payload).toHaveProperty("status", "Pendiente");
+    expect(payload).not.toHaveProperty("status");
   });
 
   it("rejects a mutation response without a resource identifier", async () => {
