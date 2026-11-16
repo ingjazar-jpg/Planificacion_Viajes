@@ -126,6 +126,7 @@ describe("ReportsPage", () => {
     await waitFor(() => expect(mocks.refreshPeriods).toHaveBeenCalledTimes(2));
     expect(screen.getByLabelText("Primer período")).toHaveValue("period-2026");
     expect(screen.getByLabelText("Segundo período")).toHaveValue("period-2024");
+    await waitFor(() => expect(mocks.getBudgetComparison).toHaveBeenCalledTimes(3));
     await waitFor(() => expect(mocks.getBudgetComparison).toHaveBeenLastCalledWith(
       "period-2026",
       "period-2024",
