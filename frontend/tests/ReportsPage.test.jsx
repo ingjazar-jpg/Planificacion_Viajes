@@ -8,6 +8,7 @@ const mocks = vi.hoisted(() => ({
   getActivitiesReport: vi.fn(),
   getBudgetReport: vi.fn(),
   getBudgetComparison: vi.fn(),
+  exportReport: vi.fn(),
   refreshPeriods: vi.fn(),
   getActivities: vi.fn(),
 }));
@@ -63,9 +64,73 @@ describe("ReportsPage", () => {
     mocks.getGeneralReport.mockResolvedValue(generalResponse);
     mocks.getActivitiesReport.mockResolvedValue(activitiesResponse);
     mocks.getBudgetComparison.mockResolvedValue(comparisonResponse);
+    mocks.exportReport.mockResolvedValue({ blob: new Blob(["pdf"]), filename: "informe-general-2026.pdf", contentType: "application/pdf" });
     mocks.refreshPeriods.mockResolvedValue(availablePeriods);
     mocks.getActivities.mockResolvedValue([{ id: "activity-1", name: "Viaje familiar", start_date: "2026-12-20", end_date: "2026-12-22" }]);
     mocks.getBudgetReport.mockResolvedValue({ data: { period: generalResponse.data.period, budget: { total_budget: "0.00", categories: [] }, expenses: { total: "0.00", balance: "0.00", execution_percentage: "0.00", by_activity: [], by_category: [], items: [] } } });
+  });
+
+  it("offers only period export when no filters have been applied", async () => {
+    render(<ReportsPage />);
+    await screen.findByText("Vacaciones 2026");
+    fireEvent.click(screen.getByRole("button", { name: "Exportar informe" }));
+    expect(screen.getByLabelText("Alcance de exportación")).toHaveValue("period");
+    expect(screen.getByLabelText("Alcance de exportación").querySelectorAll("option")).toHaveLength(1);
+  });
+
+  it("exports applied filters only and ignores pending filter edits", async () => {
+    const createUrl = vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:download");
+    const revokeUrl = vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => {});
+    render(<ReportsPage />);
+    await screen.findByText("Vacaciones 2026");
+    fireEvent.click(screen.getByRole("button", { name: "Mostrar filtros" }));
+    fireEvent.change(screen.getByLabelText("Categoría"), { target: { value: "Viajes" } });
+    fireEvent.click(screen.getByRole("button", { name: "Aplicar filtros" }));
+    await waitFor(() => expect(mocks.getGeneralReport).toHaveBeenLastCalledWith("period-1", {
+      filters: { category: "Viajes" }, page: 1, page_size: 20,
+    }));
+    fireEvent.change(screen.getByLabelText("Categoría"), { target: { value: "Turismo" } });
+    fireEvent.click(screen.getByRole("button", { name: "Exportar informe" }));
+    expect(screen.getByLabelText("Alcance de exportación").querySelectorAll("option")).toHaveLength(2);
+    fireEvent.change(screen.getByLabelText("Formato de exportación"), { target: { value: "xlsx" } });
+    fireEvent.change(screen.getByLabelText("Alcance de exportación"), { target: { value: "filtered" } });
+    fireEvent.click(screen.getByRole("button", { name: "Exportar", exact: true }));
+    await waitFor(() => expect(mocks.exportReport).toHaveBeenCalledWith("general", "period-1", expect.objectContaining({
+      format: "xlsx", scope: "filtered", filters: { category: "Viajes" }, signal: expect.any(AbortSignal),
+    })));
+    expect(await screen.findByRole("status")).toHaveTextContent("Archivo descargado correctamente.");
+    expect(createUrl).toHaveBeenCalledTimes(1);
+    expect(revokeUrl).toHaveBeenCalledWith("blob:download");
+    createUrl.mockRestore();
+    revokeUrl.mockRestore();
+  });
+
+  it("shows budget group details from the current page without changing backend aggregates", async () => {
+    mocks.getBudgetReport.mockResolvedValue({
+      data: {
+        period: generalResponse.data.period,
+        budget: { total_budget: "500.00", categories: [] },
+        expenses: {
+          total: "300.00", balance: "200.00", execution_percentage: "60.00",
+          by_activity: [{ activity_id: null, activity_name: "Sin actividad asociada", total: "300.00", count: 2 }],
+          by_category: [{ category: "Viajes", total: "300.00", count: 2 }],
+          items: [
+            { id: "expense-1", concept: "Taxi", date: "2026-12-20", category: "Viajes", amount: "100.00", activity_id: null },
+          ],
+        },
+      },
+    });
+    render(<ReportsPage />);
+    await screen.findByText("Vacaciones 2026");
+    fireEvent.click(screen.getByRole("tab", { name: "Presupuesto y gastos" }));
+    const activityGroup = await screen.findByRole("button", { name: /Sin actividad asociada/ });
+    expect(activityGroup).toHaveAttribute("aria-expanded", "false");
+    expect(activityGroup).toHaveTextContent("2 gastos");
+    expect(activityGroup).toHaveTextContent("COP 300.00");
+    fireEvent.click(activityGroup);
+    expect(await screen.findByText("Mostrando los gastos de este grupo incluidos en la página actual.")).toBeInTheDocument();
+    expect(screen.getAllByText("Taxi").length).toBeGreaterThan(0);
+    expect(mocks.getBudgetReport).toHaveBeenCalledTimes(1);
   });
 
   it("loads and renders the general report for the active period", async () => {
