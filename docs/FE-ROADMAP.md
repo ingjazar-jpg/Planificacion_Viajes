@@ -85,6 +85,8 @@ Los seis bloques FE son unidades de planificación e implementación; no implica
 
 **Bloque 4 validado y cerrado:** formulario lateral para registrar gastos con campos obligatorios y opcionales, búsqueda y asociación opcional de actividades del período, validación monetaria exacta (importe mayor que cero), POST contractual con `period_id` global y actualización posterior del listado e indicadores. La usuaria confirmó **118 pruebas frontend aprobadas** en la suite completa. `npm run build` había finalizado exitosamente con Vite 8.3.8 y 48 módulos transformados; la corrección posterior solo ajustó las consultas de dos pruebas, sin modificar código de producción.
 
+**Bloque 5 implementado y publicado; pendiente de validación local:** panel lateral de detalle del gasto, consulta del recurso completo e historial mediante los GET contractuales de API-001, pestañas Información/Historial, timeline cronológico ascendente con fecha/hora `America/Bogota`, campos afectados y valores previos/nuevos, además del estado vacío de historial. Se añadieron pruebas de componente para el detalle, el orden cronológico y el historial sin eventos. Edición y eliminación continúan pendientes.
+
 ### FE-005 — Informes
 
 - Informes General, Actividades y Presupuesto/Gastos.
