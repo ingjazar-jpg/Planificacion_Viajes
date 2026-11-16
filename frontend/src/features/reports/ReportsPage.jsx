@@ -6,6 +6,7 @@ import {
   getBudgetReport,
   getGeneralReport,
 } from "../../services/api/reportsService.js";
+import HistoricalComparison from "./HistoricalComparison.jsx";
 import "./ReportsPage.css";
 
 const REPORT_TABS = [
@@ -309,7 +310,7 @@ function ReportsPage() {
         {!selectedPeriodId && activeTab !== "comparison" ? (
           <EmptyState title="Selecciona un período" message="Crea o selecciona un período para consultar sus informes." />
         ) : activeTab === "comparison" ? (
-          <EmptyState title="Comparación histórica" message="La comparación de dos períodos se incorporará en el bloque correspondiente de FE-005." />
+          null
         ) : activeReport?.isLoading ? (
           <LoadingState message="Generando informe…" />
         ) : activeReport?.error ? (
@@ -327,6 +328,7 @@ function ReportsPage() {
           </>
         )}
       </section>
+      <HistoricalComparison isActive={activeTab === "comparison"} />
     </div>
   );
 }
