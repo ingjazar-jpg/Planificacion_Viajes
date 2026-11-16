@@ -103,7 +103,7 @@ Los seis bloques FE son unidades de planificación e implementación; no implica
 
 ### FE-006 — Gestión de datos e integración
 
-**Estado al 16-11-2026: ESPECIFICACIÓN APROBADA PARA IMPLEMENTACIÓN.** `docs/FE-006.md` v0.2 consolida FE006-DEC-001 a DEC-010, RF-001 a RF-045 y CA-001 a CA-025. No quedan decisiones de Product Owner pendientes.
+**Estado al 16-11-2026: ESPECIFICACIÓN APROBADA PARA IMPLEMENTACIÓN.** `docs/FE-006.md` v0.2 consolida FE006-DEC-001 a DEC-011, RF-001 a RF-045 y CA-001 a CA-025. No quedan decisiones de Product Owner pendientes.
 
 - Catálogo de copias semanales y estados de validación.
 - Restauración con advertencia y confirmación explícita.
