@@ -83,7 +83,7 @@ Los seis bloques FE son unidades de planificación e implementación; no implica
 
 **Bloque 3 validado y cerrado:** listado inicial de gastos, filtros combinables por fechas/categoría/actividad/importe, orden global por fecha descendente y paginación local 10/20/50, con tabla de escritorio y tarjetas móviles. La usuaria confirmó 116 pruebas frontend aprobadas en 18 archivos y build Vite 8.3.8 exitoso con 48 módulos transformados.
 
-**Bloque 4 publicado, pendiente de validación local:** formulario lateral para registrar gastos con campos obligatorios y opcionales, búsqueda y asociación opcional de actividades del período, validación monetaria exacta (importe mayor que cero), POST contractual con `period_id` global y actualización posterior del listado e indicadores. Incluye pruebas para registro correcto y rechazo de importe cero.
+**Bloque 4 validado y cerrado:** formulario lateral para registrar gastos con campos obligatorios y opcionales, búsqueda y asociación opcional de actividades del período, validación monetaria exacta (importe mayor que cero), POST contractual con `period_id` global y actualización posterior del listado e indicadores. La usuaria confirmó **118 pruebas frontend aprobadas** en la suite completa. `npm run build` había finalizado exitosamente con Vite 8.3.8 y 48 módulos transformados; la corrección posterior solo ajustó las consultas de dos pruebas, sin modificar código de producción.
 
 ### FE-005 — Informes
 
@@ -164,11 +164,11 @@ Cada bloque FE se cerrará cuando:
 | FE-001 | Validado y cerrado — 15-11-2026 |
 | FE-002 | Validado y cerrado — 15-11-2026 |
 | FE-003 | Validado y cerrado — 16-11-2026; 84 pruebas frontend aprobadas, build exitoso y regresión integrada FastAPI satisfactoria |
-| FE-004 | Implementación en curso; Bloques 1–3 validados; Bloque 4 publicado, pendiente de validación local |
+| FE-004 | Implementación en curso; Bloques 1–4 validados y cerrados |
 | FE-005 | Pendiente de refinement |
 | FE-006 | Pendiente de refinement |
 
-FE-001, FE-002 y FE-003 están validados y cerrados. FE-003 cerró el 16-11-2026 con 84 pruebas frontend aprobadas, build de producción exitoso y regresión integrada contra FastAPI satisfactoria, confirmada por la usuaria. FE-004 tiene refinement aprobado y especificación v0.1 publicada para implementación; Bloques 1 y 2 validados con 114 pruebas frontend y build de producción exitoso. FE-005 y FE-006 permanecen pendientes de refinement.
+FE-001, FE-002 y FE-003 están validados y cerrados. FE-003 cerró el 16-11-2026 con 84 pruebas frontend aprobadas, build de producción exitoso y regresión integrada contra FastAPI satisfactoria, confirmada por la usuaria. FE-004 tiene refinement aprobado y especificación v0.1 publicada para implementación; Bloques 1–4 validados. El Bloque 4 cerró con 118 pruebas frontend aprobadas y build de producción exitoso en la validación de la entrega. FE-005 y FE-006 permanecen pendientes de refinement.
 
 ## 9. Documentos relacionados
 
