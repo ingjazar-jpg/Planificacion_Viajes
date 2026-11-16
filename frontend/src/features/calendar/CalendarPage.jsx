@@ -2,6 +2,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { EmptyState, ErrorState, LoadingState } from "../../components/common/AsyncState.jsx";
 import { usePeriod } from "../../context/PeriodContext.jsx";
 import { getCalendar } from "../../services/api/calendarService.js";
+import { deleteActivity, getActivity, updateActivityStatus } from "../../services/api/activitiesService.js";
+import ActivityDetailDialog from "../activities/ActivityDetailDialog.jsx";
+import ActivityFormDialog from "../activities/ActivityFormDialog.jsx";
 
 const CATEGORIES = [
   "Viajes", "Transporte", "Alojamiento", "Recreación",
@@ -101,29 +104,6 @@ function CalendarActivity({ activity, dayKey, onSelect }) {
   );
 }
 
-function ActivityDetail({ activity, onClose }) {
-  return (
-    <section className="calendar-activity-detail" role="region" aria-label="Detalle de actividad">
-      <div className="calendar-detail-heading">
-        <div>
-          <p className="eyebrow">DETALLE DE ACTIVIDAD</p>
-          <h3>{activity.name}</h3>
-        </div>
-        <button className="secondary-action" type="button" onClick={onClose}>Cerrar detalle</button>
-      </div>
-      {activity.description && <p>{activity.description}</p>}
-      <dl className="calendar-detail-list">
-        <div><dt>Fechas</dt><dd>{activity.start_date} – {activity.end_date}</dd></div>
-        <div><dt>Horario</dt><dd>{activity.start_time}–{activity.end_time}</dd></div>
-        <div><dt>Categoría</dt><dd>{activity.category}</dd></div>
-        <div><dt>Prioridad</dt><dd>{activity.priority}</dd></div>
-        <div><dt>Estado</dt><dd>{activity.status}</dd></div>
-        {activity.destination && <div><dt>Destino</dt><dd>{activity.destination}</dd></div>}
-        {activity.is_overdue && <div><dt>Vencimiento</dt><dd>Actividad vencida</dd></div>}
-      </dl>
-    </section>
-  );
-}
 
 function CalendarPage() {
   const { selectedPeriodId, selectedPeriod } = usePeriod();
@@ -133,7 +113,15 @@ function CalendarPage() {
   const [status, setStatus] = useState("");
   const [activities, setActivities] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedActivityId, setSelectedActivityId] = useState(null);
   const [selectedActivity, setSelectedActivity] = useState(null);
+  const [isDetailLoading, setIsDetailLoading] = useState(false);
+  const [detailError, setDetailError] = useState(null);
+  const [isMutatingActivity, setIsMutatingActivity] = useState(false);
+  const [activityActionError, setActivityActionError] = useState("");
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingActivity, setEditingActivity] = useState(null);
+  const detailRequestSequence = useRef(0);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const requestSequence = useRef(0);
@@ -141,6 +129,7 @@ function CalendarPage() {
   useEffect(() => {
     setVisibleDate(getInitialDate(selectedPeriod));
     setSelectedDate(null);
+    setSelectedActivityId(null);
     setSelectedActivity(null);
     setActivities([]);
   }, [selectedPeriodId, selectedPeriod?.start_date, selectedPeriod?.end_date]);
@@ -159,7 +148,6 @@ function CalendarPage() {
     setIsLoading(true);
     setError(null);
     setActivities([]);
-    setSelectedActivity(null);
     try {
       const result = await getCalendar({
         period_id: selectedPeriodId,
@@ -188,6 +176,7 @@ function CalendarPage() {
   const goToMonth = (offset) => {
     setVisibleDate((current) => new Date(current.getFullYear(), current.getMonth() + offset, 1));
     setSelectedDate(null);
+    setSelectedActivityId(null);
     setSelectedActivity(null);
   };
 
@@ -205,8 +194,78 @@ function CalendarPage() {
 
   const selectActivity = (activity, dayKey) => {
     setSelectedDate(dayKey);
-    setSelectedActivity(activity);
+    setSelectedActivityId(activity.id);
   };
+
+  useEffect(() => {
+    if (!selectedActivityId) {
+      setSelectedActivity(null);
+      setDetailError(null);
+      setIsDetailLoading(false);
+      return undefined;
+    }
+    const requestId = ++detailRequestSequence.current;
+    setIsDetailLoading(true);
+    setDetailError(null);
+    getActivity(selectedActivityId).then((result) => {
+      if (requestId === detailRequestSequence.current) {
+        if (result.period_id !== selectedPeriodId) {
+          setDetailError(new Error("La actividad no pertenece al período seleccionado."));
+        } else {
+          setSelectedActivity(result);
+        }
+      }
+    }).catch((requestError) => {
+      if (requestId === detailRequestSequence.current) setDetailError(requestError);
+    }).finally(() => {
+      if (requestId === detailRequestSequence.current) setIsDetailLoading(false);
+    });
+    return () => { detailRequestSequence.current += 1; };
+  }, [selectedActivityId, selectedPeriodId]);
+
+  async function handleStatusChange(nextStatus) {
+    if (!selectedActivity) return;
+    setIsMutatingActivity(true);
+    setActivityActionError("");
+    try {
+      const updated = await updateActivityStatus(selectedActivity.id, nextStatus);
+      setSelectedActivity(updated);
+      loadCalendar();
+    } catch (requestError) {
+      setActivityActionError(requestError.message || "No fue posible actualizar el estado de la actividad.");
+    } finally {
+      setIsMutatingActivity(false);
+    }
+  }
+
+  async function handleDeleteActivity() {
+    if (!selectedActivity) return;
+    setIsMutatingActivity(true);
+    setActivityActionError("");
+    try {
+      await deleteActivity(selectedActivity.id);
+      setSelectedActivityId(null);
+      setSelectedActivity(null);
+      loadCalendar();
+    } catch (requestError) {
+      setActivityActionError(requestError.message || "No fue posible eliminar la actividad.");
+    } finally {
+      setIsMutatingActivity(false);
+    }
+  }
+
+  function openEditActivity(activity) {
+    setEditingActivity(activity);
+    setSelectedActivityId(null);
+    setIsFormOpen(true);
+  }
+
+  async function handleActivitySaved(savedActivity) {
+    setIsFormOpen(false);
+    setEditingActivity(null);
+    loadCalendar();
+    setSelectedActivityId(savedActivity.id);
+  }
 
   const activitiesForDate = useMemo(() => {
     if (!selectedDate) return [];
@@ -352,7 +411,7 @@ function CalendarPage() {
                   <ul>
                     {activitiesForDate.map((activity) => (
                       <li key={activity.id}>
-                        <button className="calendar-agenda-item" type="button" onClick={() => setSelectedActivity(activity)}>
+                        <button className="calendar-agenda-item" type="button" onClick={() => setSelectedActivityId(activity.id)}>
                           <strong>{activity.name}</strong>
                           <span>{activity.start_time}–{activity.end_time} · {activity.status} · {activity.priority}</span>
                         </button>
@@ -362,7 +421,33 @@ function CalendarPage() {
                 )}
               </section>
             )}
-            {selectedActivity && <ActivityDetail activity={selectedActivity} onClose={() => setSelectedActivity(null)} />}
+            <ActivityDetailDialog
+              open={Boolean(selectedActivityId)}
+              activity={selectedActivity}
+              isLoading={isDetailLoading}
+              error={detailError}
+              onRetry={() => {
+                if (selectedActivityId) {
+                  setDetailError(null);
+                  setSelectedActivity(null);
+                  setSelectedActivityId(null);
+                  Promise.resolve().then(() => setSelectedActivityId(selectedActivityId));
+                }
+              }}
+              onClose={() => { if (!isMutatingActivity) setSelectedActivityId(null); }}
+              onEdit={openEditActivity}
+              onChangeStatus={handleStatusChange}
+              onDelete={handleDeleteActivity}
+              isMutating={isMutatingActivity}
+              actionError={activityActionError}
+            />
+            <ActivityFormDialog
+              open={isFormOpen}
+              activity={editingActivity}
+              period={selectedPeriod}
+              onClose={() => { setIsFormOpen(false); setEditingActivity(null); }}
+              onSaved={handleActivitySaved}
+            />
           </>
         )}
       </section>
