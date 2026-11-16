@@ -10,16 +10,17 @@ Aplicación web local para planificar períodos de vacaciones decembrinas, admin
 - Contratos REST API-001 v0.8: aprobados.
 - Interfaz UI-001 v0.1: aprobada.
 - Línea base técnica Sprint 0: aprobada el 14-11-2026.
-- Backend: BE-001 a BE-010 validados; regresión completa posterior al ajuste CORS: **197 passed, 0 failed**.
-- BE-007 — API de presupuestos y gastos: implementada y validada; las 16 pruebas nuevas del bloque pasan dentro de la suite completa.
-- BE-009 — API de Dashboard: validada localmente; incluye respuesta con importes cero cuando no existe presupuesto.
-- BE-010 — API de informes: validada localmente; tres informes, comparación histórica, filtros, agrupaciones y exportaciones PDF/XLSX; 10 pruebas nuevas incluidas en las 195 aprobadas.
-- Frontend: **FE-001, FE-002 y FE-003 validados y cerrados**. FE-001: 12 pruebas aprobadas. FE-002: 37 pruebas aprobadas y build exitoso. FE-003: 84 pruebas aprobadas, build Vite 8.3.8 exitoso (44 módulos) y regresión integrada contra FastAPI satisfactoria, incluida la comprobación de persistencia, transiciones, cancelación y eliminación en cascada, confirmada por la usuaria el 16-11-2026.
-- Validación reproducible del backend con Python 3.14.10 y revisión/incorporación de lockfiles: pendientes.
+- Backend: BE-001 a BE-010 implementados y validados; suite completa: **197 passed, 0 failed**.
+- Frontend: FE-001 a FE-006 implementados, validados y cerrados; suite completa: **170 passed, 0 failed**.
+- Build de producción frontend: exitoso con Vite 8.3.8.
+- Integración real del frontend con FastAPI: validada.
+- Diseño responsive: revisión satisfactoria desde 360 px.
+- Accesibilidad: revisión satisfactoria conforme a WCAG 2.2 AA.
+- Runtime Python 3.14.10: validación reproducible completada en entorno temporal aislado.
 
-Consulta el [estado detallado del proyecto](docs/project-status.md) para ver capacidades completadas, trabajo pendiente, criterios de cierre y flujo de validación.
+Consulta el [estado detallado del proyecto](docs/project-status.md) para conocer capacidades, evidencias de validación, trabajo pendiente y próximos pasos.
 
-Los documentos aprobados son la fuente de verdad del proyecto. Los cambios funcionales o técnicos deberán reflejarse primero en las especificaciones correspondientes y aprobarse antes de modificar la implementación.
+Los documentos aprobados son la fuente de verdad del proyecto. Cualquier cambio funcional o técnico deberá reflejarse primero en las especificaciones correspondientes y aprobarse antes de modificar la implementación.
 
 ## Stack tecnológico obligatorio
 
@@ -49,48 +50,45 @@ Los documentos aprobados son la fuente de verdad del proyecto. Los cambios funci
 - Moneda: COP.
 - Zona horaria: `America/Bogota`.
 
-## Organización prevista
+## Organización del repositorio
 
-```text
-backend/
-frontend/
-data/
-docs/
-specs/
-```
-
-La estructura detallada se materializará durante Sprint 0 conforme a ARCH-001. Los datos locales, respaldos, entornos virtuales, dependencias instaladas y registros no deben versionarse.
+La organización del proyecto se distribuye en los directorios `backend/`, `frontend/`, `data/`, `docs/` y `specs/`. Los datos locales, respaldos, entornos virtuales, dependencias instaladas, archivos temporales y registros no deben versionarse.
 
 ## Calidad y criterios de trabajo
 
 - Cobertura de pruebas backend objetivo: mínimo 80 %.
-- Pruebas de flujos principales del frontend.
+- Pruebas automatizadas de los flujos principales del frontend.
 - Accesibilidad: WCAG 2.2 AA.
 - Diseño responsive desde 360 px.
-- Compatibilidad con las últimas dos versiones principales de Chrome, Edge, Firefox y Safari.
+- Compatibilidad objetivo con las últimas dos versiones principales de Chrome, Edge, Firefox y Safari.
 - Tareas pequeñas y verificables de máximo 30 minutos.
 - No iniciar trabajo dependiente de una aprobación pendiente.
 
-## Fuente documental
+## Documentación de referencia
 
-Los documentos funcionales, de arquitectura, datos, API e interfaz aprobados se incorporarán al repositorio en `specs/` y `docs/`. Hasta que se incorporen, este README resume las decisiones principales, pero no sustituye esos documentos.
+Las especificaciones aprobadas y los documentos de arquitectura, datos, API e interfaz prevalecen sobre este README. Este archivo sirve como punto de entrada y resumen del repositorio; no sustituye las especificaciones ni el seguimiento detallado.
 
-## Documentación operativa
+### Documentación de implementación frontend
+
+- [Mapa de implementación frontend — FE-001 a FE-006](docs/FE-ROADMAP.md)
+- [FE-001 — Fundación frontend](docs/FE-001.md)
+- [FE-002 — Dashboard y alertas](docs/FE-002.md)
+- [FE-003 — Calendario y actividades](docs/FE-003.md)
+- [FE-004 — Presupuestos y gastos](docs/FE-004.md)
+- [FE-005 — Informes](docs/FE-005.md)
+- [FE-006 — Configuración y respaldos](docs/FE-006.md)
+
+Los seis bloques frontend están implementados, validados y cerrados. Sus criterios, alcance y evidencias específicas se mantienen en cada documento.
+
+### Documentación operativa
 
 - [Línea base técnica aprobada](docs/sprint-0-technical-baseline.md)
 - [Guía de desarrollo local](docs/local-development.md)
-- [Script local de lockfiles](scripts/prepare-local-lockfiles.ps1)
+- [Script de validación local del entorno](scripts/prepare-local-lockfiles.ps1)
 - [Revisión de preparación para implementación](docs/implementation-readiness-review.md)
-
-## Documentación de implementación frontend
-
-- [Mapa de implementación frontend — seis bloques FE](docs/FE-ROADMAP.md)
-- [FE-001 — Especificación de fundación frontend](docs/FE-001.md)
-- [FE-002 — Dashboard y alertas](docs/FE-002.md)
-- [FE-003 — Calendario y actividades](docs/FE-003.md)
-
-FE-001, FE-002 y FE-003 están validados y cerrados. FE-001 incorpora el cliente HTTP centralizado, contexto global del período, selector conectado a la API y estados comunes. FE-002 incorpora Dashboard, gráficos y panel de alertas integrados con BE-006 y BE-009; su validación local reportó 37 pruebas aprobadas, build de producción exitoso y comprobaciones manuales de integración, responsive y teclado. FE-003 cerró con 84 pruebas frontend aprobadas, build de producción exitoso y regresión integrada contra FastAPI satisfactoria. FE-004 a FE-006 permanecen pendientes de refinement. La validación reproducible del backend con Python 3.14.10 continúa pendiente.
+- [Estado detallado del proyecto](docs/project-status.md)
 
 ## Desarrollo local
 
-La configuración de dependencias está incorporada. La guía local describe la instalación inicial, incluida la generación y versionado de `frontend/package-lock.json`. La aplicación funcional y sus comandos de ejecución se completarán en las siguientes tareas.
+Consulta la [guía de desarrollo local](docs/local-development.md) y la línea base técnica para conocer los runtimes, dependencias y validaciones del entorno. Antes de sincronizar cambios o preparar commits, revisa el estado de Git y preserva cualquier trabajo local no confirmado.
+
