@@ -184,7 +184,7 @@ La advertencia deprecatoria de Starlette relacionada con `httpx` no produjo fall
 
 ### 6.2 FE-004 — Presupuesto y gastos
 
-**Estado:** refinement aprobado; Bloques 1–6 implementados y publicados. La usuaria confirmó **126 pruebas frontend aprobadas** para el Bloque 6; el build de producción de este bloque está pendiente de confirmación.
+**Estado:** refinement aprobado; Bloques 1–6 implementados, publicados y validados. La usuaria confirmó **126 pruebas frontend aprobadas** para el Bloque 6 y build de producción exitoso.
 
 - Documento: `docs/FE-004.md` v0.1.
 - Decisiones aprobadas: D1–D43. D43 opción A resuelve la ausencia de ordenamiento contractual: GET /expenses consulta el conjunto filtrado completo sin page/page_size; el frontend ordena globalmente por fecha descendente y pagina localmente con 10/20/50.
@@ -194,13 +194,13 @@ La advertencia deprecatoria de Starlette relacionada con `httpx` no produjo fall
 - Bloque 3 validado: listado completo de gastos, filtros combinables, ordenamiento global por fecha descendente y paginación local 10/20/50. Evidencia: 116 pruebas frontend aprobadas en 18 archivos y build exitoso con 48 módulos transformados.
 - Bloque 4 validado: formulario lateral de registro, actividad opcional del período, campos opcionales colapsados, validación monetaria exacta y actualización del listado e indicadores tras crear. Evidencia: 118 pruebas frontend aprobadas. El ajuste que resolvió dos consultas ambiguas se limitó al archivo de pruebas; no modificó código de producción ni contratos.
 - Bloque 5 validado y cerrado: panel lateral de detalle, consulta contractual `GET /expenses/{expense_id}`, pestañas Información/Historial, consulta `GET /expenses/{expense_id}/history`, línea de tiempo cronológica ascendente y estado vacío. Evidencia de usuaria: 121 pruebas frontend aprobadas y build de producción exitoso.
-- Bloque 6 implementado y publicado; suite frontend validada con **126 passed**, confirmada por la usuaria. Build de producción pendiente de confirmación. Alcance: edición desde el panel lateral mediante `PATCH /expenses/{expense_id}` enviando únicamente campos modificados; importes con validación decimal exacta; campos opcionales limpiados enviados como `null`; `period_id` nunca editable ni enviado. Incluye prevención de doble envío, actualización del gasto y del historial, refresco de indicadores y listado, y eliminación mediante `DELETE /expenses/{expense_id}` con confirmación que muestra todos los datos y advierte la eliminación definitiva del historial. Se añadieron pruebas para edición parcial, campos opcionales, edición sin cambios, confirmación de eliminación y cancelación.
+- Bloque 6 implementado, publicado y validado: **126 pruebas frontend aprobadas** y `npm run build` exitoso, ambos confirmados por la usuaria. Alcance: edición desde el panel lateral mediante `PATCH /expenses/{expense_id}` enviando únicamente campos modificados; importes con validación decimal exacta; campos opcionales limpiados enviados como `null`; `period_id` nunca editable ni enviado. Incluye prevención de doble envío, actualización del gasto y del historial, refresco de indicadores y listado, y eliminación mediante `DELETE /expenses/{expense_id}` con confirmación que muestra todos los datos y advierte la eliminación definitiva del historial. Se añadieron pruebas para edición parcial, campos opcionales, edición sin cambios, confirmación de eliminación y cancelación.
 
 ## 7. Calidad y validación
 
 - Última suite backend completa confirmada por la usuaria, posterior al ajuste CORS: **197 passed, 0 failed**.
 - Suite frontend FE-001: **12 passed, 0 failed**.
-- FE-004 Bloque 5: **121 pruebas frontend aprobadas** y `npm run build` exitoso, confirmados por la usuaria. FE-004 Bloque 6: **126 pruebas frontend aprobadas**; build de producción pendiente de confirmación.
+- FE-004 Bloque 5: **121 pruebas frontend aprobadas** y `npm run build` exitoso. FE-004 Bloque 6: **126 pruebas frontend aprobadas** y `npm run build` exitoso, ambos confirmados por la usuaria.
 - Suite frontend FE-002: **37 passed, 0 failed** en 8 archivos; build de producción exitoso.
 - FE-003 administración de períodos: **48 passed, 0 failed** en 10 archivos; build exitoso.
 - FE-003 calendario mensual primera entrega: **59 passed, 0 failed** en 12 archivos; build Vite 8.3.8 exitoso; validación visual/funcional confirmada por la usuaria.
@@ -235,7 +235,7 @@ Las especificaciones aprobadas siguen siendo la fuente de verdad funcional y té
 
 ## 10. Próximos pasos inmediatos
 
-1. Continuar FE-004 con el detalle e historial de gastos, seguido de edición y eliminación conforme a la especificación aprobada.
+1. Continuar con FE-005: iniciar el refinement de Informes conforme a la especificación aprobada y a los contratos de API-001.
 2. Mantener pendiente la validación reproducible con Python 3.14.10, según la línea base técnica aprobada.
 3. Refinar FE-005 y FE-006 después de completar el trabajo priorizado.
 
@@ -268,7 +268,7 @@ Publicado en GitHub y validado localmente en pruebas:
 - Confirmación al descartar cambios antes de cambiar de pestaña.
 - Pruebas de componente para carga, estado vacío, reintento, creación, actualización y validación de distribución.
 
-La suite frontend completa reportada tras sincronizar el Bloque 2: **114 passed**. La usuaria confirmó `npm run build` exitoso con Vite 8.3.8 y **47 módulos transformados**. **Bloque 2 validado y cerrado.** La pestaña Gastos ya incorpora el listado inicial, filtros combinables, ordenamiento global por fecha descendente y paginación local (Bloque 3). La usuaria confirmó 116 pruebas frontend aprobadas en 18 archivos y build Vite 8.3.8 exitoso con 48 módulos transformados. Bloque 3 validado y cerrado. El Bloque 4 incorporó el formulario lateral de registro y quedó validado con 118 pruebas. El Bloque 5 (detalle e historial) quedó validado con 121 pruebas y build exitoso. El Bloque 6 (edición y eliminación) está implementado y publicado; pendiente de validación local.
+La suite frontend completa reportada tras sincronizar el Bloque 2: **114 passed**. La usuaria confirmó `npm run build` exitoso con Vite 8.3.8 y **47 módulos transformados**. **Bloque 2 validado y cerrado.** La pestaña Gastos ya incorpora el listado inicial, filtros combinables, ordenamiento global por fecha descendente y paginación local (Bloque 3). La usuaria confirmó 116 pruebas frontend aprobadas en 18 archivos y build Vite 8.3.8 exitoso con 48 módulos transformados. Bloque 3 validado y cerrado. El Bloque 4 incorporó el formulario lateral de registro y quedó validado con 118 pruebas. El Bloque 5 (detalle e historial) quedó validado con 121 pruebas y build exitoso. El Bloque 6 (edición y eliminación) está implementado, publicado y validado localmente con 126 pruebas aprobadas y build de producción exitoso.
 
 ### Observación contractual pendiente
 
