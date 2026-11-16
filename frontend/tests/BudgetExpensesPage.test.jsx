@@ -117,7 +117,6 @@ describe("BudgetExpensesPage",()=>{
   render(<BudgetExpensesPage/>);fireEvent.click(await screen.findByRole("tab",{name:"Gastos"}));
   fireEvent.click((await screen.findAllByRole("button",{name:"Ver detalle"}))[0]);
   fireEvent.click(await screen.findByRole("button",{name:"Editar gasto"}));
-  fireEvent.click(screen.getByRole("button",{name:"Mostrar campos opcionales"}));
   fireEvent.change(screen.getByLabelText("Descripción del gasto (edición)"),{target:{value:""}});
   fireEvent.click(screen.getByRole("button",{name:"Guardar cambios"}));
   await waitFor(()=>expect(updateExpense).toHaveBeenCalledWith("expense-1",{description:null}));
