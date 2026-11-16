@@ -31,7 +31,7 @@ export function PeriodProvider({ children }) {
           return currentId;
         }
         return [...nextPeriods].sort((left, right) => {
-          const dateOrder = String(right.created_at ?? "").localeCompare(String(left.created_at ?? ""));
+          const dateOrder = new Date(right.created_at).getTime() - new Date(left.created_at).getTime();
           if (dateOrder !== 0) return dateOrder;
           return Number(right.year ?? 0) - Number(left.year ?? 0);
         })[0]?.id ?? null;
