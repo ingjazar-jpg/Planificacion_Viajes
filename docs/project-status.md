@@ -178,7 +178,8 @@ La advertencia deprecatoria de Starlette relacionada con `httpx` no produjo fall
 - **Listado y filtros de actividades: primera entrega validada y cerrada el 16-11-2026.** La usuaria confirmó localmente **68 passed, 0 failed** en 14 archivos y build Vite 8.3.8 exitoso con 42 módulos transformados. La validación visual confirmó tabla de escritorio, tarjetas móviles, filtros combinados de categoría/prioridad/estado/destino/fechas, limpieza, validación de rango inválido sin consulta, estados vacío y error/reintento y alternancia Calendario/Listado. Vitest mostró únicamente un aviso informativo de creación de entornos jsdom.
 - **FE-003 — VALIDADO Y CERRADO el 16-11-2026.** Todas las entregas funcionales están validadas individualmente. La suite frontend completa confirmó **84 passed, 0 failed** y el build Vite 8.3.8 finalizó correctamente con 44 módulos transformados. La usuaria confirmó que la regresión integrada con FastAPI, con ambos servidores iniciados, se completó sin problemas; quedaron cubiertos los flujos de persistencia, transiciones, cancelación, eliminación en cascada y actualización de calendario/listado.
 - **FE-004 — Presupuesto y gastos:** refinement aprobado el 16-11-2026. La especificación `docs/FE-004.md` v0.1 está publicada y aprobada para implementación; incluye 43 decisiones (D1–D43), 68 requisitos funcionales, contratos, criterios de aceptación y estrategia de pruebas. D43 opción A establece consultar el conjunto completo filtrado, ordenar globalmente por fecha descendente en frontend y paginar localmente con 10/20/50. No se modifican API-001 ni BE-007. La implementación y validación local están pendientes.
-- FE-005 y FE-006 permanecen pendientes de refinement.
+- **FE-005 — Informes: REFINEMENT APROBADO; ESPECIFICACIÓN PUBLICADA PARA IMPLEMENTACIÓN.** `docs/FE-005.md` v0.1 consolida D01–D61, 78 requisitos funcionales, 22 criterios de aceptación, contratos API-001 §5.8, estados de interfaz, pruebas y Definition of Done. La implementación y validación local están pendientes.
+- FE-006 permanece pendiente de refinement.
 
 ### 6.2 FE-004 — Presupuesto y gastos
 
@@ -233,9 +234,9 @@ Las especificaciones aprobadas siguen siendo la fuente de verdad funcional y té
 
 ## 10. Próximos pasos inmediatos
 
-1. Continuar con FE-005: iniciar el refinement de Informes conforme a la especificación aprobada y a los contratos de API-001.
+1. Iniciar la implementación FE-005 conforme a `docs/FE-005.md` v0.1, sin modificar los contratos de API-001.
 2. Mantener pendiente la validación reproducible con Python 3.14.10, según la línea base técnica aprobada.
-3. Refinar FE-005 y FE-006 después de completar el trabajo priorizado.
+3. Refinar FE-006 después de completar o priorizar el trabajo de FE-005.
 
 ---
 
