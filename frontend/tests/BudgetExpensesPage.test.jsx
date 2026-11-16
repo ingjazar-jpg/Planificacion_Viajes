@@ -20,4 +20,30 @@ describe("BudgetExpensesPage",()=>{
  it("blocks allocations above the general budget",async()=>{render(<BudgetExpensesPage/>);fireEvent.click(await screen.findByRole("button",{name:"Editar presupuesto"}));fireEvent.change(screen.getByLabelText("Presupuesto general"),{target:{value:"100.00"}});fireEvent.change(screen.getByLabelText("Viajes"),{target:{value:"150.00"}});expect(screen.getByRole("button",{name:"Guardar presupuesto"})).toBeDisabled();});
  it("confirms discarding edits before changing tabs",async()=>{const confirm=vi.spyOn(window,"confirm").mockReturnValue(false);render(<BudgetExpensesPage/>);fireEvent.click(await screen.findByRole("button",{name:"Editar presupuesto"}));fireEvent.change(screen.getByLabelText("Presupuesto general"),{target:{value:"5200000.00"}});fireEvent.click(screen.getByRole("tab",{name:"Gastos"}));expect(confirm).toHaveBeenCalled();expect(screen.getByRole("tab",{name:"Presupuesto"})).toHaveAttribute("aria-selected","true");});
  it("updates an existing budget through PUT",async()=>{render(<BudgetExpensesPage/>);fireEvent.click(await screen.findByRole("button",{name:"Editar presupuesto"}));fireEvent.change(screen.getByLabelText("Presupuesto general"),{target:{value:"5100000.00"}});fireEvent.click(screen.getByRole("button",{name:"Guardar presupuesto"}));await waitFor(()=>expect(updateBudget).toHaveBeenCalledWith(period.id,expect.objectContaining({total_budget:"5100000.00"})));});
+
+ it("loads the complete expense collection and sorts globally by date descending",async()=>{
+  getExpenses.mockResolvedValueOnce([
+   {id:"e1",date:"2026-12-01",concept:"Compra temprana",category:"Otros",amount:"100.00",activity_id:null},
+   {id:"e2",date:"2026-12-20",concept:"Compra reciente",category:"Viajes",amount:"250.00",activity_id:null},
+   {id:"e3",date:"2026-12-10",concept:"Compra media",category:"Transporte",amount:"150.00",activity_id:null},
+  ]);
+  render(<BudgetExpensesPage/>);
+  fireEvent.click(await screen.findByRole("tab",{name:"Gastos"}));
+  expect(await screen.findByText("Compra reciente")).toBeInTheDocument();
+  expect(screen.getAllByRole("row").slice(1).map((row)=>row.cells[1].textContent)).toEqual(["Compra reciente","Compra media","Compra temprana"]);
+  expect(getExpenses).toHaveBeenCalledWith({period_id:period.id,start_date:"",end_date:"",category:"",activity_id:"",min_amount:"",max_amount:""});
+ });
+ it("applies combined filters and resets local pagination",async()=>{
+  getExpenses.mockResolvedValue(Array.from({length:22},(_,i)=>({id:`e${i}`,date:`2026-12-${String(22-i).padStart(2,"0")}`,concept:`Gasto ${i}`,category:"Viajes",amount:"10.00",activity_id:null})));
+  render(<BudgetExpensesPage/>);
+  fireEvent.click(await screen.findByRole("tab",{name:"Gastos"}));
+  expect(await screen.findByText("Gasto 0")).toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button",{name:"Siguiente"}));
+  expect(screen.getByText("Página 2 de 2")).toBeInTheDocument();
+  fireEvent.change(screen.getByLabelText("Filtrar por categoría"),{target:{value:"Viajes"}});
+  fireEvent.change(screen.getByLabelText("Fecha desde"),{target:{value:"2026-12-01"}});
+  fireEvent.click(screen.getByRole("button",{name:"Aplicar filtros"}));
+  await waitFor(()=>expect(getExpenses).toHaveBeenLastCalledWith({period_id:period.id,start_date:"2026-12-01",end_date:"",category:"Viajes",activity_id:"",min_amount:"",max_amount:""}));
+  expect(screen.getByText("Página 1 de 2")).toBeInTheDocument();
+ });
 });
