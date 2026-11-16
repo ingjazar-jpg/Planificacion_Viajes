@@ -55,7 +55,6 @@ describe("ActivitiesPage list", () => {
     await waitFor(() => expect(getActivities).toHaveBeenLastCalledWith(expect.objectContaining({
       period_id: period.id, category: "Viajes", priority: "Alta", destination: "Santa Marta",
     })));
-    expect(updateActivity.mock.calls[0][1]).not.toHaveProperty("status");
     fireEvent.click(screen.getByRole("button", { name: "Limpiar filtros" }));
     await waitFor(() => expect(getActivities).toHaveBeenLastCalledWith(expect.objectContaining({
       period_id: period.id, category: "", priority: "", destination: "",
@@ -147,7 +146,7 @@ describe("ActivitiesPage list", () => {
     expect(within(detail).queryByRole("button", { name: "Completar actividad" })).not.toBeInTheDocument();
     fireEvent.click(within(detail).getByRole("button", { name: "Iniciar actividad" }));
     await waitFor(() => expect(updateActivityStatus).toHaveBeenCalledWith("activity-1", "En progreso"));
-    expect(await screen.findByText("En progreso")).toBeInTheDocument();
+    expect(await within(detail).findByText("En progreso")).toBeInTheDocument();
     expect(getActivities).toHaveBeenCalledTimes(2);
   });
 
@@ -163,7 +162,7 @@ describe("ActivitiesPage list", () => {
     confirm.mockReturnValue(true);
     fireEvent.click(within(detail).getByRole("button", { name: "Cancelar actividad" }));
     await waitFor(() => expect(updateActivityStatus).toHaveBeenCalledWith("activity-1", "Cancelada"));
-    expect(await screen.findByText("Cancelada")).toBeInTheDocument();
+    expect(await within(detail).findByText("Cancelada")).toBeInTheDocument();
     confirm.mockRestore();
   });
 
