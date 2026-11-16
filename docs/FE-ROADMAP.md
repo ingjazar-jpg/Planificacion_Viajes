@@ -83,6 +83,8 @@ Los seis bloques FE son unidades de planificación e implementación; no implica
 
 **Bloque 3 validado y cerrado:** listado inicial de gastos, filtros combinables por fechas/categoría/actividad/importe, orden global por fecha descendente y paginación local 10/20/50, con tabla de escritorio y tarjetas móviles. La usuaria confirmó 116 pruebas frontend aprobadas en 18 archivos y build Vite 8.3.8 exitoso con 48 módulos transformados.
 
+**Bloque 4 publicado, pendiente de validación local:** formulario lateral para registrar gastos con campos obligatorios y opcionales, búsqueda y asociación opcional de actividades del período, validación monetaria exacta (importe mayor que cero), POST contractual con `period_id` global y actualización posterior del listado e indicadores. Incluye pruebas para registro correcto y rechazo de importe cero.
+
 ### FE-005 — Informes
 
 - Informes General, Actividades y Presupuesto/Gastos.
@@ -162,7 +164,7 @@ Cada bloque FE se cerrará cuando:
 | FE-001 | Validado y cerrado — 15-11-2026 |
 | FE-002 | Validado y cerrado — 15-11-2026 |
 | FE-003 | Validado y cerrado — 16-11-2026; 84 pruebas frontend aprobadas, build exitoso y regresión integrada FastAPI satisfactoria |
-| FE-004 | Implementación en curso; Bloques 1, 2 y 3 validados; Bloque 3: 116 pruebas y build exitoso |
+| FE-004 | Implementación en curso; Bloques 1–3 validados; Bloque 4 publicado, pendiente de validación local |
 | FE-005 | Pendiente de refinement |
 | FE-006 | Pendiente de refinement |
 
