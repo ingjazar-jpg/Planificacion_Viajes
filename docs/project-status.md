@@ -141,7 +141,7 @@ Cualquier endpoint transversal adicional que la revisión identifique como falta
 
 FE-001 a FE-005 están implementados y validados. El trabajo funcional frontend pendiente se concentra en FE-006 — Gestión de datos e integración — y en la regresión transversal de cierre.
 
-- Implementar el catálogo de copias semanales y la restauración confirmada conforme a FE-006, una vez aprobada su especificación.
+- Implementar el catálogo de copias semanales y la restauración confirmada conforme a `docs/FE-006.md` v0.2 aprobada.
 - Conectar la restauración con el contexto global de períodos y garantizar la recarga de datos, incluso si el identificador del período activo no cambia.
 - Ejecutar pruebas integrales frontend-backend y regresión de FE-001 a FE-006.
 - Verificar accesibilidad, responsive y compatibilidad indicadas en SPEC-006.
@@ -161,7 +161,7 @@ El mapa de implementación de seis bloques se mantiene en `docs/FE-ROADMAP.md`. 
 
 **FE-005 — VALIDADO Y CERRADO el 16-11-2026.** La usuaria confirmó cinco bloques implementados, suite frontend completa con **150 passed, 0 failed** en 20 archivos, `npm run build` exitoso con Vite 8.3.8 y revisión visual/funcional satisfactoria. La especificación v0.2 incluye FE005-D01 a D62, RF-001 a RF-090 y CA-001 a CA-022 + B5-CA01 a B5-CA12. El commit `0789bac9920bdab27df3c9244d627ac54e477520` corrigió una consulta ambigua en una prueba de exportación. No se modificaron contratos normativos.
 
-**FE-006 — ESPECIFICACIÓN APROBADA PARA IMPLEMENTACIÓN el 16-11-2026.** `docs/FE-006.md` v0.2 consolida FE006-DEC-001 a DEC-010, RF-001 a RF-045 y CA-001 a CA-025. Quedaron cerradas todas las decisiones de catálogo, confirmación, errores, restauración, selección de período, recarga global, recuperación GET-only y regresión. No se modificaron API-001 §5.9 ni las especificaciones normativas. La implementación está pendiente.
+**FE-006 — ESPECIFICACIÓN APROBADA PARA IMPLEMENTACIÓN el 16-11-2026.** `docs/FE-006.md` v0.2 consolida FE006-DEC-001 a DEC-011, RF-001 a RF-045 y CA-001 a CA-025. Quedaron cerradas todas las decisiones de catálogo, confirmación, errores, restauración, selección de período, recarga global, recuperación GET-only y regresión. No se modificaron API-001 §5.9 ni las especificaciones normativas. La implementación está pendiente.
 
 ## 7. Calidad y validación
 
@@ -202,9 +202,9 @@ Las especificaciones aprobadas siguen siendo la fuente de verdad funcional y té
 
 ## 10. Próximos pasos inmediatos
 
-1. Refinar FE-006 — Gestión de datos e integración — conforme a UI-001, API-001 §5.9, SPEC-006 v0.2, ARCH-001 y decisiones aprobadas sobre el catálogo de respaldos. La especificación debe madurarse y aprobarse antes de implementar.
+1. Implementar FE-006 conforme a `docs/FE-006.md` v0.2 aprobada, en bloques verificables y sin modificar contratos normativos.
 2. Mantener pendiente la validación reproducible con Python 3.14.10, según la línea base técnica aprobada.
-3. Tras aprobar FE-006, descomponer su implementación en bloques verificables y ejecutar regresión integral sin modificar contratos normativos.
+3. Ejecutar regresión integral, integración real con FastAPI y revisión responsive/accesibilidad antes de solicitar el cierre de FE-006.
 
 ---
 
@@ -249,11 +249,11 @@ API-001 v0.8 devuelve por categoría `allocated_amount`, `spent_amount`, `balanc
 
 ## 6.4 FE-006 — Gestión de datos e integración
 
-**Estado: REFINEMENT INICIADO el 16-11-2026; no aprobado para implementación.**
+**Estado: ESPECIFICACIÓN APROBADA PARA IMPLEMENTACIÓN el 16-11-2026; implementación pendiente.**
 
-- Documento: `docs/FE-006.md` v0.1, borrador en refinement.
+- Documento: `docs/FE-006.md` v0.2, aprobado para implementación.
 - Alcance heredado: catálogo de copias semanales, restauración confirmada y recarga del contexto; regresión integral y revisión transversal de calidad.
 - Contratos: `GET /backups` y `POST /backups/restore`, definidos en API-001 §5.9. No se crean endpoints ni se exponen respaldos `pre_write`.
 - Restricciones: máximo 15 copias semanales; restaurables únicamente las copias cuyo estado listado sea `valid`; confirmación explícita; backend vuelve a validar antes de reemplazar datos; aplicación de API-DEC-038 después del éxito.
-- El borrador contiene 32 requisitos preliminares, 15 criterios de aceptación preliminares y preguntas abiertas. La Product Owner debe resolverlas y aprobar la especificación antes de iniciar la implementación.
+- La especificación contiene 45 requisitos funcionales, 25 criterios de aceptación y 11 decisiones aprobadas. No quedan preguntas de Product Owner pendientes.
 
