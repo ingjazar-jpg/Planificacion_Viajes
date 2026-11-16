@@ -64,7 +64,7 @@ describe("activitiesService", () => {
     const payload = {
       name: "Viaje actualizado", description: "", category: "Viajes",
       destination: "Santa Marta", start_date: "2026-12-20", end_date: "2026-12-22",
-      start_time: "08:00", end_time: "18:00", priority: "Media",
+      start_time: "08:00", end_time: "18:00", priority: "Media", status: "Pendiente",
     };
     request.mockResolvedValue({ data: activity });
     await expect(updateActivity("activity-1", payload)).resolves.toEqual(activity);
@@ -72,7 +72,7 @@ describe("activitiesService", () => {
       method: "PUT", body: JSON.stringify(payload),
     });
     expect(payload).not.toHaveProperty("period_id");
-    expect(payload).not.toHaveProperty("status");
+    expect(payload).toHaveProperty("status", "Pendiente");
   });
 
   it("rejects a mutation response without a resource identifier", async () => {
