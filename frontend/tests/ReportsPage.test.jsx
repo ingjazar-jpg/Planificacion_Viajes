@@ -72,6 +72,21 @@ describe("ReportsPage", () => {
     mocks.getBudgetReport.mockResolvedValue({ data: { period: generalResponse.data.period, budget: { total_budget: "0.00", categories: [] }, expenses: { total: "0.00", balance: "0.00", execution_percentage: "0.00", by_activity: [], by_category: [], items: [] } } });
   });
 
+  it("offers export on the three individual reports but not on historical comparison", async () => {
+    render(<ReportsPage />);
+    await screen.findByText("Vacaciones 2026");
+    expect(screen.getByRole("button", { name: "Exportar informe" })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("tab", { name: "Actividades" }));
+    expect(await screen.findByRole("button", { name: "Exportar informe" })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("tab", { name: "Presupuesto y gastos" }));
+    expect(await screen.findByRole("button", { name: "Exportar informe" })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("tab", { name: "Comparación histórica" }));
+    expect(screen.queryByRole("button", { name: "Exportar informe" })).not.toBeInTheDocument();
+  });
+
   it("offers only period export when no filters have been applied", async () => {
     render(<ReportsPage />);
     await screen.findByText("Vacaciones 2026");
