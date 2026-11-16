@@ -5,6 +5,7 @@ from uuid import UUID, uuid4
 from zoneinfo import ZoneInfo
 
 from fastapi.testclient import TestClient
+import pytest
 
 from app.domain.enums import AlertEventType, AlertStatus, AlertType
 from app.main import create_app
@@ -16,13 +17,19 @@ TZ = ZoneInfo("America/Bogota")
 FIXED_NOW = datetime(2026, 11, 15, 10, 0, tzinfo=TZ)
 
 
+@pytest.fixture(autouse=True)
+def _freeze_alert_clock(monkeypatch):
+    # AlertService.evaluate_document uses the class-level clock by default.
+    # Freeze it for this module so API and direct evaluations share one instant.
+    monkeypatch.setattr(AlertService, "now", staticmethod(lambda: FIXED_NOW))
+
+
 def _client(tmp_path):
     repository = JsonRepository(tmp_path / "data.json")
     app = create_app(repository=repository)
 
-    # Keep API-triggered evaluations deterministic and aligned with direct
-    # service evaluations performed by the tests.
-    app.state.alert_service.now = lambda: FIXED_NOW
+    # Activity mutations use their own service clock before reevaluating alerts.
+    app.state.period_activity_service._now = lambda: FIXED_NOW
 
     return TestClient(app), repository
 
@@ -207,7 +214,11 @@ def test_reviewed_alert_is_deactivated_and_reactivated_without_losing_review(tmp
     }))
     deactivated = _evaluate_at(repository, period["id"])
     assert deactivated["deactivated_count"] == 1
-    inactive = repository.load().alerts[0]
+    inactive = next(
+        item
+        for item in repository.load().alerts
+        if item.type == AlertType.HIGH_PRIORITY
+    )
     assert inactive.condition_active is False
     assert inactive.status == AlertStatus.REVIEWED
     assert inactive.history[-1].event_type == AlertEventType.DEACTIVATED
