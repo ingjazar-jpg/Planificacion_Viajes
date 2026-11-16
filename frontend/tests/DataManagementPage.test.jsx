@@ -117,13 +117,15 @@ describe("DataManagementPage", () => {
   });
 
   it("keeps restore success and offers GET-only recovery when the global refresh fails", async () => {
-    completeRestoration.mockResolvedValue(false);
-    useDataRecovery.mockReturnValue({
-      refreshError: new Error("Fallo de actualización"),
-      isRefreshing: false,
-      restoreSucceeded: true,
-      retryRefresh,
-      completeRestoration,
+    completeRestoration.mockImplementation(async () => {
+      useDataRecovery.mockReturnValue({
+        refreshError: new Error("Fallo de actualización"),
+        isRefreshing: false,
+        restoreSucceeded: true,
+        retryRefresh,
+        completeRestoration,
+      });
+      return false;
     });
     render(<DataManagementPage />);
     await openValidBackup();
@@ -131,6 +133,10 @@ describe("DataManagementPage", () => {
 
     expect(await screen.findByText(/La restauración se completó correctamente, pero la actualización/)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Reintentar actualización" })).toBeInTheDocument();
+    expect(screen.getAllByRole("button", { name: "Restaurar" }).every((button) => button.disabled)).toBe(true);
+
+    fireEvent.click(screen.getByRole("button", { name: "Reintentar actualización" }));
+    expect(retryRefresh).toHaveBeenCalledOnce();
     expect(restoreBackup).toHaveBeenCalledOnce();
   });
 
