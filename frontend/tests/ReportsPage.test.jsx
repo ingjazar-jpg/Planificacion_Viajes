@@ -96,22 +96,22 @@ describe("ReportsPage", () => {
     await screen.findByText("Vacaciones 2026");
     fireEvent.click(screen.getByRole("tab", { name: "Comparación histórica" }));
 
-    expect(await screen.findAllByText("Presupuesto general")).toHaveLength(2);
+    await waitFor(() => expect(screen.getAllByText("Presupuesto general")).toHaveLength(2));
     expect(mocks.refreshPeriods).toHaveBeenCalledTimes(1);
     expect(mocks.getBudgetComparison).toHaveBeenCalledWith(
       "period-2026",
       "period-2025",
       expect.objectContaining({ signal: expect.any(AbortSignal) }),
     );
-    expect(screen.getByText("COP 1000000.00")).toBeInTheDocument();
-    expect(screen.getByText("COP 800000.00")).toBeInTheDocument();
+    expect(screen.getAllByText("COP 1000000.00")).toHaveLength(2);
+    expect(screen.getAllByText("COP 800000.00")).toHaveLength(2);
   });
 
   it("preserves available selections and refreshes periods when reopening comparison", async () => {
     render(<ReportsPage />);
     await screen.findByText("Vacaciones 2026");
     fireEvent.click(screen.getByRole("tab", { name: "Comparación histórica" }));
-    await screen.findAllByText("Presupuesto general");
+    await waitFor(() => expect(screen.getAllByText("Presupuesto general")).toHaveLength(2));
 
     fireEvent.change(screen.getByLabelText("Segundo período"), { target: { value: "period-2024" } });
     await waitFor(() => expect(mocks.getBudgetComparison).toHaveBeenLastCalledWith(
