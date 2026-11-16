@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { EmptyState, ErrorState, LoadingState } from "../../components/common/AsyncState.jsx";
 import { usePeriod } from "../../context/PeriodContext.jsx";
-import { getActivities, getActivity } from "../../services/api/activitiesService.js";
+import {
+  deleteActivity, getActivities, getActivity, updateActivityStatus,
+} from "../../services/api/activitiesService.js";
 import ActivityDetailDialog from "./ActivityDetailDialog.jsx";
 import ActivityFormDialog from "./ActivityFormDialog.jsx";
 import CalendarPage from "../calendar/CalendarPage.jsx";
@@ -29,6 +31,8 @@ function ActivitiesPage({ activityId = null }) {
   const [selectedActivity, setSelectedActivity] = useState(null);
   const [isDetailLoading, setIsDetailLoading] = useState(false);
   const [detailError, setDetailError] = useState(null);
+  const [isMutatingActivity, setIsMutatingActivity] = useState(false);
+  const [activityActionError, setActivityActionError] = useState("");
   const requestSequence = useRef(0);
   const detailRequestSequence = useRef(0);
 
@@ -133,7 +137,11 @@ function ActivitiesPage({ activityId = null }) {
     setIsFormOpen(true);
   }, []);
 
-  const closeActivityDetail = useCallback(() => setSelectedActivityId(null), []);
+  const closeActivityDetail = useCallback(() => {
+    if (isMutatingActivity) return;
+    setSelectedActivityId(null);
+    setActivityActionError("");
+  }, [isMutatingActivity]);
   const retryActivityDetail = useCallback(
     () => loadActivityDetail(selectedActivityId),
     [loadActivityDetail, selectedActivityId],
@@ -144,6 +152,37 @@ function ActivitiesPage({ activityId = null }) {
     setIsFormOpen(false);
     setEditingActivity(null);
     setSelectedActivityId(savedActivity.id);
+  }
+
+  async function handleStatusChange(nextStatus) {
+    if (!selectedActivity) return;
+    setIsMutatingActivity(true);
+    setActivityActionError("");
+    try {
+      const updated = await updateActivityStatus(selectedActivity.id, nextStatus);
+      setSelectedActivity(updated);
+      await loadActivities();
+    } catch (requestError) {
+      setActivityActionError(requestError.message || "No fue posible actualizar el estado de la actividad.");
+    } finally {
+      setIsMutatingActivity(false);
+    }
+  }
+
+  async function handleDeleteActivity() {
+    if (!selectedActivity) return;
+    setIsMutatingActivity(true);
+    setActivityActionError("");
+    try {
+      await deleteActivity(selectedActivity.id);
+      setSelectedActivityId(null);
+      setSelectedActivity(null);
+      await loadActivities();
+    } catch (requestError) {
+      setActivityActionError(requestError.message || "No fue posible eliminar la actividad.");
+    } finally {
+      setIsMutatingActivity(false);
+    }
   }
 
   const hasFilters = Object.values(filters).some(Boolean);
@@ -281,7 +320,9 @@ function ActivitiesPage({ activityId = null }) {
         onClose={() => { setIsFormOpen(false); setEditingActivity(null); }} onSaved={handleSaved} />
       <ActivityDetailDialog open={Boolean(selectedActivityId)} activity={selectedActivity}
         isLoading={isDetailLoading} error={detailError} onRetry={retryActivityDetail}
-        onClose={closeActivityDetail} onEdit={openEditForm} />
+        onClose={closeActivityDetail} onEdit={openEditForm}
+        onChangeStatus={handleStatusChange} onDelete={handleDeleteActivity}
+        isMutating={isMutatingActivity} actionError={activityActionError} />
     </div>
   );
 }
