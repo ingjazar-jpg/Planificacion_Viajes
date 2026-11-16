@@ -7,10 +7,12 @@ const mocks = vi.hoisted(() => ({
   getGeneralReport: vi.fn(),
   getActivitiesReport: vi.fn(),
   getBudgetReport: vi.fn(),
+  getBudgetComparison: vi.fn(),
+  refreshPeriods: vi.fn(),
 }));
 
 vi.mock("../src/context/PeriodContext.jsx", () => ({
-  usePeriod: () => ({ selectedPeriodId: "period-1" }),
+  usePeriod: () => ({ selectedPeriodId: "period-1", refreshPeriods: mocks.refreshPeriods }),
 }));
 
 vi.mock("../src/services/api/reportsService.js", () => mocks);
@@ -24,6 +26,19 @@ const generalResponse = {
     summary: "Una actividad completada.",
   },
   meta: { total: 1, page: 1, page_size: 20, total_pages: 1 },
+};
+
+const availablePeriods = [
+  { id: "period-2026", year: 2026, name: "Vacaciones 2026", start_date: "2026-12-20", end_date: "2027-01-10" },
+  { id: "period-2025", year: 2025, name: "Vacaciones 2025", start_date: "2025-12-20", end_date: "2026-01-10" },
+  { id: "period-2024", year: 2024, name: "Vacaciones 2024", start_date: "2024-12-20", end_date: "2025-01-10" },
+];
+
+const comparisonResponse = {
+  data: {
+    period_1: { id: "period-2026", year: 2026, name: "Vacaciones 2026", total_budget: "1000000.00", total_expenses: "250000.00", balance: "750000.00", execution_percentage: "25.00" },
+    period_2: { id: "period-2025", year: 2025, name: "Vacaciones 2025", total_budget: "800000.00", total_expenses: "400000.00", balance: "400000.00", execution_percentage: "50.00" },
+  },
 };
 
 const activitiesResponse = {
@@ -45,6 +60,8 @@ describe("ReportsPage", () => {
     vi.clearAllMocks();
     mocks.getGeneralReport.mockResolvedValue(generalResponse);
     mocks.getActivitiesReport.mockResolvedValue(activitiesResponse);
+    mocks.getBudgetComparison.mockResolvedValue(comparisonResponse);
+    mocks.refreshPeriods.mockResolvedValue(availablePeriods);
     mocks.getBudgetReport.mockResolvedValue({ data: { period: generalResponse.data.period, budget: { total_budget: "0.00", categories: [] }, expenses: { total: "0.00", balance: "0.00", execution_percentage: "0.00", by_activity: [], by_category: [], items: [] } } });
   });
 
@@ -73,4 +90,57 @@ describe("ReportsPage", () => {
     expect(await screen.findByText("Resumen presupuestario")).toBeInTheDocument();
     expect(mocks.getGeneralReport).toHaveBeenCalledTimes(1);
   });
+
+  it("loads the two most recent periods and compares the contractual indicators", async () => {
+    render(<ReportsPage />);
+    await screen.findByText("Vacaciones 2026");
+    fireEvent.click(screen.getByRole("tab", { name: "Comparación histórica" }));
+
+    expect(await screen.findAllByText("Presupuesto general")).toHaveLength(2);
+    expect(mocks.refreshPeriods).toHaveBeenCalledTimes(1);
+    expect(mocks.getBudgetComparison).toHaveBeenCalledWith(
+      "period-2026",
+      "period-2025",
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    );
+    expect(screen.getByText("COP 1000000.00")).toBeInTheDocument();
+    expect(screen.getByText("COP 800000.00")).toBeInTheDocument();
+  });
+
+  it("preserves available selections and refreshes periods when reopening comparison", async () => {
+    render(<ReportsPage />);
+    await screen.findByText("Vacaciones 2026");
+    fireEvent.click(screen.getByRole("tab", { name: "Comparación histórica" }));
+    await screen.findAllByText("Presupuesto general");
+
+    fireEvent.change(screen.getByLabelText("Segundo período"), { target: { value: "period-2024" } });
+    await waitFor(() => expect(mocks.getBudgetComparison).toHaveBeenLastCalledWith(
+      "period-2026",
+      "period-2024",
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    ));
+
+    fireEvent.click(screen.getByRole("tab", { name: "General" }));
+    fireEvent.click(screen.getByRole("tab", { name: "Comparación histórica" }));
+
+    await waitFor(() => expect(mocks.refreshPeriods).toHaveBeenCalledTimes(2));
+    expect(screen.getByLabelText("Primer período")).toHaveValue("period-2026");
+    expect(screen.getByLabelText("Segundo período")).toHaveValue("period-2024");
+    await waitFor(() => expect(mocks.getBudgetComparison).toHaveBeenLastCalledWith(
+      "period-2026",
+      "period-2024",
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    ));
+  });
+
+  it("does not request a comparison when fewer than two periods exist", async () => {
+    mocks.refreshPeriods.mockResolvedValueOnce([availablePeriods[0]]);
+    render(<ReportsPage />);
+    await screen.findByText("Vacaciones 2026");
+    fireEvent.click(screen.getByRole("tab", { name: "Comparación histórica" }));
+
+    expect(await screen.findByText("Se necesitan al menos dos períodos disponibles para realizar una comparación.")).toBeInTheDocument();
+    expect(mocks.getBudgetComparison).not.toHaveBeenCalled();
+  });
+
 });
