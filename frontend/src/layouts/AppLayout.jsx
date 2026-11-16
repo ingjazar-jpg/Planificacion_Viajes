@@ -41,7 +41,8 @@ function AppLayout() {
   function handleNavigate(sectionId, activityId = null) {
     if (sectionId === "dashboard" && activeSection !== "dashboard") refreshAlerts();
     setActiveSection(sectionId);
-    if (sectionId === "activities" && activityId) setActivityDestinationId(activityId);
+    if (sectionId === "activities") setActivityDestinationId(activityId || null);
+    else setActivityDestinationId(null);
     setIsMobileNavigationOpen(false);
   }
 
