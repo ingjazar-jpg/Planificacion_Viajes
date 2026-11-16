@@ -6,6 +6,7 @@ import {
   getBudgetReport,
   getGeneralReport,
 } from "../../services/api/reportsService.js";
+import { getActivities } from "../../services/api/activitiesService.js";
 import HistoricalComparison from "./HistoricalComparison.jsx";
 import "./ReportsPage.css";
 
@@ -22,11 +23,41 @@ const REPORT_LOADERS = {
   budget: getBudgetReport,
 };
 
-const INITIAL_REPORT_STATE = {
-  general: { data: null, meta: null, page: 1, pageSize: 20, isLoading: false, error: null },
-  activities: { data: null, meta: null, page: 1, pageSize: 20, isLoading: false, error: null },
-  budget: { data: null, meta: null, page: 1, pageSize: 20, isLoading: false, error: null },
+const REPORT_FILTER_FIELDS = {
+  general: ["start_date", "end_date", "category", "status", "activity_id", "priority", "min_amount", "max_amount"],
+  activities: ["start_date", "end_date", "category", "status", "activity_id", "priority"],
+  budget: ["start_date", "end_date", "category", "activity_id", "min_amount", "max_amount"],
 };
+const CATEGORIES = ["Viajes", "Transporte", "Alojamiento", "Recreación", "Turismo", "Reuniones familiares", "Otros"];
+const STATUSES = ["Pendiente", "En progreso", "Completada", "Cancelada"];
+const PRIORITIES = ["Alta", "Media", "Baja"];
+const EMPTY_FILTERS = { start_date: "", end_date: "", category: "", status: "", activity_id: "", priority: "", min_amount: "", max_amount: "" };
+const createReportState = () => ({
+  general: { data: null, meta: null, page: 1, pageSize: 20, isLoading: false, error: null, pendingFilters: { ...EMPTY_FILTERS }, appliedFilters: {}, filtersOpen: false },
+  activities: { data: null, meta: null, page: 1, pageSize: 20, isLoading: false, error: null, pendingFilters: { ...EMPTY_FILTERS }, appliedFilters: {}, filtersOpen: false },
+  budget: { data: null, meta: null, page: 1, pageSize: 20, isLoading: false, error: null, pendingFilters: { ...EMPTY_FILTERS }, appliedFilters: {}, filtersOpen: false },
+});
+const INITIAL_REPORT_STATE = createReportState();
+
+function amountToCents(value) {
+  if (!value) return null;
+  const [whole, fraction = ""] = value.split(".");
+  return BigInt(whole) * 100n + BigInt(fraction.padEnd(2, "0"));
+}
+function validateReportFilters(filters) {
+  if (Boolean(filters.start_date) !== Boolean(filters.end_date)) return "Debes indicar las dos fechas del rango.";
+  if (filters.start_date && filters.start_date > filters.end_date) return "La fecha inicial no puede ser posterior a la fecha final.";
+  for (const key of ["min_amount", "max_amount"]) {
+    if (filters[key] && !/^\\d+(?:\\.\\d{1,2})?$/.test(filters[key])) return "Los importes deben ser decimales no negativos con máximo dos decimales.";
+  }
+  if (filters.min_amount && filters.max_amount && amountToCents(filters.min_amount) > amountToCents(filters.max_amount)) {
+    return "El importe mínimo no puede superar el importe máximo.";
+  }
+  return "";
+}
+function filtersEqual(left, right) {
+  return JSON.stringify(left) === JSON.stringify(right);
+}
 
 function Metric({ label, value }) {
   return <article className="reports-metric"><span>{label}</span><strong>{value ?? "—"}</strong></article>;
@@ -94,6 +125,46 @@ function ActivityResults({ activities = [] }) {
         ))}
       </ul>
     </>
+  );
+}
+
+function ReportFilters({ reportType, report, onPendingChange, onToggle, onApply, onClear, activities, activitiesLoading, activitiesError, onLoadActivities }) {
+  const applicable = REPORT_FILTER_FIELDS[reportType];
+  const pending = report.pendingFilters;
+  const validationError = validateReportFilters(pending);
+  const hasApplied = Object.keys(report.appliedFilters).length > 0;
+  const hasPending = applicable.some((key) => (pending[key] || "") !== (report.appliedFilters[key] || ""));
+  const isBusy = report.isLoading;
+  const set = (key, value) => onPendingChange(reportType, key, value);
+  const show = (key) => applicable.includes(key);
+  return (
+    <section className="reports-filter-panel" aria-label="Filtros del informe">
+      <div className="reports-filter-heading">
+        <div><strong>Filtros</strong>{(hasApplied || hasPending) && <span className="reports-filter-count">Filtros activos o pendientes</span>}</div>
+        <button type="button" aria-expanded={report.filtersOpen} onClick={() => onToggle(reportType)}>
+          {report.filtersOpen ? "Ocultar filtros" : "Mostrar filtros"}
+        </button>
+      </div>
+      {report.filtersOpen && (
+        <div className="reports-filter-content">
+          <div className="reports-filter-grid">
+            {show("start_date") && <label>Desde<input aria-label="Fecha inicial" type="date" value={pending.start_date} disabled={isBusy} onChange={(e) => set("start_date", e.target.value)} /></label>}
+            {show("end_date") && <label>Hasta<input aria-label="Fecha final" type="date" value={pending.end_date} disabled={isBusy} onChange={(e) => set("end_date", e.target.value)} /></label>}
+            {show("category") && <label>Categoría<select aria-label="Categoría" value={pending.category} disabled={isBusy} onChange={(e) => set("category", e.target.value)}><option value="">Todas</option>{CATEGORIES.map((v) => <option key={v} value={v}>{v}</option>)}</select></label>}
+            {show("status") && <label>Estado<select aria-label="Estado" value={pending.status} disabled={isBusy} onChange={(e) => set("status", e.target.value)}><option value="">Todos</option>{STATUSES.map((v) => <option key={v} value={v}>{v}</option>)}</select></label>}
+            {show("priority") && <label>Prioridad<select aria-label="Prioridad" value={pending.priority} disabled={isBusy} onChange={(e) => set("priority", e.target.value)}><option value="">Todas</option>{PRIORITIES.map((v) => <option key={v} value={v}>{v}</option>)}</select></label>}
+            {show("activity_id") && <label>Actividad<select aria-label="Actividad" value={pending.activity_id} disabled={isBusy || activitiesLoading || Boolean(activitiesError)} onFocus={onLoadActivities} onChange={(e) => set("activity_id", e.target.value)}><option value="">Todas</option>{activities.map((item) => <option key={item.id} value={item.id}>{item.name} ({item.start_date} – {item.end_date})</option>)}</select>{activitiesLoading && <small>Cargando actividades…</small>}{activitiesError && <small role="alert">{activitiesError.message} <button type="button" onClick={onLoadActivities}>Reintentar</button></small>}{!activitiesLoading && !activitiesError && activities.length === 0 && <small>No hay actividades disponibles.</small>}</label>}
+            {show("min_amount") && <label>Importe mínimo<input aria-label="Importe mínimo" inputMode="decimal" placeholder="0.00" value={pending.min_amount} disabled={isBusy} onChange={(e) => set("min_amount", e.target.value)} /></label>}
+            {show("max_amount") && <label>Importe máximo<input aria-label="Importe máximo" inputMode="decimal" placeholder="0.00" value={pending.max_amount} disabled={isBusy} onChange={(e) => set("max_amount", e.target.value)} /></label>}
+          </div>
+          {validationError && <p className="reports-filter-error" role="alert">{validationError}</p>}
+          <div className="reports-filter-actions">
+            <button type="button" disabled={isBusy || !hasPending || Boolean(validationError)} onClick={() => onApply(reportType)}>Aplicar filtros</button>
+            <button type="button" disabled={isBusy || (!hasApplied && !applicable.some((key) => pending[key]))} onClick={() => onClear(reportType)}>Limpiar filtros</button>
+          </div>
+        </div>
+      )}
+    </section>
   );
 }
 
@@ -236,11 +307,16 @@ function ReportsPage() {
   const { selectedPeriodId } = usePeriod();
   const [activeTab, setActiveTab] = useState("general");
   const [reports, setReports] = useState(INITIAL_REPORT_STATE);
+  const [activityOptions, setActivityOptions] = useState([]);
+  const [activityOptionsLoading, setActivityOptionsLoading] = useState(false);
+  const [activityOptionsError, setActivityOptionsError] = useState(null);
+  const [activityOptionsLoaded, setActivityOptionsLoaded] = useState(false);
+  const activityOptionsSequence = useRef(0);
   const requestSequences = useRef({ general: 0, activities: 0, budget: 0 });
   const reportsRef = useRef(reports);
   reportsRef.current = reports;
 
-  const loadReport = useCallback(async (reportType, page = 1, pageSize = 20, force = false) => {
+  const loadReport = useCallback(async (reportType, page = 1, pageSize = 20, force = false, filters = reportsRef.current[reportType]?.appliedFilters || {}) => {
     if (!selectedPeriodId || !REPORT_LOADERS[reportType]) return;
     const current = reportsRef.current[reportType];
     if (!force && current.data && current.page === page && current.pageSize === pageSize) return;
@@ -251,7 +327,7 @@ function ReportsPage() {
       [reportType]: { ...state[reportType], isLoading: true, error: null, data: null, meta: null, page, pageSize },
     }));
     try {
-      const response = await REPORT_LOADERS[reportType](selectedPeriodId, { page, page_size: pageSize });
+      const response = await REPORT_LOADERS[reportType](selectedPeriodId, { filters, page, page_size: pageSize });
       if (requestId !== requestSequences.current[reportType]) return;
       setReports((state) => ({
         ...state,
@@ -268,7 +344,11 @@ function ReportsPage() {
 
   useEffect(() => {
     reportsRef.current = INITIAL_REPORT_STATE;
-    setReports(INITIAL_REPORT_STATE);
+    setReports(createReportState());
+    setActivityOptions([]);
+    setActivityOptionsLoaded(false);
+    setActivityOptionsError(null);
+    activityOptionsSequence.current += 1;
     Object.keys(requestSequences.current).forEach((key) => { requestSequences.current[key] += 1; });
   }, [selectedPeriodId]);
 
@@ -278,12 +358,68 @@ function ReportsPage() {
 
   function changePage(reportType, page) {
     const current = reports[reportType];
-    loadReport(reportType, page, current.pageSize, true);
+    loadReport(reportType, page, current.pageSize, true, current.appliedFilters);
   }
 
   function changePageSize(reportType, pageSize) {
-    loadReport(reportType, 1, pageSize, true);
+    const current = reports[reportType];
+    loadReport(reportType, 1, pageSize, true, current.appliedFilters);
   }
+
+  function updatePendingFilter(reportType, key, value) {
+    setReports((state) => ({
+      ...state,
+      [reportType]: { ...state[reportType], pendingFilters: { ...state[reportType].pendingFilters, [key]: value } },
+    }));
+  }
+
+  function toggleFilters(reportType) {
+    setReports((state) => ({
+      ...state,
+      [reportType]: { ...state[reportType], filtersOpen: !state[reportType].filtersOpen },
+    }));
+  }
+
+  function applyFilters(reportType) {
+    const current = reportsRef.current[reportType];
+    const error = validateReportFilters(current.pendingFilters);
+    if (error || current.isLoading) return;
+    const appliedFilters = Object.fromEntries(
+      REPORT_FILTER_FIELDS[reportType].filter((key) => current.pendingFilters[key]).map((key) => [key, current.pendingFilters[key]]),
+    );
+    setReports((state) => ({
+      ...state,
+      [reportType]: { ...state[reportType], appliedFilters, page: 1 },
+    }));
+    loadReport(reportType, 1, current.pageSize, true, appliedFilters);
+  }
+
+  function clearFilters(reportType) {
+    const current = reportsRef.current[reportType];
+    if (current.isLoading) return;
+    setReports((state) => ({
+      ...state,
+      [reportType]: { ...state[reportType], pendingFilters: { ...EMPTY_FILTERS }, appliedFilters: {}, page: 1 },
+    }));
+    loadReport(reportType, 1, current.pageSize, true, {});
+  }
+
+  const loadActivityOptions = useCallback(async () => {
+    if (!selectedPeriodId || activityOptionsLoaded || activityOptionsLoading) return;
+    const sequence = ++activityOptionsSequence.current;
+    setActivityOptionsLoading(true);
+    setActivityOptionsError(null);
+    try {
+      const result = await getActivities({ period_id: selectedPeriodId });
+      if (sequence !== activityOptionsSequence.current) return;
+      setActivityOptions(Array.isArray(result) ? result : []);
+      setActivityOptionsLoaded(true);
+    } catch (error) {
+      if (sequence === activityOptionsSequence.current) setActivityOptionsError(error);
+    } finally {
+      if (sequence === activityOptionsSequence.current) setActivityOptionsLoading(false);
+    }
+  }, [selectedPeriodId, activityOptionsLoaded, activityOptionsLoading]);
 
   const activeReport = reports[activeTab];
   const retry = () => loadReport(activeTab, activeReport.page, activeReport.pageSize, true);
@@ -311,20 +447,31 @@ function ReportsPage() {
           <EmptyState title="Selecciona un período" message="Crea o selecciona un período para consultar sus informes." />
         ) : activeTab === "comparison" ? (
           null
-        ) : activeReport?.isLoading ? (
+        ) : (
+          <>
+            <ReportFilters reportType={activeTab} report={activeReport}
+              onPendingChange={updatePendingFilter} onToggle={toggleFilters}
+              onApply={applyFilters} onClear={clearFilters}
+              activities={activityOptions} activitiesLoading={activityOptionsLoading}
+              activitiesError={activityOptionsError} onLoadActivities={loadActivityOptions} />
+            {activeReport?.isLoading ? (
           <LoadingState message="Generando informe…" />
         ) : activeReport?.error ? (
           <ErrorState message={activeReport.error.message} onRetry={retry} />
-        ) : !activeReport?.data ? (
-          <EmptyState title="Informe no disponible" message="No se recibieron datos para mostrar." actionLabel="Reintentar" onAction={retry} />
-        ) : (
-          <>
-            {activeTab === "general" && <GeneralReport report={activeReport.data} />}
-            {activeTab === "activities" && <ActivitiesReport report={activeReport.data} />}
-            {activeTab === "budget" && <BudgetReport report={activeReport.data} />}
-            <Pagination meta={activeReport.meta} page={activeReport.page} pageSize={activeReport.pageSize}
-              isLoading={activeReport.isLoading} onPageChange={(page) => changePage(activeTab, page)}
-              onPageSizeChange={(size) => changePageSize(activeTab, size)} />
+            ) : activeReport?.error ? (
+              <ErrorState message={activeReport.error.message} onRetry={retry} />
+            ) : !activeReport?.data ? (
+              <EmptyState title="Informe no disponible" message="No se recibieron datos para mostrar." actionLabel="Reintentar" onAction={retry} />
+            ) : (
+              <>
+                {activeTab === "general" && <GeneralReport report={activeReport.data} />}
+                {activeTab === "activities" && <ActivitiesReport report={activeReport.data} />}
+                {activeTab === "budget" && <BudgetReport report={activeReport.data} />}
+                <Pagination meta={activeReport.meta} page={activeReport.page} pageSize={activeReport.pageSize}
+                  isLoading={activeReport.isLoading} onPageChange={(page) => changePage(activeTab, page)}
+                  onPageSizeChange={(size) => changePageSize(activeTab, size)} />
+              </>
+            )}
           </>
         )}
         <HistoricalComparison isActive={activeTab === "comparison"} />
