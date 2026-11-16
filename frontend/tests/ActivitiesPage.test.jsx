@@ -101,8 +101,8 @@ describe("ActivitiesPage list", () => {
     await screen.findByRole("table", { name: "Listado de actividades" });
     fireEvent.click(screen.getByRole("button", { name: "Crear actividad" }));
     const dialog = screen.getByRole("dialog", { name: "Crear actividad" });
-    fireEvent.change(within(dialog).getByLabelText("Nombre *"), { target: { value: "Nuevo viaje" } });
-    fireEvent.change(within(dialog).getByLabelText("Categoría *"), { target: { value: "Viajes" } });
+    fireEvent.change(within(dialog).getByLabelText(/Nombre/), { target: { value: "Nuevo viaje" } });
+    fireEvent.change(within(dialog).getByLabelText(/Categoría/), { target: { value: "Viajes" } });
     fireEvent.change(within(dialog).getByLabelText(/Fecha inicial/), { target: { value: "2026-12-20" } });
     fireEvent.change(within(dialog).getByLabelText(/Fecha final/), { target: { value: "2026-12-22" } });
     fireEvent.change(within(dialog).getByLabelText(/Hora inicial/), { target: { value: "08:00" } });
