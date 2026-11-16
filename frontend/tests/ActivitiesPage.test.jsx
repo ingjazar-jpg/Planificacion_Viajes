@@ -133,6 +133,7 @@ describe("ActivitiesPage list", () => {
     await waitFor(() => expect(updateActivity).toHaveBeenCalledWith("activity-1", expect.objectContaining({
       name: "Viaje actualizado",
     })));
+    expect(updateActivity.mock.calls[0][1]).not.toHaveProperty("status");
     expect(await screen.findByRole("dialog", { name: "Viaje actualizado" })).toBeInTheDocument();
   });
 
