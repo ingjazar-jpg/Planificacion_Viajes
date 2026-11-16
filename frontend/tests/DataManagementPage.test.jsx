@@ -32,6 +32,11 @@ const unvalidatedBackup = {
   validation_status: "not_validated",
 };
 
+async function openValidBackup() {
+  const buttons = await screen.findAllByRole("button", { name: "Restaurar" });
+  fireEvent.click(buttons[0]);
+}
+
 describe("DataManagementPage", () => {
   const completeRestoration = vi.fn();
   const retryRefresh = vi.fn();
@@ -91,7 +96,7 @@ describe("DataManagementPage", () => {
 
   it("does not send a request when the user cancels confirmation", async () => {
     render(<DataManagementPage />);
-    fireEvent.click(await screen.findByRole("button", { name: "Restaurar" }));
+    await openValidBackup();
 
     expect(screen.getByRole("dialog", { name: "Confirmar restauración" })).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Cancelar" }));
@@ -102,7 +107,7 @@ describe("DataManagementPage", () => {
 
   it("confirms restoration and starts the global data refresh after HTTP success", async () => {
     render(<DataManagementPage />);
-    fireEvent.click(await screen.findByRole("button", { name: "Restaurar" }));
+    await openValidBackup();
     fireEvent.click(screen.getByRole("button", { name: "Confirmar restauración" }));
 
     await waitFor(() => expect(restoreBackup).toHaveBeenCalledWith(validBackup.backup_id));
@@ -121,7 +126,7 @@ describe("DataManagementPage", () => {
       completeRestoration,
     });
     render(<DataManagementPage />);
-    fireEvent.click(await screen.findByRole("button", { name: "Restaurar" }));
+    await openValidBackup();
     fireEvent.click(screen.getByRole("button", { name: "Confirmar restauración" }));
 
     expect(await screen.findByText(/La restauración se completó correctamente, pero la actualización/)).toBeInTheDocument();
@@ -134,7 +139,7 @@ describe("DataManagementPage", () => {
       status: 404, code: "BACKUP_NOT_FOUND",
     }));
     render(<DataManagementPage />);
-    fireEvent.click(await screen.findByRole("button", { name: "Restaurar" }));
+    await openValidBackup();
     fireEvent.click(screen.getByRole("button", { name: "Confirmar restauración" }));
 
     expect(await screen.findByText(/ya no está disponible/)).toBeInTheDocument();
@@ -147,7 +152,7 @@ describe("DataManagementPage", () => {
       status: 500, code: "BACKUP_RESTORE_FAILED",
     }));
     render(<DataManagementPage />);
-    fireEvent.click(await screen.findByRole("button", { name: "Restaurar" }));
+    await openValidBackup();
     fireEvent.click(screen.getByRole("button", { name: "Confirmar restauración" }));
 
     expect(await screen.findByText(/Los datos anteriores se conservaron/)).toBeInTheDocument();
