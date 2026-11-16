@@ -1,9 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { EmptyState, ErrorState, LoadingState } from "../../components/common/AsyncState.jsx";
 import { usePeriod } from "../../context/PeriodContext.jsx";
-import {
-  createActivity, getActivities, getActivity, updateActivity,
-} from "../../services/api/activitiesService.js";
+import { getActivities, getActivity } from "../../services/api/activitiesService.js";
 import ActivityDetailDialog from "./ActivityDetailDialog.jsx";
 import ActivityFormDialog from "./ActivityFormDialog.jsx";
 import CalendarPage from "../calendar/CalendarPage.jsx";
