@@ -32,6 +32,7 @@ function AppLayout() {
   const { alerts, count, isLoading: alertsLoading, error: alertsError, notice, noticeIsError, isReviewing, refreshAlerts, markReviewed } = useAlerts();
   const { periods, isLoading, error, refreshPeriods } = usePeriod();
   const { isRefreshing: isRecovering, refreshError, restoreSucceeded, retryRefresh, revision } = useDataRecovery();
+  const isRecoveryBlocked = restoreSucceeded && (isRecovering || refreshError);
   const CurrentPage = pageComponents[activeSection] ?? DashboardPage;
   const closeAlerts = useCallback(() => setIsAlertsOpen(false), []);
 
@@ -88,13 +89,13 @@ function AppLayout() {
       <Sidebar activeSection={activeSection} onNavigate={handleNavigate} />
 
       <div className="main-column">
-        <Topbar onMenuClick={() => setIsMobileNavigationOpen(true)} alertCount={count} onAlertsClick={() => setIsAlertsOpen(true)} />
+        <Topbar onMenuClick={() => setIsMobileNavigationOpen(true)} alertCount={isRecoveryBlocked ? 0 : count} disabled={Boolean(isRecoveryBlocked)} onAlertsClick={() => setIsAlertsOpen(true)} />
         <main className="main-content" id="main-content" tabIndex="-1">
           {renderContent()}
         </main>
       </div>
 
-      <AlertsDrawer open={isAlertsOpen} onClose={closeAlerts} alerts={alerts}
+      <AlertsDrawer open={isAlertsOpen && !isRecoveryBlocked} onClose={closeAlerts} alerts={alerts}
         isLoading={alertsLoading} error={alertsError} notice={notice} noticeIsError={noticeIsError} isReviewing={isReviewing}
         onRetry={refreshAlerts} onReview={handleReview}
         onNavigate={(activityId) => { setIsAlertsOpen(false); handleNavigate("activities", activityId); }} />
