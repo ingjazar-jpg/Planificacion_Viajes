@@ -53,7 +53,8 @@ describe("ActivitiesPage list", () => {
 
   it("does not query an invalid date range", async () => {
     render(<ActivitiesPage />);
-    await screen.findByText("Viaje familiar");
+    const table = await screen.findByRole("table", { name: "Listado de actividades" });
+    expect(within(table).getByText("Viaje familiar")).toBeInTheDocument();
     const callsBefore = getActivities.mock.calls.length;
     fireEvent.change(screen.getByLabelText("Desde"), { target: { value: "2026-12-30" } });
     fireEvent.change(screen.getByLabelText("Hasta"), { target: { value: "2026-12-10" } });
@@ -77,7 +78,8 @@ describe("ActivitiesPage list", () => {
 
   it("switches to the calendar view", async () => {
     render(<ActivitiesPage />);
-    await screen.findByText("Viaje familiar");
+    const table = await screen.findByRole("table", { name: "Listado de actividades" });
+    expect(within(table).getByText("Viaje familiar")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Calendario", exact: true }));
     expect(await screen.findByRole("heading", { name: "Calendario" })).toBeInTheDocument();
   });
