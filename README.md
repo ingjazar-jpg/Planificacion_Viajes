@@ -89,7 +89,7 @@ Los documentos funcionales, de arquitectura, datos, API e interfaz aprobados se 
 - [FE-002 — Dashboard y alertas](docs/FE-002.md)
 - [FE-003 — Calendario y actividades](docs/FE-003.md)
 
-FE-001 y FE-002 están validados y cerrados. FE-001 incorpora el cliente HTTP centralizado, contexto global del período, selector conectado a la API y estados comunes. FE-002 incorpora Dashboard, gráficos y panel de alertas integrados con BE-006 y BE-009; su validación local reportó 37 pruebas aprobadas, build de producción exitoso y comprobaciones manuales de integración, responsive y teclado. FE-003 tiene dos primeras entregas validadas (administración de períodos y calendario mensual); el resto de actividades sigue en implementación. FE-004 a FE-006 permanecen pendientes de refinement. La validación reproducible del backend con Python 3.14.10 continúa pendiente.
+FE-001 y FE-002 están validados y cerrados. FE-001 incorpora el cliente HTTP centralizado, contexto global del período, selector conectado a la API y estados comunes. FE-002 incorpora Dashboard, gráficos y panel de alertas integrados con BE-006 y BE-009; su validación local reportó 37 pruebas aprobadas, build de producción exitoso y comprobaciones manuales de integración, responsive y teclado. FE-003 tiene validadas individualmente todas sus entregas funcionales, incluida la gestión del ciclo de vida de actividades; la última suite reportó 84 pruebas aprobadas y build exitoso. Resta la regresión integrada final contra FastAPI. FE-004 a FE-006 permanecen pendientes de refinement. La validación reproducible del backend con Python 3.14.10 continúa pendiente.
 
 ## Desarrollo local
 
