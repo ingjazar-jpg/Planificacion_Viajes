@@ -44,3 +44,24 @@
 .expense-success{display:flex;justify-content:space-between;gap:1rem;padding:.8rem 1rem;border:1px solid var(--color-border);border-radius:var(--radius-control);color:var(--color-primary);background:var(--color-surface)}
 .expense-success button{border:0;background:transparent;color:inherit;font-size:1.1rem}
 @media(max-width:520px){.expense-drawer{padding:1rem}}
+
+
+/* Panel de detalle e historial del gasto. */
+.expense-detail-tabs{display:flex;gap:.35rem;margin:1rem 0;border-bottom:1px solid var(--color-border)}
+.expense-detail-tabs button{min-height:42px;padding:.55rem .85rem;border:0;border-bottom:3px solid transparent;background:transparent;color:var(--color-text-secondary);font-weight:650;cursor:pointer}
+.expense-detail-tabs button.is-active{border-bottom-color:var(--color-secondary);color:var(--color-primary)}
+.expense-detail-fields,.expense-history-event dl{display:grid;gap:.8rem;margin:1rem 0}
+.expense-detail-fields>div,.expense-history-event dl>div{display:grid;grid-template-columns:minmax(110px,.7fr) minmax(0,1.3fr);gap:.8rem;padding-bottom:.7rem;border-bottom:1px solid var(--color-border)}
+.expense-detail-fields dt,.expense-history-event dt{color:var(--color-text-secondary);font-size:.82rem}
+.expense-detail-fields dd,.expense-history-event dd{margin:0;color:var(--color-text);font-size:.88rem;overflow-wrap:anywhere}
+.expense-history-empty{padding:1rem;border-radius:var(--radius-control);background:var(--color-background);color:var(--color-text-secondary)}
+.expense-history-timeline{display:grid;gap:1rem;margin:1.2rem 0;padding:0 0 0 1.1rem;border-left:2px solid var(--color-border);list-style:none}
+.expense-history-timeline>li{position:relative}
+.expense-history-timeline>li::before{position:absolute;top:.25rem;left:-1.48rem;width:.65rem;height:.65rem;border:2px solid var(--color-secondary);border-radius:50%;background:var(--color-surface);content:""}
+.expense-history-event{padding:.9rem;border:1px solid var(--color-border);border-radius:var(--radius-card);background:var(--color-surface)}
+.expense-history-event-heading{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.5rem}
+.expense-history-event-heading strong{color:var(--color-primary)}
+.expense-history-event-heading time{color:var(--color-text-secondary);font-size:.78rem}
+.expense-history-event dl{gap:.55rem}
+.expense-history-event del{color:var(--color-text-secondary)}
+@media(max-width:420px){.expense-detail-fields>div,.expense-history-event dl>div{grid-template-columns:minmax(0,1fr);gap:.25rem}}
