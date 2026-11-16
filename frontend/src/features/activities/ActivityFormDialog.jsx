@@ -103,9 +103,9 @@ function ActivityFormDialog({ open, activity = null, period, onClose, onSaved })
     const nextErrors = {};
     const payload = {
       name: form.name.trim(),
-      description: form.description.trim(),
+      description: form.description.trim() || null,
       category: form.category,
-      destination: form.destination.trim(),
+      destination: form.destination.trim() || null,
       start_date: form.start_date,
       end_date: form.end_date,
       start_time: form.start_time,
@@ -136,7 +136,7 @@ function ActivityFormDialog({ open, activity = null, period, onClose, onSaved })
     setIsSaving(true);
     try {
       const saved = activity
-        ? await updateActivity(activity.id, payload)
+        ? await updateActivity(activity.id, { ...payload, status: activity.status })
         : await createActivity({ period_id: period.id, ...payload });
       await onSaved(saved);
       onClose();
