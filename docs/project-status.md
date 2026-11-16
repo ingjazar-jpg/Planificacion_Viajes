@@ -178,7 +178,7 @@ La advertencia deprecatoria de Starlette relacionada con `httpx` no produjo fall
 - **Administración de períodos: validada y cerrada.** La usuaria confirmó 48 pruebas aprobadas, build exitoso e integración manual de creación/edición y manejo de conflictos.
 - **Calendario mensual: primera entrega validada y cerrada el 16-11-2026.** La usuaria confirmó localmente 12 archivos de pruebas, **59 passed, 0 failed**, y build Vite 8.3.8 exitoso con 41 módulos transformados. La prueba de integración App ya no presenta advertencias React `act(...)`; queda el aviso informativo de jsdom. La usuaria confirmó satisfactorias todas las pruebas visuales y funcionales: mes inicial, navegación, filtros combinados, agenda diaria, detalle, desbordamiento de actividades y vista móvil de 360 px.
 - **Listado y filtros de actividades: primera entrega validada y cerrada el 16-11-2026.** La usuaria confirmó localmente **68 passed, 0 failed** en 14 archivos y build Vite 8.3.8 exitoso con 42 módulos transformados. La validación visual confirmó tabla de escritorio, tarjetas móviles, filtros combinados de categoría/prioridad/estado/destino/fechas, limpieza, validación de rango inválido sin consulta, estados vacío y error/reintento y alternancia Calendario/Listado. Vitest mostró únicamente un aviso informativo de creación de entornos jsdom.
-- **FE-003 — validación de integración final pendiente.** Todas las entregas funcionales están validadas individualmente, incluida creación, detalle, edición, navegación desde alertas, transiciones, cancelación y eliminación. La última suite frontend confirmó **84 passed, 0 failed**; el build de producción Vite 8.3.8 también finalizó correctamente con 44 módulos transformados. La usuaria confirmó que la validación visual y funcional del ciclo de vida cumple los criterios esperados. Resta ejecutar la regresión integrada contra FastAPI y verificar los efectos persistidos y la eliminación en cascada antes del cierre global.
+- **FE-003 — VALIDADO Y CERRADO el 16-11-2026.** Todas las entregas funcionales están validadas individualmente. La suite frontend completa confirmó **84 passed, 0 failed** y el build Vite 8.3.8 finalizó correctamente con 44 módulos transformados. La usuaria confirmó que la regresión integrada con FastAPI, con ambos servidores iniciados, se completó sin problemas; quedaron cubiertos los flujos de persistencia, transiciones, cancelación, eliminación en cascada y actualización de calendario/listado.
 - FE-004 a FE-006 permanecen pendientes de refinement.
 
 ## 7. Calidad y validación
@@ -190,6 +190,7 @@ La advertencia deprecatoria de Starlette relacionada con `httpx` no produjo fall
 - FE-003 calendario mensual primera entrega: **59 passed, 0 failed** en 12 archivos; build Vite 8.3.8 exitoso; validación visual/funcional confirmada por la usuaria.
 - FE-003 listado y filtros de actividades primera entrega: **68 passed, 0 failed** en 14 archivos; build Vite 8.3.8 exitoso con 42 módulos; validación visual/funcional confirmada por la usuaria.
 - FE-003 CRUD, detalle, navegación desde alertas, transiciones, cancelación y eliminación: suite frontend completa **84 passed, 0 failed**; build Vite 8.3.8 exitoso con 44 módulos; comprobaciones manuales funcionales confirmadas por la usuaria.
+- Regresión integrada final FE-003 contra FastAPI: **satisfactoria**, confirmada por la usuaria el 16-11-2026; sin incidencias reportadas. Incluyó persistencia de mutaciones y eliminación en cascada.
 - Validación manual integrada FE-002: Dashboard, alertas, revisión, navegación, responsive y teclado confirmados por la usuaria.
 - Build frontend de producción: exitoso.
 - La ejecución backend mostró una advertencia deprecatoria de Starlette por el uso de `httpx` con `starlette.testclient`; no afectó el resultado. La actualización de dependencias queda fuera del alcance de FE-001 y requiere revisión independiente.
@@ -218,7 +219,7 @@ Las especificaciones aprobadas siguen siendo la fuente de verdad funcional y té
 
 ## 10. Próximos pasos inmediatos
 
-1. Completar la regresión integrada final de FE-003 contra FastAPI, verificando persistencia de cambios, transiciones, cancelación y eliminación en cascada; después registrar evidencia y cerrar el bloque si todos los criterios se satisfacen.
+1. FE-003 está validado y cerrado tras la regresión integrada satisfactoria contra FastAPI.
 2. Mantener pendiente la validación reproducible con Python 3.14.10, según la línea base técnica aprobada.
 
 ---
