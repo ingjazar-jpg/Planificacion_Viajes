@@ -179,7 +179,19 @@ La advertencia deprecatoria de Starlette relacionada con `httpx` no produjo fall
 - **Calendario mensual: primera entrega validada y cerrada el 16-11-2026.** La usuaria confirmó localmente 12 archivos de pruebas, **59 passed, 0 failed**, y build Vite 8.3.8 exitoso con 41 módulos transformados. La prueba de integración App ya no presenta advertencias React `act(...)`; queda el aviso informativo de jsdom. La usuaria confirmó satisfactorias todas las pruebas visuales y funcionales: mes inicial, navegación, filtros combinados, agenda diaria, detalle, desbordamiento de actividades y vista móvil de 360 px.
 - **Listado y filtros de actividades: primera entrega validada y cerrada el 16-11-2026.** La usuaria confirmó localmente **68 passed, 0 failed** en 14 archivos y build Vite 8.3.8 exitoso con 42 módulos transformados. La validación visual confirmó tabla de escritorio, tarjetas móviles, filtros combinados de categoría/prioridad/estado/destino/fechas, limpieza, validación de rango inválido sin consulta, estados vacío y error/reintento y alternancia Calendario/Listado. Vitest mostró únicamente un aviso informativo de creación de entornos jsdom.
 - **FE-003 — VALIDADO Y CERRADO el 16-11-2026.** Todas las entregas funcionales están validadas individualmente. La suite frontend completa confirmó **84 passed, 0 failed** y el build Vite 8.3.8 finalizó correctamente con 44 módulos transformados. La usuaria confirmó que la regresión integrada con FastAPI, con ambos servidores iniciados, se completó sin problemas; quedaron cubiertos los flujos de persistencia, transiciones, cancelación, eliminación en cascada y actualización de calendario/listado.
-- FE-004 a FE-006 permanecen pendientes de refinement.
+- **FE-004 — Presupuesto y gastos:** refinement aprobado el 16-11-2026. La especificación `docs/FE-004.md` v0.1 está publicada y aprobada para implementación; incluye 43 decisiones (D1–D43), 68 requisitos funcionales, contratos, criterios de aceptación y estrategia de pruebas. D43 opción A establece consultar el conjunto completo filtrado, ordenar globalmente por fecha descendente en frontend y paginar localmente con 10/20/50. No se modifican API-001 ni BE-007. La implementación y validación local están pendientes.
+- FE-005 y FE-006 permanecen pendientes de refinement.
+
+### 6.2 FE-004 — Presupuesto y gastos
+
+**Estado:** refinement aprobado y especificación publicada para implementación; implementación no iniciada/validada en este registro.
+
+- Documento: `docs/FE-004.md` v0.1.
+- Decisiones aprobadas: D1–D43. D43 opción A resuelve la ausencia de ordenamiento contractual: GET /expenses consulta el conjunto filtrado completo sin page/page_size; el frontend ordena globalmente por fecha descendente y pagina localmente con 10/20/50.
+- Requisitos: 68 requisitos funcionales para presupuesto, gastos, filtros, paginación, detalle, historial, estados, calidad y accesibilidad.
+- Contratos: GET/POST/PUT de presupuesto; GET/POST/GET/PUT/PATCH/DELETE de gastos; GET de historial; consulta de actividades para asociación. Todos conforme a API-001 v0.8.
+- Restricción: no se modifica API-001 ni se reabre BE-007.
+- Próximo paso: iniciar implementación FE-004 según la especificación aprobada, publicar cambios primero en GitHub y validar localmente después de sincronizar.
 
 ## 7. Calidad y validación
 
@@ -219,8 +231,9 @@ Las especificaciones aprobadas siguen siendo la fuente de verdad funcional y té
 
 ## 10. Próximos pasos inmediatos
 
-1. FE-003 está validado y cerrado tras la regresión integrada satisfactoria contra FastAPI.
+1. Iniciar implementación FE-004 conforme a `docs/FE-004.md` v0.1 aprobada.
 2. Mantener pendiente la validación reproducible con Python 3.14.10, según la línea base técnica aprobada.
+3. Refinar FE-005 y FE-006 después de completar el trabajo priorizado.
 
 ---
 
